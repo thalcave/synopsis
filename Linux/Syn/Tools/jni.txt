@@ -1,0 +1,134 @@
+JNI = Java Native Interface
+- standard programming interface for writing Java native methods and embedding the Java virtual machine into native applications. 
+- the primary goal is binary compatibility of native method libraries across all Java virtual machine implementations on a given platform
+- applications that use the JNI can incorporate native code written in programming languages such as C and C++, and Java
+
+Java platform = programming environment
+	- java virtual machine JVM
+	- API ( predefined classes)
+	- Java programming language
+
+Host environment = 	host operating system
+			native libraries
+			CPU instruction set
+
+
+Native application = written in native programming language, compiled into host-specific binary code, and linked with native libraries
+- are dependent of host env.
+Java app = written in Java, compiled into a machine-independent binary class format
+
+JRE = Java Runtime Environment
+
+JNI = part of JVM that allows Java apps to invoke native code and vice-versa; supports native libraries and native code
+
+
+
+
+Java_HelloWorld_print (JNIEnv *, jobject);
+JNIEnv = JNIEnv interface pointer points to a location that contains a pointer to a function table
+Each entry in the function table points to a JNI function. Native methods always access data structures in the Java virtual machine through one of the JNI functions.
+
+jobject = 
+- differs depending on whether the native method is a static or an instance method. 
+a) reference to the HelloWorld object itself (sort of like the "this" pointer in C++).
+b) the second argument to a static native method is a reference to the class in which the method is defined
+
+javac InstanceFieldAccess.java
+javah -jni InstanceFieldAccess
+gcc -c -fPIC HelloWorld.c -o Hello_World.o
+gcc -shared -Wl,-soname,libHelloWorld.so.1 -o libHelloWorld.so.1.0.1 Hello_World.o
+ln -s libHelloWorld.so.1.0.1 libHelloWorld.so
+java -Djava.library.path=`pwd`
+
+*****************************************************************************************
+Programmer's Guide
+
+In Java =	primitive types: int, float, char
+		reference types: classes, instances, arrays
+
+mapping of primitive types is straightforward : int <--> jint, float <--> jfloat
+
+-----------------------------------------
+Strings
+- JNI supports conversion both to and from Unicode and UTF-8 strings
+Unicode strings =  characters as 16-bit values
+UTF-8 strings  = use an encoding scheme that is upward compatible with 7-bit ASCII strings
+		 act like NULL-terminated C strings, even if they contain non-ASCII characters. 
+		 All 7-bit ASCII characters whose values are between 1 and 127 remain the same in the UTF-8 encoding. 
+		 
+		 
+string <-->jstring
+in C:
+	 convert jstring objects to C/C++ strings
+	 GetStringUTFChars, ReleaseStringUTFChars, NewStringUTF
+	 
+
+-----------------------------------------	 	 
+Arrays
+ GetIntArrayElements, 
+ 
+ 
+ ----------------------------------------
+Fields and Methods
+
+To access an instance field
+1) GetObjectClass to obtains the class reference
+2) GetFieldID to obtain the field ID from the class reference, field name, and field descriptor
+3) GetObjectField  to access the instance field
+
+javap -s -p InstanceFieldAccess
+
+
+Calling methods:
+1) GetObjectClass to obtains the class reference
+2)  GetMethodID performs a lookup for the method in the given class
+3) CallVoidMethod  CallIntMethod  CallObjectMethod
+
+Calling instance methods which were defined in a superclass but that have been overridden in the class to which the object belongs
+1) GetObjectClass to obtains the class reference
+2) GetMethodID from a reference to the superclass
+3) CallNonvirtualVoidMethod with the object, superclass, method ID, and arguments 
+
+It is relatively rare that you will need to invoke the instance methods of a superclass
+similarly to:  super.f();
+
+Invoking Constructors
+1)  FindClass returns a reference to the java.lang.String class.
+2) GetMethodID returns the method ID for the string constructor
+3) NewCharArray to allocate a character array that holds all the string elements
+4) NewObject invokes the constructor specified by the method ID
+
+a typical virtual machine may execute a Java/native call roughly two to three times slower than it executes a Java/Java call
+ the overhead of a native/Java callback can be as much as ten times higher than a Java/Java call.
+
+ 
+ 
+  --------------------------------------
+  Exceptions
+  
+  
+  
+
+
+
+
+  **************************************************************************************************************************
+  RMI Remote Method Invocation
+   allows an object running in one Java Virtual Machine (VM) to invoke methods on an object running in another Java VM
+
+An object becomes remote by implementing a remote interface, which has the following characteristics. 
+	A remote interface extends the interface java.rmi.Remote. 
+	Each method of the interface declares java.rmi.RemoteException in its throws clause, in addition to any application-specific exceptions.
+  
+   
+  
+RMI applications: server & client
+	- server creates some remote objects, calls the registry to bind a name with a remote object
+	- client looks up the remote object name in server;s registry and invokes a method on it
+
+Distributed object application:
+	locate remote objects: 		 an app can register its remote objects with rmiregistry = RMI's naming facility
+	communicate with remote objects: details of communication between remote objects are handled by RMI; 
+					 to the programmer, remote communication looks like a standard Java method invocation.	
+	load class bytecodes for objects: because RMI allows a caller to pass objects to remote objects, 
+					  RMI provides the necessary mechanisms for loading an object's code, as well as for transmitting its data.

@@ -1,0 +1,63 @@
+fcntl - manipulate file descriptor(lock file, set nonblocking mode etc.)
+ioctl - function manipulates the underlying device parameters of special files.
+select = wait for a number of file  descriptors to change status.(wait for read, write; blocking or nonblocking)
+wait = wait for process termination (waitpid) and frees resources used by child
+
+socket - create socket
+bind  - assign a name to the socket
+listen - listen for connections on a socket
+accept - accept a connection on a socket
+
+connect - initiate a connection on a socket
+
+
+popen - opens a process by creating a pipe,forking,and invoking the shell (uses pipe, fork and exec)
+mkstemp - create a unique temporary file
+access - check user's permissions for a file
+fsync  - copies all in-core parts of a file to disk, and waits  until  the
+	 device  reports  that all parts are on stable storage
+getrlimit - get/set resource limits and usage
+mlock - disable paging for some parts of memory
+nanosleep -  pause execution for a specified time
+readlink - display value of a symbolic link
+sysinfo - returns information on overall system statistics
+
+
+execvp = replaces the current process image with a new  process  image
+nice - run a program with modified scheduling priority
+sigaction  = change the action taken by a process on receipt of a specific signa
+
+pthread_create  - create a new thread
+pthread_exit - terminate the calling thread
+pthread_join - wait for termination of another thread
+pthread_detach - put a running thread in the detached state
+pthread_cancel - cancel a thread
+
+
+sem_init
+sem_wait
+
+
+shmget - allocates a shared memory segment
+shmat -  attaches  the shared memory segment
+shmdt -  detaches the shared memory segment
+shmctl - shared memory control
+
+semget - get a semaphore set identifier
+semctl - semaphore control operations
+
+mmap, munmap - map or unmap files or devices into memory
+lseek - reposition read/write file offset
+msync - synchronize a file with a memory map
+
+
+pipe - create a pipe
+fdopen - associates a stream with the existing file descriptor
+dup, dup2 - duplicate a file descriptor
+popen - opens a process by creating a pipe, forking, and invoking the shell
+pclose - waits for the associated process to terminate and returns the exit status of the command
+mkfifo - make FIFOs (named pipes)
+
+
+socket - create an endpoint for communication
+clone = creates  a  new  process, allowing the child process to share  parts of its execution context with the calling process

@@ -1,0 +1,22 @@
+1) Selecting a page size
+DB->set_pagesize
+
+- locks are taken per page --> a too big page will cause waiting
+- a too small page will force the creation of large numbers of overflow pages
+
+
+
+The Btree access method is an implementation of a sorted, balanced tree structure
+Hash (used by us)
+The Queue access method stores fixed-length records with logical record numbers as keys
+The Recno access method stores both fixed and variable-length records with logical record numbers as keys
+
+The DB->sync() method flushes all modified records from the database cache to disk.
+
+
+
+Berkeley DB environment = an encapsulation of one or more databases, log files and region files
+
+
+In order to maintain a cursor position when an application is using locking, locks are maintained on behalf of the cursor until the cursor is closed. 
+In cases when an application is using locking without transactions, cursor duplication is often required to avoid self-deadlocks

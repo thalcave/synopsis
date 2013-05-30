@@ -1,0 +1,27 @@
+Most lossless compression programs do two things in sequence: 
+* the first step generates a statistical model for the input data
+* the second step uses this model to map input data to bit sequences in such a way that "probable" (e.g. frequently encountered) data will produce shorter output than "improbable" data.
+
+A high level view of the encoding algorithm is shown here:
+* Initialize the dictionary to contain all strings of length one.
+* Find the longest string W in the dictionary that matches the current input.
+* Emit the dictionary index for W to output and remove W from the input.
+* Add W followed by the next symbol in the input to the dictionary.
+Go to Step 2.
+
+
+Because of this high rate of redundancy, text files compress very well. 
+
+Compression: 
+* create a dictionary with all patterns
+e.g:
+1 --> "ask"
+2 --> "can do for you"
+etc.
+* replace patterns with their key
+e,g "Ask not what your country can do for you -- ask what you can do for your country."
+	"1not__2345__--__12354"
+
+
+-----------------------------------------
+

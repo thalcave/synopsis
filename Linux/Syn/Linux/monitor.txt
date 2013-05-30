@@ -1,0 +1,6 @@
+pmap -x pid 
+slabtop
+vmstat -a| -d
+cat /proc/sys/fs/dentry-state 
+watch -n 1 --differences=cumulative  "pmap -x 1604  >> watch_fsmd.log_modified_bpath3"
+proc/sys/vm/swappiness

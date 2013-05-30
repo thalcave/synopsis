@@ -1,0 +1,93 @@
+SVN = SubVersioN
+Subversion is a free/open-source version control system. 
+That is, Subversion manages files and directories over time. 
+A tree of files is placed into a central repository. 
+The repository is much like an ordinary file server, except that it remembers every change ever made to your files and directories. 
+This allows you to recover older versions of your data, or examine the history of how your data changed.
+
+
+Repository = central store of data.
+Repository remembers every change ever written to it: every change to every file, and even changes to the directory tree itself, 
+such as the addition, deletion, and rearrangement of files and directories.
+
+The Lock-Modify-Unlock Solution
+	-locks on files
+The Copy-Modify-Merge Solution
+	Each user's client contacts the project repository and creates a personal working copy - a local reflection of the repository's files and directories.
+	Users then work in parallel, modifying their private copies. 
+	Finally, the private copies are merged together into a new, final version.
+
+A Subversion working copy is an ordinary directory tree on your local system, containing a collection of files.
+Writing to the repository = "publish" your changes to the other people working with you on your project
+Each directory in your working copy contains a subdirectory named .svn, also known as the working copy administrative directory.
+
+checkout = simply creates a private copy of the project for you
+commit = committing (or checking in) = changes to the repository.
+update command = will incorporate changes intoworking copy
+revision = Each time the repository accepts a commit, this creates a new state of the filesystem tree
+log
+diff
+
+A revision is a "snapshot" of the repository at a particular moment in time
+When you specify a date as a revision, Subversion finds the most recent revision of the repository as of that date
+
+
+The typical work cycle looks like this:
+
+	Update your working copy
+		svn update
+
+	Make changes
+		svn add
+		svn delete
+		svn copy
+		svn move
+		(or just simple editing - in this case we don't need to inform Subversion of the changes)
+		
+	Examine your changes
+		svn status
+		svn diff
+		svn revert
+
+	Merge others' changes into your working copy
+		svn update
+		svn resolved
+
+	Commit your changes
+		svn commit
+
+
+Branch = a line of development that exists independently of another line, yet still shares a common history if you look far enough back in time
+
+
+svn log  ProtocolData.hpp
+svn diff --revision 427:428 ProtocolData.hpp
+svn status --verbose
+
+
+U foo
+	File foo was Updated (received changes from the server).
+	
+A foo
+	File or directory foo was Added to your working copy.
+	
+D foo
+	File or directory foo was Deleted from your working copy.
+
+R foo
+	File or directory foo was Replaced in your working copy; that is, foo was deleted, and a new item with the same name was added. 
+	While they may have the same name, the repository considers them to be distinct objects with distinct histories.
+
+G foo
+	File foo received new changes from the repository, but your local copy of the file had your modifications. 
+	Either the changes did not intersect, or the changes were exactly the same as your local modifications, 
+	so Subversion has successfully merGed the repository's changes into the file without a problem.
+
+C foo
+	File foo received Conflicting changes from the server. The changes from the server directly overlap your own changes to the file. 
+
+
+Merging branches
+svn diff --revision 987:1054 svn://svn.schlund.de/LSD/EnhancedHosting/backup/trunk/src/common/metapath
+svn merge -r 343:344 http://svn.example.com/repos/calc/trunk
+

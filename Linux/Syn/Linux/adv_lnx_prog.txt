@@ -1,0 +1,160 @@
+***********************
+Processes & Threads
+
+Init = root process
+Creating processes 
+	system
+	fork
+
+A signal is a special message sent to a process
+/usr/include/bits/signum.h
+
+Thread = The creating and the created thread share the same memory space, file descriptors, and other system resources as the original.
+Upon creation, each thread executes a thread function.
+
+Make sure that any data you pass to a thread by reference is not deallocated, even by a different thread, 
+until you're sure that the thread is done with it
+
+Thread
+	joinable thread (the default)
+		is not automatically cleaned up; the thread's exit state hangs around in the system (kind of like a zombie process) until another thread
+		calls pthread_join to obtain its return value. 
+	detached thread
+		is cleaned up automatically when it terminates.
+
+Thread
+	asynchronously cancelable = the thread may be canceled at any point in its execution
+	synchronously cancelable = the thread is canceled only when it reaches specific points in its execution
+	uncancelable = attempts to cancel the thread are quietly ignored
+	
+Cleanup handler =  function that should be called when a thread exits.
+
+
+
+
+Race condition = an action that takes place only if a specific condition is met;
+		 2 threads accesing the same data at the same time
+Mutex = a special lock that only one thread may lock at a time.
+Deadlock = when one or more threads are stuck waiting for something that never will occur.
+Semaphore = a counter that can be used to synchronize multiple threads.
+
+
+
+***************************
+Inter-process communication
+
+transfer of data inter processes.
+
+1)Shared memory
+- allows two or more processes to access the same memory as if they all
+called malloc and were returned pointers to the same actual memory
+- the fastest form of interprocess communication
+- you must provide your own synchronization (semaphores etc.)
+
+one process --> allocate the segment.
+each process --> attach the segment. 
+each process -->detaches the segment.
+one process --> deallocate the segment.
+
+allocating an existing segment does not create new pages, but return an identifier for the existing pages
+
+shmget
+
+
+- all pointers in shared memory should point to locations within shared memory. 
+(That is why C++ classes that contain virtual function tables -- those that inherit from classes that have virtual member functions cannot be placed in shared memory)
+
+
+2)Processes Semaphores(System V semaphores)
+semget
+semctl
+
+Process semaphores are allocated, used, and deallocated like shared memory segments.	
+
+- each semaphore has a non-negative value and supports "post" and "wait" operations
+
+	P(Semaphore s) // Acquire Resource....wait
+	{
+	  wait until s > 0, then s := s-1;
+	  /* must be atomic once s > 0 is detected */
+	}
+
+	V(Semaphore s)  // Release  Resource...post
+	{
+	  s := s+1;   /* must be atomic */
+	}
+
+	Init(Semaphore s, Integer v)
+	{
+	  s := v;
+	}
+
+
+3)Mapped memory
+- permits different processes to communicate via a shared file.
+- forms an association between a file and a process` memory; file is split and copied into VM --> fast access to file
+- could be a replacement for write and read
+
+4)Pipes
+- a serial device
+- a communication device that permits unidirectional communication. 
+- data written to the 'write end' of the pipe is read back from the 'read end'
+- 
+
+
+**************************
+System calls (mechanisms used by an application program to request service from the operating system)
+/usr/include/asm/unistd.h
+
+
+**************************
+The /proc File System
+
+man 5 proc 
+
+this file system isn't associated with a hardware device such as a disk drive. 
+Instead, /proc is a window into the running Linux kernel. Files in the /proc file system don't correspond
+to actual files on a physical device.
+
+The /proc file system contains a directory entry for each process running on the
+GNU/Linux system.The name of each directory is the process ID of the corresponding
+process.
+
+These directories appear and disappear dynamically as processes start and
+terminate on the system.
+
+
+
+*************************
+Devices
+
+device driver = software component used to interact with hardware device
+
+Device drivers run as part of the kernel and aren't directly accessible to user processes. 
+Linux provides a mechanism by which processes can communicate with a device driver - and
+through it with a hardware device- via "file-like" objects
+
+These objects appear in the file system, and programs can open them, read from them, and write to them practically
+as if they were normal files
+
+Character device  =  a hardware device that reads or writes a serial stream
+		    of data bytes. Serial and parallel ports, tape drives, terminal devices, and sound
+		    cards are examples of character devices.
+Block device 	   = a hardware device that reads or writes data in fixed-size
+		     blocks. Unlike a character device, a block device provides random access to data
+		     stored on the device.A disk drive is an example of a block device.
+
+************************************************
+Generally speaking, the ctime can't be set arbitrarily. It's
+effectively the one relatively high-integrity timestamp on files
+(since, as you know, mtime and atime are arbitrarily "user"
+settable). Of course one can make certain changes to the file, and
+that will update the ctime to the current system time. Of course if
+one has superuser (root) access, there are ways to bypass this. E.g.
+change the system time (generally not recommended - especially moving
+the clock back - most stuff doesn't expect time to go backwards, and
+it typically will cause some stuff to fail or behave in unexpected
+ways), or unmount the filesystem and edit the data on the filesytem
+device (one can set the ctime arbitrarily that way ... and/or
+introduce arbitrary corruption or other changes to the filesystem)
+

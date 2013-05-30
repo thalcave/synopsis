@@ -1,0 +1,227 @@
+linux/scripts/patch-kernel linux		//patches are applied from current directory
+
+cd linux
+make mrproper
+
+******Sources are correct installed
+
+
+Configure and build Kernel:
+cd linux
+make O=/build_directory/ menuconfig	( make oldconfig)
+make O=/build_directory/
+su root; make O=/build_directory modules_install install
+
+make dep
+make bzImage
+make install
+
+ - In order to boot your new kernel, you'll need to copy the kernel
+   image (found in .../linux/arch/i386/boot/bzImage after compilation)
+   to the place where your regular bootable kernel is found. 
+
+
+modify lilo
+
+
+
+
+
+************************************************
+Linux Kernel Procfs
+
+/proc = virtual file system; exists only in memory (in kernel memory)
+	used as an interface to kernel data structures
+
+create_proc_entry = creates a regular file
+proc_mknod = creating a device
+proc_mkdir = creates a directory
+remove_proc_entry = remove the entry name
+
+create_proc_read_entry = creates a regular file but also allows to set the read function read_proc in one call.
+
+Instead of reading (or writing) information directly from kernel memory, procfs works
+with call back functions for files: functions that are called when a specific file is being
+read or written. Such functions have to be initialised after the procfs file is created.
+
+Read function = call back function that allows userland processes to read data from the kernel. 
+Write function = allows a userland process to write data to the kernel, so it has some kind of control over the kernel
+
+
+
+
+
+************************************************
+Computer system = 6 abstraction layers:
+			User applications
+			   |		
+			OS
+			   |
+			Kernel
+			   |
+			Assembler
+			Firmware
+			Hardware
+			
+- design using abstraction layers: each layer relay on functions of layer beneath itself
+
+			
+Firmware - software embedded in a device( BIOS etc)
+Assembly language = low-level language used in writing computer programs
+	- translated into computer's machine code by assembler
+(assembler is different than a compiler beacause it performs one-to-one translations from statements to machine instructions)
+	- used for direct hardware manipulation( BIOS, boot loader, 
+
+
+Operating System = computer program that manages the hardware and software resources of a computer
+O/S Services = 	the programming interface to the kernel,  services that are typically considered part of the operating system
+
+Adress space = range of discrete addresses, each of which may correspond to a physical or virtual memory register etc
+	
+	VAS = Virtual Address Space = memory mapping mechanism
+		When you run an application on a 32-bit operating system (OS), the OS creates a new process for it. 
+		This process has a 4GB VAS: each one of the memory addresses (from 0 to 2 pow 32-1) in that space can have a single byte as value.
+		
+	KVA = Kernel Virtual Address Space = virtual memory area in which all Linux kernel threads reside
+	User Virtual Address space = specific form of address space or memory allocation. 
+		Every process that runs on a computer system has some data and some code associated to it which is loaded into memory at runtime. 
+		The part of the virtual address space of the process that corresponds to the process data and code in the memory
+		accessed by the kernel through copy_to_user(), copy_from_user and similar functions
+		
+
+Glibc - GNU C Library 
+	= system call interface that connects to the kernel and provides the mechanism to transition between the user-space application and the kernel
+		
+************************************************
+Kernel
+what is it:
+	- central component of most OSs
+	- lowest layer of software
+	- a programm running in supervisor mode 
+
+what it does:	
+	- presents a virtual interface to user processes
+	- manages system's resources
+	- communication between hardware and software(lowest-level abstraction layer for resources)
+	- provide features for low-level scheduling of processes (dispatching)
+	- Inter-process communication
+	- process synchronization
+	- context switch
+	- manipulation of process control blocks, interrupt handling, process creation and destruction, process suspension and resumption
+	
+Structure:
+1. Process Scheduler (SCHED)
+	- responsible for controlling process access to CPU
+	- maintains a data structure = task list, with one entry for each active process
+	
+	- depends on MM to adjust the hardware memory map for a specific process when that process is resumed
+	- all the other kernel subsytems depend on SCHED to suspend and resume processes 
+
+2. Memory Manager (MM)
+	- permits multiple processes to securely share machine's memory
+	- supports virtual memory (allows Linux to use more memory than is available in the system)
+	
+	- stores a per-process mapping of physical addresses to virtual addresses (2 processes can access the same virtual memory address and actually use different
+			physical memory locations)
+	- controls memory hardware and receives notification when a page fault occurs
+	- uses VFS to support swapping and memory mapped I/O
+
+3. Virtual FileSystem (VFS)
+	- presents a common file interface to all devices
+	- supports several file systems formats
+	
+	- all files are represented using i-nodes (structure containing location information, pointers to routines in logical file system module and device driver that will
+	perform required read and write operations)
+	- uses NET to support NFS and MM to provide ramdisk (a segment of active computer memory, RAM, which is being used as secondary storage)
+	
+4 .Network Interface (NET)
+	- access to several networking software and network hardware
+	
+	- each network object is represented as a socket (associated to processes in the same manner that i-nodes are associated)
+	
+5. Inter-process Communication (IPC)	
+	-  subsystem supports several mechanisms for process-to-process communication on a single Linux system
+	- uses MM for shared memory communication mechanism
+
+
+
+Fault-tolerance = property that enables a system to continue operating properly in the event of the failure of some of its components
+
+language-based protection =  kernel will only allow code to execute that has been produced by a trusted language compiler
+	JX (operating system)
+	Singularity (operating system)
+	Inferno (operating system)
+Hardware-based protection =  processor monitors the execution and stops a program that violates a rule (e.g., a user process that is about to read or write to kernel memory)
+				use different space address for every process
+
+
+
+Monolithic kernel = all OS services run along with the main kernel thread, residing in the same memory area
+	- all of the basic services are in kernel
+	Adv:    rich and powerful hardware access
+		easy to design and maintain ?
+		extremely efficient
+	Disadv:
+		dependencies between system components( a bug in a device driver may crash whole system)
+Unix-like : Linux, BSD, Solaris
+DOS, MS_DOS		
+		
+
+
+
+Microkernel = 	defining a simple abstraction over the hardware, with a set of primitives or system calls to implement minimal OS services(memory management, 
+			multitasking, and ipc); other services, including those normally provided by the kernel such as networking, are implemented in user-space programs, 
+			referred to as servers.
+minimal computer OS kernel providing only basic operating system services (system calls)
+	other services (commonly provided by kernels) are provided by user-space programs called servers
+	
+	Adv:	
+		easier to maintain
+	Disadv:
+		large number of system calls and context switches --> might slow down the system
+		overhead of moving in and out of kernel 		
+	Use	
+		where crash-tolerance is important( robots, medical computers)
+Minix, 		
+
+
+Hybrid kernel = running some services in kernel space to reduce performance overhead, but still running kernel code(e.g. device drivers) as servers in user space
+
+
+
+Kernel panic = unrecoverable system error detected by the kernel as opposed to similar errors detected by user space code. 
+	result of unhandled processor exceptions in kernel code
+	can indicate a hardware failure, overheating CPU, soft error etc.
+	
+
+
+
+
+*************************************************************************************************
+
+
+real-time system = one in which the correctness of the computations not only depends upon the logical correctness of the computation but also upon the time 
+			at which the result is produced. If the timing constraints of the system are not met, system failure is said to have occurred.
+response time    = time between the arrival of the interrupt (an event has occurred) and the dispatch of the required task
+context-switch   = the process of storing the current state of a CPU at interrupt time, and then restoring the state of a given task. 
+				what constitutes a context switch is a function of both the operating system and the underlying processor architecture.
+
+for real-time, response should be deterministic and operate within a known worst-case
+
+hard real-time = an OS that can support the desired deadlines of the real-time tasks
+			can't miss deadlines (catastrophical effects)
+soft real-time = OS that can support the deadlines on average
+			can miss deadlines without the overall system failure			
+
+
+
+Kernel:
+- soft real-time performance through a simple kernel configuration to make the kernel fully preemptable:
+	in the standard 2.6 Linux kernel, when a user space process makes a call into the kernel (through a system call), it cannot be preempted. 
+	this means that if a low-priority process makes a system call, a high-priority process must wait until that call is complete before it can gain access to the CPU. 
+	the new configuration option CONFIG_PREEMPT changes this behavior of the kernel by allowing processes to be preempted if high-priority work is available to do 
+	(even if the process is in the middle of a system call).
+
+- although the option enables soft real-time performance and even under load makes the operating system execute more smoothly, it does so at a cost.
+that cost is slightly lower throughput and a small reduction in kernel performance because of the added overhead of the CONFIG_PREEMPT option. 
+this option is useful for desktop and embedded systems, but it may not be right in all scenarios (for example, servers).

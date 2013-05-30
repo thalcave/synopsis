@@ -1,0 +1,393 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introduction</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '.',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="" href="index.html" />
+    <link rel="next" title="Functions" href="functions.html" />
+    <link rel="prev" title="Python Guide" href="index.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="_static/small_flask.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+  
+  
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="functions.html" title="Functions"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="index.html" title="Python Guide"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html"></a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="goals">
+<h2>Goals<a class="headerlink" href="#goals" title="Permalink to this headline">¶</a></h2>
+<p>This guide will explain some basic python concepts through a series of
+exercises. However, it&#8217;s far from complete and cannot teach you Python. You
+should read the <a class="reference external" href="http://docs.python.org/tutorial/">The Python Tutorial</a> and use the <a class="reference external" href="http://docs.python.org/library/index.html">Library Reference</a> whenever
+necessary.</p>
+</div>
+<div class="section" id="humble-beginnings">
+<h2>Humble Beginnings<a class="headerlink" href="#humble-beginnings" title="Permalink to this headline">¶</a></h2>
+<p>You don&#8217;t need type declarations. To create a variable simply assign to it:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">width</span> <span class="o">=</span> <span class="mi">10</span>
+</pre></div>
+</div>
+<p>To use functions from modules use the <tt class="docutils literal"><span class="pre">import</span></tt> keyword:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">math</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">help</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">)</span>
+<span class="k">print</span> <span class="nb">int</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The most common data structure in Python is the list (similar to the C++
+<tt class="docutils literal"><span class="pre">std::vector</span></tt>, but without type constraints):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">x</span>
+<span class="k">assert</span> <span class="n">a</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="k">assert</span> <span class="n">b</span> <span class="o">==</span> <span class="mi">2</span>
+<span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="k">print</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+</pre></div>
+</div>
+<p>Another common data structure is the tuple (an immutable list):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>Lists, tuples and strings are sequences. More information about sequences can be
+found in <a class="reference external" href="http://docs.python.org/library/stdtypes.html#sequence-types-str-unicode-list-tuple-bytearray-buffer-xrange">Sequence Types</a>.</p>
+<p>In contrast with C and Java, Python uses indentation to delimit blocks:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">&#39;zero&#39;</span>
+<span class="k">elif</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">&#39;odd&#39;</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">&#39;even&#39;</span>
+</pre></div>
+</div>
+<p>Indented blocks are always preceded by a statement which ends in a colon
+(<tt class="docutils literal"><span class="pre">:</span></tt>). You should always use 4 spaces for indentation (<a class="reference external" href="http://www.python.org/dev/peps/pep-0008/">PEP8</a>).</p>
+<p>Python has a <a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">bool()</span></tt></a> type with two values: <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-data xref docutils literal"><span class="pre">True</span></tt></a> and <a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-data xref docutils literal"><span class="pre">False</span></tt></a>.
+You can also use any sequence as a boolean value in <tt class="docutils literal"><span class="pre">if</span></tt> or <tt class="docutils literal"><span class="pre">while</span></tt>
+conditions (empty sequences are <a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-data xref docutils literal"><span class="pre">False</span></tt></a>, non-empty sequences are
+<a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-data xref docutils literal"><span class="pre">True</span></tt></a>).</p>
+<p>To iterate over a sequence you can use the <tt class="docutils literal"><span class="pre">for</span></tt> statement:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">x</span>
+</pre></div>
+</div>
+<p>If you just want to iterate over a range of integers, you can create with the
+<a class="reference external" href="http://docs.python.org/library/functions.html#range" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">range()</span></tt></a> function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">assert</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="k">assert</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">)):</span>
+    <span class="k">print</span> <span class="s">&quot;l[</span><span class="si">%d</span><span class="s">] = </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">l</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>This could be also written as:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+  <span class="k">print</span> <span class="s">&quot;l[</span><span class="si">%d</span><span class="s">] = </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To define a function use <tt class="docutils literal"><span class="pre">def</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">even</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>If you don&#8217;t explicitly <tt class="docutils literal"><span class="pre">return</span></tt> from a function, the caller will receive the
+special value <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-data xref docutils literal"><span class="pre">None</span></tt></a>.</p>
+<p>You can have a variable number of arguments:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">csv</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="n">csv</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also call a function with arguments from a list object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span> <span class="n">csv</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="section" id="exercise">
+<h3>Exercise<a class="headerlink" href="#exercise" title="Permalink to this headline">¶</a></h3>
+<p>Define a function which returns <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-data xref docutils literal"><span class="pre">True</span></tt></a> if a number is prime and
+<a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-data xref docutils literal"><span class="pre">False</span></tt></a> otherwise.</p>
+<dl class="function">
+<dt id="isprime">
+<tt class="descname">isprime</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#isprime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p><strong>Unit test</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">test_primes</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">isprime</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">isprime</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">isprime</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">isprime</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">isprime</span><span class="p">(</span><span class="mi">97</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="functional-style">
+<h2>Functional Style<a class="headerlink" href="#functional-style" title="Permalink to this headline">¶</a></h2>
+<p>If you want to write code in a functional style, you have access to the usual
+tools:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://docs.python.org/library/functions.html#map" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">map()</span></tt></a></li>
+<li><a class="reference external" href="http://docs.python.org/library/functions.html#filter" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">filter()</span></tt></a></li>
+<li><a class="reference external" href="http://docs.python.org/library/functions.html#reduce" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">reduce()</span></tt></a></li>
+</ul>
+<p>However Python also provides list comprehensions to replace <a class="reference external" href="http://docs.python.org/library/functions.html#map" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">map()</span></tt></a> and
+<a class="reference external" href="http://docs.python.org/library/functions.html#filter" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">filter()</span></tt></a> with a syntax closer to the mathematical set notation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">f1</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">f2</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">f1</span> <span class="o">==</span> <span class="n">f2</span>
+
+<span class="n">mf1</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="p">,</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)))</span>
+<span class="n">mf2</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">*</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">mf1</span> <span class="o">==</span> <span class="n">mf2</span>
+</pre></div>
+</div>
+<p>List comprehensions can have multiple <tt class="docutils literal"><span class="pre">for</span></tt> and <tt class="docutils literal"><span class="pre">if</span></tt> clauses:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span> <span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+</pre></div>
+</div>
+<div class="section" id="id1">
+<h3>Exercise<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>Define a function which returns the prime numbers smaller than <em>n</em>.</p>
+<dl class="function">
+<dt id="primesuntil">
+<tt class="descname">primesuntil</tt><big>(</big><em>n</em><big>)</big><a class="headerlink" href="#primesuntil" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p><strong>Unit test</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">test_primesuntil</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="n">primesuntil</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="something-useful">
+<h2>Something Useful<a class="headerlink" href="#something-useful" title="Permalink to this headline">¶</a></h2>
+<p>The Python equivalent of C/C++ <tt class="docutils literal"><span class="pre">NULL</span></tt> is <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-data xref docutils literal"><span class="pre">None</span></tt></a>. You should always use
+the <tt class="docutils literal"><span class="pre">is</span></tt> (or <tt class="docutils literal"><span class="pre">is</span> <span class="pre">not</span></tt>) operator to compare things with <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-data xref docutils literal"><span class="pre">None</span></tt></a>.  <tt class="docutils literal"><span class="pre">is</span></tt>
+tests for object identity (think of it as pointer comparison).</p>
+<p>You can get a sub-sequence from a sequence using the slice notation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">a</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can omit one or both ends of the slice range, which means the beginning or
+the end of the sequence is used:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">assert</span> <span class="n">a</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">a</span><span class="p">[:]</span> <span class="o">==</span> <span class="n">a</span>
+</pre></div>
+</div>
+<p>Note that the return value of a slice is a shallow copy:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">assert</span> <span class="n">a</span><span class="p">[:]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">a</span>
+</pre></div>
+</div>
+<p>Negative indexes count backwards from the end of the sequence:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">assert</span> <span class="n">a</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">a</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">a</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="id2">
+<h3>Exercise<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>Implement binary search using a recursive function. The function definition
+should start with:</p>
+<div class="highlight-python"><pre>def bsearch(l, x):</pre>
+</div>
+<p>where <em>x</em> is the element being searched and <em>l</em> is the list. The return value
+must satisfy <tt class="docutils literal"><span class="pre">l[bsearch(l,</span> <span class="pre">x)]</span> <span class="pre">==</span> <span class="pre">x</span></tt> or be <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-data xref docutils literal"><span class="pre">None</span></tt></a> if <em>x</em> is not found in <em>l</em>.</p>
+<p>You can use slicing to avoid defining a helper function.</p>
+<p><strong>Unit test</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">test_bsearch</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="n">bsearch</span><span class="p">([],</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span>
+    <span class="k">assert</span> <span class="n">bsearch</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">bsearch</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">bsearch</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">),</span> <span class="n">i</span><span class="p">)</span> <span class="o">==</span> <span class="n">i</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="mappings">
+<span id="id3"></span><h2>Mappings<a class="headerlink" href="#mappings" title="Permalink to this headline">¶</a></h2>
+<p>Another important built-in data type is <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></a>, similar to the C++
+<tt class="docutils literal"><span class="pre">std::map</span></tt> or the Java <tt class="docutils literal"><span class="pre">HashMap</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">emptydict</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">specs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;color&#39;</span><span class="p">:</span> <span class="s">&#39;black&#39;</span><span class="p">,</span> <span class="s">&#39;size&#39;</span><span class="p">:</span> <span class="mf">3.5</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>If the keys are strings that conform to Python identifier naming rules, you can
+use the <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></a> constructor to avoid quoting them:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">specs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;black&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mf">3.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">specs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+<span class="k">assert</span> <span class="n">specs</span><span class="p">[</span><span class="s">&#39;color&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;black&#39;</span>
+
+<span class="k">print</span> <span class="n">specs</span><span class="p">[</span><span class="s">&#39;price&#39;</span><span class="p">]</span>
+<span class="c"># raise a KeyError exception if the key is not found</span>
+<span class="k">print</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;price&#39;</span><span class="p">)</span>
+<span class="c"># return None if key is not found</span>
+
+<span class="k">assert</span> <span class="s">&#39;color&#39;</span> <span class="ow">in</span> <span class="n">specs</span>
+<span class="k">assert</span> <span class="s">&#39;price&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">specs</span>
+<span class="k">del</span> <span class="n">specs</span><span class="p">[</span><span class="s">&#39;color&#39;</span><span class="p">]</span>
+<span class="k">assert</span> <span class="s">&#39;color&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">specs</span>
+<span class="n">specs</span><span class="p">[</span><span class="s">&#39;color&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;green&#39;</span>
+<span class="k">print</span> <span class="n">specs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">specs</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+
+<span class="k">print</span> <span class="nb">list</span><span class="p">(</span><span class="n">specs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">())</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">specs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+    <span class="k">print</span> <span class="n">k</span><span class="p">,</span> <span class="s">&#39;=&#39;</span><span class="p">,</span> <span class="n">v</span>
+</pre></div>
+</div>
+<p>You can call a function by specifying the name of some parameters together with
+their value (keyword arguments):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">print_report</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;red&#39;</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">&quot;A </span><span class="si">%s</span><span class="s"> report with </span><span class="si">%d</span><span class="s"> rows and </span><span class="si">%d</span><span class="s"> columns&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">columns</span><span class="p">)</span>
+
+<span class="n">print_report</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">print_report</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;black&#39;</span><span class="p">)</span>
+<span class="n">print_report</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;blue&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">rows</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A function can receive variable keyword arguments (<em>kwargs</em> is a
+<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></a>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">map2str</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">=</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
+    <span class="k">return</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="n">map2str</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;black&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">apply_function</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="id4">
+<h3>Exercise<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>Write a word counter function.</p>
+<dl class="function">
+<dt id="word_count">
+<tt class="descname">word_count</tt><big>(</big><em>text</em>, <em>case_sensitive=True</em><big>)</big><a class="headerlink" href="#word_count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The return value should be a <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></a> which maps (whitespace-separated)
+words to the number of occurrences in <em>text</em>.</p>
+<p>Hint: read the documentation for <a class="reference external" href="http://docs.python.org/library/stdtypes.html#string-methods">String Methods</a> and
+<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></a>.</p>
+<p><strong>Unit test</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">test_word_count</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="n">word_count</span><span class="p">(</span><span class="s">&quot;a b c&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">word_count</span><span class="p">(</span><span class="s">&quot;a b a&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">word_count</span><span class="p">(</span><span class="s">&quot;a b A&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">A</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">word_count</span><span class="p">(</span><span class="s">&quot;a b A&quot;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Introduction</a><ul>
+<li><a class="reference internal" href="#goals">Goals</a></li>
+<li><a class="reference internal" href="#humble-beginnings">Humble Beginnings</a><ul>
+<li><a class="reference internal" href="#exercise">Exercise</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#functional-style">Functional Style</a><ul>
+<li><a class="reference internal" href="#id1">Exercise</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#something-useful">Something Useful</a><ul>
+<li><a class="reference internal" href="#id2">Exercise</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mappings">Mappings</a><ul>
+<li><a class="reference internal" href="#id4">Exercise</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Python Guide</a></li>
+      <li>Next: <a href="functions.html" title="next chapter">Functions</a></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/introduction.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  
+  </body>
+</html>

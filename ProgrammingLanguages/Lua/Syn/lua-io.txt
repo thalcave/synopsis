@@ -1,0 +1,21 @@
+io.read - reads a line by default
+ - "print" for quick-and-dirty programs, or for debugging, 
+ - "write" when you need full control over your output:
+
+filehandle = io.open(filename, mode)
+	mode = r, w, a
+		+,b
+filehandle:write
+	   close
+	   read
+
+read
+"*1" - reads one line
+"*a" - reads and returns whole file (minus anything that's already read)
+"*n" - reads and returns a number
+number - reads "number" chars
+
+io.stdin, io.stdout, io.stderr
+
+io.lines - opens a file and returns an iterator that loops through all lines
+

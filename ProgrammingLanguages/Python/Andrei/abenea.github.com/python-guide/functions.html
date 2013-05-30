@@ -1,0 +1,489 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Functions</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '.',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="" href="index.html" />
+    <link rel="next" title="Classes" href="classes.html" />
+    <link rel="prev" title="Introduction" href="introduction.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="_static/small_flask.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+  
+  
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="classes.html" title="Classes"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="introduction.html" title="Introduction"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html"></a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="functions">
+<h1>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="scopes">
+<h2>Scopes<a class="headerlink" href="#scopes" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="creating-names">
+<h3>Creating Names<a class="headerlink" href="#creating-names" title="Permalink to this headline">¶</a></h3>
+<p>To create new variables you don&#8217;t need declarations, only assignments. But how
+does Python determine the scope of the variable?</p>
+<p>There is a <em>global scope</em> for each file. Each function has it&#8217;s own <em>local
+scope</em>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">print</span> <span class="n">x</span>
+
+<span class="n">f</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">x</span>
+</pre></div>
+</div>
+<p>Assignment isn&#8217;t the only way to add names to a scope. You can also use
+<tt class="docutils literal"><span class="pre">import</span></tt>, <tt class="docutils literal"><span class="pre">def</span></tt> or function argument lists. To get the list of names from
+the current scope, you can use the <a class="reference external" href="http://docs.python.org/library/functions.html#dir" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">dir()</span></tt></a> function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">math</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">print</span> <span class="s">&#39;x =&#39;</span><span class="p">,</span> <span class="n">x</span>
+    <span class="k">print</span> <span class="s">&#39;local scope:&#39;</span><span class="p">,</span> <span class="nb">dir</span><span class="p">()</span>
+
+<span class="n">f</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&#39;x =&#39;</span><span class="p">,</span> <span class="n">x</span>
+<span class="k">print</span> <span class="s">&#39;global scope:&#39;</span><span class="p">,</span> <span class="nb">dir</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Notice how the names <strong>f</strong> and <strong>math</strong> are created in the global scope and
+<strong>arg</strong> is created in the local scope. <strong>x</strong> is present in both scopes, but with
+different values.</p>
+<p>But if assignments from a function create new names in the local scope, how can
+we change the global variables from a function? The variable must be declared as
+<tt class="docutils literal"><span class="pre">global</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">x</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">print</span> <span class="n">x</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">f</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">x</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="name-resolution">
+<h3>Name Resolution<a class="headerlink" href="#name-resolution" title="Permalink to this headline">¶</a></h3>
+<p>In the previous example you can notice that <strong>x</strong> is created after the body of
+<strong>f</strong> has been defined. This proves that name resolution happens when <strong>f</strong> is
+called. Names declared as <tt class="docutils literal"><span class="pre">global</span></tt> don&#8217;t even need to exist in the global
+scope when the function is executed (you can even remove the <tt class="docutils literal"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">1</span></tt>
+assignment).</p>
+<p>For name lookup the <tt class="docutils literal"><span class="pre">global</span></tt> declaration is not needed, as long as there is no
+local variable with the same name:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
+    <span class="k">print</span> <span class="n">x</span>
+
+<span class="n">f</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>But if a function contains a statement defining a name in the local scope, that
+name is considered local for all the lookups, even for those that appear before
+the assignment. This is true even for unreachable statements which define
+names:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
+    <span class="k">print</span> <span class="n">x</span>
+    <span class="c"># error: local variable &#39;x&#39; referenced before assignment</span>
+    <span class="k">if</span> <span class="bp">False</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="n">f</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>More formally, names are searched in:</p>
+<ul class="simple">
+<li>the local scope of the current function, see <a class="reference external" href="http://docs.python.org/library/functions.html#locals" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">locals()</span></tt></a></li>
+<li>the local scopes of enclosing functions</li>
+<li>the global scope, see <a class="reference external" href="http://docs.python.org/library/functions.html#globals" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">globals()</span></tt></a></li>
+<li>the built-in scope, run <tt class="docutils literal"><span class="pre">dir(__builtins__)</span></tt></li>
+</ul>
+<p>The search stops at the first place where the name is found. Each one of these
+places is essentially a dictionary which maps variable names (strings) to
+objects. Assignment is equivalent to changing this dictionary:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">&#39;f begins:&#39;</span><span class="p">,</span> <span class="nb">locals</span><span class="p">()</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="k">print</span> <span class="s">&#39;f ends  :&#39;</span><span class="p">,</span> <span class="nb">locals</span><span class="p">()</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&#39;globals :&#39;</span><span class="p">,</span> <span class="nb">globals</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="argument-passing">
+<h3>Argument Passing<a class="headerlink" href="#argument-passing" title="Permalink to this headline">¶</a></h3>
+<p>Why did <strong>t</strong> remain unchanged?</p>
+<p>Arguments are passed using the same mechanism as assignment. Imagine the Python
+interpreter executes the following pseudocode for the previous example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nb">globals</span><span class="p">[</span><span class="s">&#39;t&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">f_frame</span> <span class="o">=</span> <span class="n">new_stack_frame</span><span class="p">()</span>
+<span class="n">interpreter_stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">f_frame</span><span class="p">)</span>
+<span class="n">f_frame</span><span class="o">.</span><span class="n">locals</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">[</span><span class="s">&#39;t&#39;</span><span class="p">]</span>
+
+<span class="k">print</span> <span class="s">&#39;f begins:&#39;</span><span class="p">,</span> <span class="nb">locals</span><span class="p">()</span>
+<span class="n">f_frame</span><span class="o">.</span><span class="n">locals</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">f_frame</span><span class="o">.</span><span class="n">locals</span><span class="p">[</span><span class="s">&#39;b&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="k">print</span> <span class="s">&#39;f ends  :&#39;</span><span class="p">,</span> <span class="nb">locals</span><span class="p">()</span>
+
+<span class="n">interpreter_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+<span class="k">print</span> <span class="s">&#39;globals :&#39;</span><span class="p">,</span> <span class="nb">globals</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This means that mutable arguments (for example lists) can be modified, but it is
+not possible to make a non-local name point to another object simply by
+assigning to an argument:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+
+<span class="n">f</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&#39;after f:&#39;</span><span class="p">,</span> <span class="n">l</span>
+
+<span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+    <span class="n">l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">g</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&#39;after g:&#39;</span><span class="p">,</span> <span class="n">l</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="nested-functions">
+<span id="id1"></span><h2>Nested Functions<a class="headerlink" href="#nested-functions" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">f1</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">f2</span><span class="p">():</span>
+        <span class="k">print</span> <span class="n">x</span>
+    <span class="k">return</span> <span class="n">f2</span>
+
+<span class="n">action</span> <span class="o">=</span> <span class="n">f1</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">action</span><span class="p">()</span>
+
+<span class="n">f1</span><span class="p">(</span><span class="mi">2</span><span class="p">)()</span>
+<span class="n">f1</span><span class="p">(</span><span class="mi">3</span><span class="p">)()</span>
+</pre></div>
+</div>
+<p>Notice that <strong>f2</strong> can access the <strong>x</strong> even if after <strong>f1</strong> (which defines
+<strong>x</strong>) has returned. This type of function is called <a class="reference external" href="http://en.wikipedia.org/wiki/Closure_(computer_science)">closure</a>. Simply put, the
+function <cite>f2</cite> holds a reference to the local scope in which it was defined.</p>
+<p>Unfortunately there is no way to change the value of <strong>x</strong> from <strong>f2</strong> in
+Python 2. Python 3 fixes this by adding the <a class="reference external" href="http://docs.python.org/py3k/reference/simple_stmts.html#the-nonlocal-statement">nonlocal</a>
+statement. However this can be worked around easily:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">incrementer</span><span class="p">(</span><span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">inner</span><span class="p">():</span>
+        <span class="n">v</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">step</span>
+        <span class="k">return</span> <span class="n">v</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">inner</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">incrementer</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">a</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">a</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">a</span><span class="p">()</span>
+
+<span class="n">b</span> <span class="o">=</span> <span class="n">incrementer</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">b</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">b</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">b</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Notice how each call to <strong>incrementer</strong> creates a new scope (<strong>b</strong> starts
+counting from 0 again).</p>
+<div class="section" id="exercise">
+<h3>Exercise<a class="headerlink" href="#exercise" title="Permalink to this headline">¶</a></h3>
+<p>Let&#8217;s say you want to add some logging to your application. You have some
+functions already written, and want to log the arguments for each function
+call:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">a</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">b</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">c</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">arg3</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="n">a</span><span class="p">(</span><span class="s">&#39;black&#39;</span><span class="p">)</span>
+<span class="n">b</span><span class="p">([</span><span class="s">&quot;a&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">c</span><span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">arg3</span><span class="o">=</span><span class="mi">51</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Of course, you could go through each function and add a logging statement:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">a</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;calling a(</span><span class="si">%s</span><span class="s">, </span><span class="si">%d</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">color</span><span class="p">),</span> <span class="n">size</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">b</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;calling b(</span><span class="si">%s</span><span class="s">)&#39;</span> <span class="o">%</span> <span class="nb">repr</span><span class="p">(</span><span class="n">l</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">c</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">arg3</span><span class="p">):</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;calling c(</span><span class="si">%s</span><span class="s">, </span><span class="si">%s</span><span class="s">, </span><span class="si">%s</span><span class="s">)&#39;</span>
+                  <span class="o">%</span> <span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">arg1</span><span class="p">),</span> <span class="nb">repr</span><span class="p">(</span><span class="n">arg2</span><span class="p">),</span> <span class="nb">repr</span><span class="p">(</span><span class="n">arg3</span><span class="p">)))</span>
+
+<span class="n">a</span><span class="p">(</span><span class="s">&#39;black&#39;</span><span class="p">)</span>
+<span class="n">b</span><span class="p">([</span><span class="s">&quot;a&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">c</span><span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">arg3</span><span class="o">=</span><span class="mi">51</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>However, this gets boring fast. There&#8217;s a better way to do it: write a function</p>
+<dl class="function">
+<dt id="log_call">
+<tt class="descname">log_call</tt><big>(</big><em>f</em><big>)</big><a class="headerlink" href="#log_call" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>which returns a function that does the required logging and then calls
+<strong>f</strong>. You can then replace the original functions (ex: <tt class="docutils literal"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">log_call(a)</span></tt>)
+before calling them to achieve the desired result.</p>
+<p>Hints:</p>
+<ul class="simple">
+<li>you might need to revisit the last example from <a class="reference internal" href="introduction.html#mappings"><em>Mappings</em></a></li>
+<li>to get the original name of <strong>f</strong> you can use <tt class="docutils literal"><span class="pre">f.__name__</span></tt></li>
+</ul>
+<p>Expected output:</p>
+<div class="highlight-python"><pre>DEBUG:root:calling a('black')
+DEBUG:root:calling b(['a', 1])
+DEBUG:root:calling c('test', 4, arg3=51)</pre>
+</div>
+</div>
+</div>
+<div class="section" id="function-decorators">
+<h2>Function Decorators<a class="headerlink" href="#function-decorators" title="Permalink to this headline">¶</a></h2>
+<p>Python provides some syntactic sugar to make wrapping functions (which was
+necessary in the previous exercise) easier. Let&#8217;s say you defined a function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>Instead of this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
+    <span class="o">...</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">wrap</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>you can use this syntax:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@wrap</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>In the simplest form, a decorator is a function which takes as argument a
+function to be decorated and returns another function.</p>
+<p>The <tt class="docutils literal"><span class="pre">&#64;</span></tt> syntax calls the decorator with the function from the following line
+and binds the name of this function to the return value of the call.</p>
+<p>You can also nest decorators:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@a</span>
+<span class="nd">@b</span>
+<span class="nd">@c</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>is equivalent to:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
+    <span class="o">...</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">a</span><span class="p">(</span><span class="n">b</span><span class="p">(</span><span class="n">c</span><span class="p">(</span><span class="n">f</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>If you want to pass arguments to a decorator, you must write a function which
+takes those arguments and return another function that acts as a decorator
+without arguments:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">decorator_with_args</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">decorator_without_args</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="o">...</span>
+    <span class="k">return</span> <span class="n">decorator_without_args</span>
+</pre></div>
+</div>
+<p>Now you can write:</p>
+<div class="highlight-python"><pre>@decorator_with_args(1, 2):
+def f():
+    ...</pre>
+</div>
+<p>which means:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
+    <span class="o">...</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">decorator_with_args</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To achieve something useful, the decorator usually needs to return a different
+function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">logging_decorator</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;before&quot;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">f</span><span class="p">()</span>
+        <span class="k">print</span> <span class="s">&quot;after&quot;</span>
+        <span class="k">return</span> <span class="n">ret</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+<span class="nd">@logging_decorator</span>
+<span class="k">def</span> <span class="nf">hi</span><span class="p">():</span>
+    <span class="k">print</span> <span class="s">&quot;hi&quot;</span>
+
+<span class="n">hi</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">hi</span><span class="o">.</span><span class="n">__name__</span>
+</pre></div>
+</div>
+<p>Notice that <tt class="docutils literal"><span class="pre">hi.__name__</span></tt> is now <tt class="docutils literal"><span class="pre">wrapper</span></tt>. We can fix this by using
+<a class="reference external" href="http://docs.python.org/library/functools.html#functools.wraps" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">functools.wraps()</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+
+<span class="k">def</span> <span class="nf">logging_decorator</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;before&quot;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">f</span><span class="p">()</span>
+        <span class="k">print</span> <span class="s">&quot;after&quot;</span>
+        <span class="k">return</span> <span class="n">ret</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+<span class="nd">@logging_decorator</span>
+<span class="k">def</span> <span class="nf">hi</span><span class="p">():</span>
+    <span class="k">print</span> <span class="s">&quot;hi&quot;</span>
+
+<span class="n">hi</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">hi</span><span class="o">.</span><span class="n">__name__</span>
+</pre></div>
+</div>
+<div class="section" id="id2">
+<h3>Exercise<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>Starting from the <a class="reference internal" href="#log_call" title="log_call"><tt class="xref py py-func docutils literal"><span class="pre">log_call()</span></tt></a> function from the previous exercise, define</p>
+<dl class="function">
+<dt id="time_call">
+<tt class="descname">time_call</tt><big>(</big><em>level=logging.DEBUG</em><big>)</big><a class="headerlink" href="#time_call" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>which is a decorator that does everything <a class="reference internal" href="#log_call" title="log_call"><tt class="xref py py-func docutils literal"><span class="pre">log_call()</span></tt></a> did, but also:</p>
+<ul class="simple">
+<li>uses <a class="reference external" href="http://docs.python.org/library/time.html#time.clock" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">time.clock()</span></tt></a> to log timing information</li>
+<li>uses <a class="reference external" href="http://docs.python.org/library/functools.html#functools.wraps" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">functools.wraps()</span></tt></a></li>
+</ul>
+<p>Usage example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@time_call</span><span class="p">()</span>  <span class="c"># notice the parentheses; why are they required?</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
+    <span class="k">pass</span>
+
+<span class="nd">@time_call</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">square</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">([(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)])</span>
+
+<span class="k">print</span> <span class="n">f</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">square</span><span class="p">(</span><span class="mi">700</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">square</span><span class="o">.</span><span class="n">__name__</span>
+</pre></div>
+</div>
+<p>Expected output:</p>
+<div class="highlight-python"><pre>DEBUG:root:calling f(): 0.0s
+None
+INFO:root:calling square(700): 0.34s
+490000
+square</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Functions</a><ul>
+<li><a class="reference internal" href="#scopes">Scopes</a><ul>
+<li><a class="reference internal" href="#creating-names">Creating Names</a></li>
+<li><a class="reference internal" href="#name-resolution">Name Resolution</a></li>
+<li><a class="reference internal" href="#argument-passing">Argument Passing</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#nested-functions">Nested Functions</a><ul>
+<li><a class="reference internal" href="#exercise">Exercise</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#function-decorators">Function Decorators</a><ul>
+<li><a class="reference internal" href="#id2">Exercise</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Overview</a><ul>
+      <li>Previous: <a href="introduction.html" title="previous chapter">Introduction</a></li>
+      <li>Next: <a href="classes.html" title="next chapter">Classes</a></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/functions.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  
+  </body>
+</html>

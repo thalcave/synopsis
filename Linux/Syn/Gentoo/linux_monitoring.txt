@@ -1,0 +1,13 @@
+pidstat -lud  -p 16003 1 100
+
+app-admin/sysstat:
+	/usr/bin/cifsiostat
+	/usr/bin/iostat
+	/usr/bin/mpstat
+	/usr/bin/nfsiostat
+	/usr/bin/pidstat
+	/usr/bin/sadf
+	/usr/bin/sar
+	
+	
+xfs_db -c frag -r /dev/sdb1

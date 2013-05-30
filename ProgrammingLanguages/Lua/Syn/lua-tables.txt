@@ -1,0 +1,78 @@
+********************************************
+Chapter 4. Tables
+
+table = Lua's only data structure
+- collection of key-value
+{
+[key]=value
+....
+}
+
+
+table["John"] - "get the value for the "John" key"
+table.John
+
+table[John] - "get the value for whatever key is in the variable John"
+
+array(list) = table that its keys are consecutive integers
+- when a table is not used as an array, is called an "associative table"
+
+- if the value doesn't have a key, it will be associated with 1
+- if subsequent values don't have keys, will increment...
+
+an array has gap if there is a nil between element 1 and the highest positive integer
+# will have undefined behaviour
+
+Looping:
+a. numeric loop
+for I = 1, #array
+- beware of nil
+b. ipairs:
+- iterate on array's pairs 
+- stops on first gap
+c. pairs:
+- iterate on table's pairs, in arbitrary order
+"ipairs" and "pairs": neither loop variable is nil
+
+
+Tables of functions
+- functions contained in a table are know as table library
+table.sort - ignores non-integer keys
+
+table:
+- insert
+- remove
+- sort
+- concat
+- maxn
+
+
+OOP with tables
+- if ":" is used to define a function, Lua will take care of inserting "safe" arg
+- 
+
+Vararg functions - variable number of args
+- a vararg expression cannot be used as an upvalue
+	function VarArg(...)
+		return function(...)
+			print(...)	-- won't work
+
+unpack - takes an array as first arg and returns all of the elements of array
+	unpack(array, start, end)
+select - first arg == 1 --> return all its additional args
+	 first arg == 2 --> return all its additional args except the first one
+	 ..and so on
+
+
+mutating a table= changing is index assignment
+strings, bools and numbers are immutable
+	tbl1 = {}
+	tbl2 = tbl1
+	tbl1.test = "test"
+	print(tbl2.test) --> yields "test"
+
+copying table: by hand
+
+
+Global Variable Environment
+_G = global variable table

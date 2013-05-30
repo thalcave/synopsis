@@ -1,0 +1,7 @@
+********************************************
+Chapter 7. Using modules
+
+module = a file that conforms to certain rules
+ - located and loaded at runtime
+ - it receives one arg: the name of the module
+ - returns at most one result

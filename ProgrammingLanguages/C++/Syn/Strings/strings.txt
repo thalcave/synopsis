@@ -1,0 +1,89 @@
+Unicode = an industry standard designed to allow text and symbols from all of the writing systems of the world to be consistently represented and manipulated by computers.
+consists of:
+	 a character repertoire
+	 an encoding methodology and set of standard character encodings
+	 a set of code charts for visual reference
+	 an enumeration of character properties such as upper and lower case
+	 a set of reference data computer files
+	 and rules for normalization, decomposition, collation and rendering.
+	 
+Unicode has already defined more than 100,000 encoded characters
+Unicode defines two mapping methods:
+	the UTF (Unicode Transformation Format) encodings
+	the UCS (Universal Character Set) encodings
+
+UTF-8 (8-bit UCS/Unicode Transformation Format)
+	a variable-length character encoding for Unicode; able to represent any universal character in the Unicode standard, 
+	is consistent with ASCII (requiring little or no change for software that handles ASCII but preserves other values). 
+
+UTF-8 uses one to four bytes (strictly, octets) per character, depending on the Unicode symbol
+( for ASCII, 1; 2 bytes for Latin with diacritics, Greek, Cyrillic etc)
+	
+
+------------------------------------------------------------------------------
+String = sequence of characters
+
+template<class charT,
+	 class traits = char_traits<charT>,
+	 class Allocator = allocator<charT> >
+class basic_string;
+
+	charT = datatype of single character
+	traits = traits class which provides all core operations for the characters
+	Allocator = defines the memory model used by string class
+	
+typedef basic_string<char> string;
+typedef basic_string<wchar_t> wstring;
+	
+Representations of strings depend heavily on the choice of character repertoire and the method of character encoding. 
+Older string implementations were designed to work with repertoire and encoding defined by ASCII, or more recent extensions like the ISO 8859 series. 
+Modern implementations often use the extensive repertoire defined by Unicode along with a variety of complex encodings such as UTF-8 and UTF-16.	
+	
+
+
+In a perfect world the C++ Standard Library would contain a UTF-8 string class. 
+Unfortunately, the C++ standard doesn't mention UTF-8 at all. 
+Note that std::wstring is not a UTF-8 string class because it contains only fixed-width characters (where width could be 32, 16, or even 8 bits).
+
+
+
+
+
+**********************************************************************************
+
+Creating and initializing C++ strings
+#include <string>
+
+	Create an empty string and defer initializing it with character data.
+	Initialize a string by passing a literal, quoted character array as an argument to the constructor.
+	Initialize a string using the equal sign (=).
+	Use one string to initialize another.
+
+	-substr =  takes a starting position as its first argument and the number of characters to select as the second argument
+	string::begin( ) and string::end( )
+		string source("xxx");
+		string s(source.begin(), source.end());
+		assert(s == source);
+	 string okay(5, 'a');
+size,capacity
+
+Operating on strings
+-C++ strings grow as needed, without intervention on the part of the programmer
+
+size( )= returns the number of characters currently stored in the string and is identical to the length( ) member function. 
+capacity( ) = function returns the size of the current underlying allocation, meaning the number of characters the string can hold without requesting more storage. 
+reserve( ) = an optimization mechanism that indicates your intention to specify a certain amount of storage for future use
+resize( ) = appends spaces if the new size is greater than the current string size or truncates the string otherwise
+find()
+
+insert() 
+replace()
+    string tag("$tag$");
+    s.insert(8, tag + ' ');
+    assert(s == "A piece $tag$ of text");
+    int start = s.find(tag);
+    assert(start == 8);
+    assert(tag.size() == 5);
+    s.replace(start, tag.size(), "hello there");
+
+

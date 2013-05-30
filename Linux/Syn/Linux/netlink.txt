@@ -1,0 +1,8 @@
+ioctl  = part of the user-to-kernel interface of a conventional operating system. 
+	Short for "Input/output control", ioctls are typically employed to allow userspace code to communicate with hardware devices or kernel components.
+	
+Netlink = socket-like mechanism for IPC between kernel and user space processes, as well as between user-space processes alone (like e.g., unix sockets) 
+	or mixture of multiple user space and kernel space processes. However, unlike INET sockets, it can't traverse host boundaries, 
+	as it addresses processes by their (inherently local) PIDs.
+designed to be a more flexible successor to ioctl
+

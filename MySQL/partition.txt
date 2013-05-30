@@ -1,0 +1,16 @@
+SHOW VARIABLES LIKE '%partition%';
+
+SHOW PLUGINS;
+
+enabling you to distribute portions of individual tables across a file system according to rules which you can set largely as needed.
+different portions of a table are stored as separate tables in different locations
+
+partitioning function= user-selected rule by which the division of data is accomplished
+
+advantages:
+Being able to store more data in one table than can be held on a single disk or file system partition.
+Data that loses its usefulness can often be easily removed from the table by dropping the partition containing
+only that data
+
+
+alter table truncate partition

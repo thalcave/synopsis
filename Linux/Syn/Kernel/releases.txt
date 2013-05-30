@@ -1,0 +1,259 @@
+**********************************************************
+2.6.22
+
+SLAB (dala)
+
+heap = large-block of memory
+- heap-based allocation strategy
+	request for a block of memory
+	returning the block(first-fit, best-fit algorithms) from heap
+	return the block to heap
+     - fragmentation = because blocks are returned in different orders and at different times
+     - more time to manage the heap
+     + memory efficient
+     
+- buddy memory allocation    
+	divides memory into power-of-2 partitions
+	best-fit to allocate memory
+	when memory is freed: minimize fragmentation by checking if any of its contiguous neighbours have also been freed
+	
+     + time efficient
+     + less fragmentation
+     - waste memory
+
+slab
+   - contiguous piece of memory, made of several physically contiguous pages
+   - the amount that a cache can grow or shrink (unit measure for cache)
+slab allocator
+   - manages memory to solve the problem of internal memory fragmentation by caching similarly sized objects
+	
+/proc/slabinfo = provides detailed information about all slab caches
+
+More SMP-friendly SLUB allocator
+SLUB - replacement for slab allocator
+ - drops most of the queues, simplify the slab structure
+ slab
+	a group of one or more pages neatly packed with objects of a given size (no metadata)			 	
+
+
+
+
+Event notifications through file decriptors
+
+kevent = generic subsystem which allows to handle event notifications
+	- the arrival of network data or connections. 
+	- any situation which can be reported by the poll() system call. 
+	- events which can be returned by inotify(), such as the creation or removal of files. 
+	- network asynchronous I/O events. 
+	- timer events.
+
+poll - wait for some event on a file descriptor
+epoll - variant of poll; I/O event notification facility; scales well to large numbers of watched file descriptors
+signal/timer notifications aren't covered	
+
+
+Three new syscalls have been added:
+signalfd() - allows a program to receive signals via that file descriptor
+timerfd()  - implements timers event delivery into file descriptors (can use poll, epoll, select etc)
+eventfd()  - it can be used instead of pipe(2) in all cases where those would simply be used to signal events
+
+eventfs = bind events to file descriptors
+
+
+
+
+POSIX-draft utimensat() syscall
+	struct stat reports nanoseconds values
+	utimes only takes a timeval structure which allows only micro-second resolution improvements to the CFQ I/O scheduler
+utimensat - like futimesat (change timestamps of a file) but it takes a timespec structure (with nanoseconds)	
+
+
+
+improvements to the CFQ I/O scheduler,
+ - implement logic for detecting cooperating processes 
+ - rework the queue handling: currently CFQ uses a doubly linked list per priority level for sorting and service uses, 
+ 	those lists are killed and now an rbtree of cfq_queue's is maintained, sorted by when to service them
+
+
+
+**********************************************************
+2.6.24
+
+
+- CFS task scheduler:
+	performance improvement
+	Fair Group Scheduling
+		group tasks and provide fair CPU time to each such task group
+		
+- anti-fragmentation patches to improve the memory allocator and reduce the tendency to fragment		
+
+- USB authorization - only if root authorizes the device to be configured will then it be possible to use it
+
+- Per-device dirty memory thresholds
+	when a process writes data to disk, data is stored temporarily into "dirty memory" (until the kernel writes it to disk)
+	a process can dirty the memory faster than data is written on disk --> necessity of "dirty memory thresholds" so that kernel throttles processes
+	if a slower device exists, thresholds are hit very quickly (because they are global)
+  in 2.6.24, thresholds are per-device, not global	
+
+- Large Receive Offload (LRO) support for TCP traffic
+	LRO combines received TCP packets to a single larger TCP packet and passes them then to the network stack 
+		in order to increase performance (throughput)
+		
+- Task Control Groups
+	track and group processes into arbitrary "cgroups" and assign arbitrary state to those groups, in order to control its behaviour
+	
+	
+
+**********************************************************
+2.6.26
+
+- bind mount:
+		directory symlink (allow to share the content of a directory in two different paths) can be accidentally deleted
+	mount --bind /foo /home/fred/foo (remount a subtree somewhere else so its content will be available in both places)
+		foo will be linked under /home/fred and cannot be deleted (device or resource busy)
+		umount foo
+
+NEW: read-only bind mounts : /home/fred/foo will be read-only, with /foo of course writable
+
+
+- KGDB - kernel debugger; remote debugger, it needs two machines
+
+- memtest : simple built-in memory tester; enabled with "memtest" boot parameter
+
+- /proc/pid/mountinfo
+
+- generic semaphores 
+
+- ext3: fdatasync should skip metadata writeout when overwriting
+	
+
+**********************************************************
+2.6.30
+NILFS2, a log-structured filesystem (copy-on-write technique) = New Implementation of a Log-structured File System
+ - treat the whole disk as a consecutive list of blocks (called log, actually a circular log)
+ - all the operations append data at the end of the log, they never rewrite blocks (except when there's no space left - in that case, new blocks are reclaimed from the start of the log) 
+advantage: all operations are sequential (faster), crashes can't corrupt the filesystem
+- has continuous snapshots and versioning of the entire file system (can recover files that were deleted or unintentionally modified as well as perform backups at any time
+from a snapshot)
+- very good write performance
+
+Networking
+- allowing more than 64k connections and heavily optimize bind(0) time
+
+ftrace is a small utility that uses the frysk engine to trace systemcalls in a similar manner to strace.
+
+
+**********************************************************
+2.6.31
+USB 3 support
+
+Improve desktop interactivity under memory pressure:
+- PROT_EXEC pages = pages that normally belong to some currently running executables and their linked libraries
+	they shall really be cached aggressively to provide good user experiences
+now it's much harder to get the mapped executable pages out of the list of active pages	
+
+Performance Counters
+perf =  powerful performance analysis tool 
+
+
+gcov is a test coverage program
+Use it in concert with GCC to analyze your programs to help create more efficient, faster running code and to discover untested parts of your program. 
+You can use gcov as a profiling tool to help discover where your optimization efforts will best affect your code
+
+
+Kmemcheck -  a dynamic checker that detects and warns about some uses of uninitialized memory
+(same as Valgrind's memcheck but for kernel only)
+
+
+**********************************************************
+Zen-kernel 2.6.31
+
+- Zen is a variant of the Linux kernel that is geared for desktops
+- selectable CPU schedulers (CFS/BrainFuckScheduler),
+BFQ i/o scheduler (/sys/block/sda/queue/scheduler)
+reiser4
+
+
+**********************************************************
+kernel 2.6.33
+DRDB (Distributed Replicated Block Device)
+- shared-nothing, synchronously replicated block device, developed by LINBIT. 
+- it is designed to serve as a building block for high availability (HA) clusters. DRBD can be understood as network based raid-1.
+
+recvmmsg()
+- new syscall that allows to receive with a single syscall multiple messages that would require multiple calls to recvmsg()
+
+TCP Cookie Transactions
+- an extension of TCP intended to secure it against denial-of-service attacks, 
+such as resource exhaustion by SYN flooding and malicious connection termination by third parties
+
+Block IO Controller
+-
+
+
+**********************************************************
+kernel 2.6.35
+
+two new features contributed by Google aim to spread the load of network handling across the CPUs available in the system: 
+Receive Packet Steering (RPS) and Receive Flow Steering (RFS).
+RPS:
+- distributes the load of received packet processing across multiple CPUs
+- this solution allows protocol processing (e.g. IP and TCP) to be performed on packets in parallel
+RFS:
+- instead of randomly choosing the CPU from a hash, RFS tries to use the CPU where the application running the recvmsg() syscall is running or has run in the past, 
+to improve cache utilization
+
+Btrfs improvements
+
+XFS Delayed logging
+- logging (journaling) mode called delayed logging
+It allows to accumulated multiple asynchronous transactions in memory instead of possibly writing them out many times
+enable it with the "-o delaylog" mount option
+
+
+**********************************************************
+kernel 2.6.36
+
+ Tilera architecture support:
+  - a new cpu manufactured by Tilera Corporation.
+  It's a multicore design intended to scale to hundreds of cores on a single chip. The goal is to provide a high-performance CPU,
+
+"Fanotify":
+- system for providing filesystem event notifications to user space
+- another filesystem notification interface, intended to supersede inotify and, obviously, dnotify
+
+Concurrency-managed workqueues
+- Workqueues are a "thread pool" that are used extensively across the kernel; now workqueues have been reworked to add a true thread pool manager
+
+CIFS local caching
+- FS-Cache is a cache layer that allows filesystems to implement local caching.
+- It was merged in 2.6.30 with support for NFS and AFS. In this release, CIFS adds FS-Cache support.
+
+Improve VM-related desktop responsiveness
+
+OOM rewrite
+Out of Memory Killer is the part of the VM that kills a process when there's no memory (both RAM and swap) left.
+The algorithm that decides what is the better process to be killed has been rewritten in this release and should make better decisions.
+
+Help glibc to implement statvfs(3) efficiently
+
+XFS
+Simplify and speed up direct I/O completions
+
+
+**********************************************************
+kernel 2.6.37
+
+XFS scalability improvements
+	- removal of 50 Mio files, 100%
+No BKL (Big Kernel Lock)
+	- BKL = a giant lock used at the beginning of SMP (Symetric Multi Processing)
+I/O throttling support
+	makes possible to set upper read/write limits to a group of processes
+
+**********************************************************
+kernel 2.6.38
+
+VFS scalability: scaling the directory cache
+	VFS faster
+	a hot-cache "find . -size" on his home directory seems to be 35% faster.

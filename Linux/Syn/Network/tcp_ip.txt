@@ -1,0 +1,382 @@
+TCP/IP = protocol suite = combination of different protocols at multiple layers
+
+IP = basic protocol for sending data over the Internet
+
+	Application 	Telnet, FTP
+	Transport	TCP, UDP
+	Network		IP, ICMP
+	Link		device driver, interface card
+
+
+encapsulation:
+	Application				  ||DATA||	
+	Transport			    || UDP |DATA||
+	Network				||IP HEADER|DATA||
+	Link		 ||HEADER|IP HEADER|FRAME|FOOTER||
+
+tos = type of service
+
+Path MTU discovery :
+	setting the DF (Don't Fragment) option bit in the IP headers of outgoing packets. 
+	any device along the path whose MTU is smaller than the packet will drop it and send back an ICMP "Fragmentation Needed" message containing its MTU
+	the source host reduces its assumed path MTU appropriately
+	the process repeats until the MTU is small enough to traverse the entire path without fragmentation
+
+
+
+Data Unit		Layer
+Data			7. Application	Network process to application
+Data			6. Presentation	Data representation, encryption and decryption, convert machine dependent data to machine independent data
+Data			5. Session	Interhost communication, managing sessions between applications
+Segments		4. Transport	End-to-end connections, reliability and flow control
+Packet/Dgram		3. Network	Path determination and logical addressing
+Frame			2. Data link	Physical addressing
+Bit			1. Physical	Media, signal and binary transmission
+
+
+
+
+-----------------------------------------------
+Chapter 4. ARP - Address Resolution Protocol
+
+
+IP address makes sense only for TCP/IP; link layer works with hardware address, obtained through arp (from IP address to ethernet address)
+
+ARP - mapping between IP addresses and hardware addresses
+ARP cache = maintains the recent mapping from IP addresses to hardware addresses
+
+RARP - reverse ARP: for diskless system, send a RARP request with hardware address and obtain IP address from network
+
+
+
+-----------------------------------------------
+Chapter 6. ICMP: Internet Control Message Protocol
+
+ - part of IP layer; communicates messages (transmitted within IP datagrams)
+ 	||IP header|ICMP message||
+
+
+-----------------------------------------------
+Chapter 7. Ping program
+
+ - sends an ICMP echo request message to a host, expecting an ICMP echo replay to be returned
+
+ping -R = record route: set the IP RR option in outgoing IP datagram --> every router that handles the datagram add its IP address 
+			
+
+-----------------------------------------------
+Chapter 8. Traceroute program
+
+- display the route that IP datagram follows from one host to another
+
+record route not an option: some routers don't have support for it, not enough space in IP header etc.
+when a router receives a datagram with TTL 0 or 1, it doesn't forward it but throws it and sends back ICMP "time exceeded"
+
+traceroute:
+	- send a datagram to destination host with TTL = 1
+	- router discards it and sends back ICMP "time excedeed"
+	- send a datagram to destination host with TTL = 2
+	- second router discards etc.
+	....
+	- destination router receives IP datagram : 
+		traceroute sends UDP datagram with unlikely port value (large than 30000)
+		router sends back ICMP "port unreachable"
+
+1. a route available today could be unused tomorrow and
+	there is no guarantee that 2 consecutive IP datagrams follow the same route
+2. return path taken by ICMP may not be the same as sent path --> times printed may not be true
+3. source IP in returned ICMP message is the IP address of the router who sends back 
+
+-----------------------------------------------
+Chapter 9. IP Routing (static)
+
+
+routing mechanism = search the routing table and decide which interface to send a packet out
+routing policy = set of rules that decides which routes goes into routing table
+
+IP performs routing mechanism while a routing daemon provides routing policy
+
+netstat -rn (routing table)
+
+0.0.0.0 - default route
+Flags:
+	U - route is Up
+	G - route is to a Gateway (not set --> destination is directly connected)
+	H - route is to a Host (not set --> route is to a network)
+	
+G - differentiates between a direct and indirect route
+H - specifies that dest address is a complete host address	
+
+routing:
+	the routing table is searched for a route to a destination IP address
+		a host address entry must match destination entirely
+		a network address entry must match destination only ....
+		default route (if found) is used
+
+init:
+	when ifconfig is used --> direct route is automatically computed
+	"route add <dest> <router> <metric>"
+
+
+-----------------------------------------------
+Chapter 10. Dynamic Routing
+
+- occurs when routers talk to adjacent routers
+- routing mechanism is the same; what is changing is the way the route table is maintained
+
+
+-----------------------------------------------
+Chapter 11. UDP: User Datagram Protocol
+
+- simple, datagram-oriented, transport layer protocol
+
+IP fragmentation
+	IP compares MTU with the datagram size and performs fragmentation if needed
+if one fragment is loss, all datagram must be resent	
+
+ICMP Unreachable Error (fragmentation required) : when Don't fragment bit is set although fragmentation is needed
+
+
+-----------------------------------------------
+Chapter 12. Broadcasting and Multicasting
+
+unicast   = sending package to a destination
+
+
+
+broadcast = send a frame to every other host
+	limited broadcast
+		address = 255.255.255.255
+		IP datagram for limited broadcasting is never forwarded by a router
+
+	net-directed broadcast
+		host ID of 1 bits (for a class A, 255.255.255
+
+
+multicast = deliver a frame to a set of hosts
+	way to deliver messages to multiple recipients without the broadcast overhead
+	
+-----------------------------------------------
+Chapter 13. IGMP (Internet Group Management Protocol)
+
+- part of IP layer protocol
+- used by routers and hosts that support multicasting (lets all the systems in a network to know which hosts currently belong to which multicast group)
+
+||IP header|IGMP message||
+
+
+
+-----------------------------------------------
+Chapter 14. DNS (Domain Name System)
+
+DNS = distributed database used by TCP/IP apps to map between hostnames and IP addresses
+
+access to DNS is through a resolver (from user space: gethostbyname(), gethostbyaddr())
+
+nslookup <host> <DNS server>
+dig <host>
+host <host>
+
+/etc/resolv.conf
+
+tcpdump -evvv "udp [dst|src] port 53"	- only DNS replies/requests
+
+domain name:
+	top level domain (.com)
+	subdomain(example)
+FQDN = Fully Qualified Domain Name = domain name that ends with a period	
+	
+DNS message
+	defined for queries/responses
+	contains a question
+		query name
+		query type:
+			A - IP
+			NS - nameserver
+			CNAME - canonical name
+			PTR - pointer record
+			HINFO - host info
+			MX - mail exchange
+	
+Caching
+	all name servers employ a cache
+
+
+
+-----------------------------------------------
+Chapter 15. TFTP (Trivial File Transfer Protocol)
+
+- used when bootstrapping diskless systems
+- uses UDP, small and simple
+
+SAS problem, stop-and-wait ARQ
+
+-----------------------------------------------
+Chapter 16. BOOTP (Bootstrap protocol)
+
+- alternative for RARP to find IP address
+- alternative method for a diskless system to bootstrap itself
+- uses UDP and works with TFTP
+
+
+-----------------------------------------------
+Chapter 17. TCP: Transmission Control Protocol
+
+- connection-oriented:
+	a connection must be established between 2 apps
+- reliable:
+	data is broken into chunks (UDP has fixed size) whose sizes are determined by TCP: segments
+	if an ACK for segment is not received, segment is retransmitted
+	ACK is sent when data received
+	if invalid checksum, data is discarded
+	if TCP segments arrive out of order, they are rearranged
+	duplicated data is discarded
+	
+	||IP Header|TCP Header| TCP Data||
+
+socket pair: client IP, client port, server IP, server port
+
+- full-duplex service	
+
+
+-----------------------------------------------
+Chapter 18. TCP: Connection establishment and termination
+
+	SYN - synchronize sequence numbers
+	FIN - sender is finished sending data
+	RST - reset connection
+	PSH - push data to receiving process as soon as possible
+
+Establishment - 3-way handshaking:
+	client sends a SYN (synchronize sequence number) segment specifying port from server (active open)
+	server responds with its own SYN segment (passive open)
+	client ACK this SYN
+
+Termination - four segments needed (full-duplex --> each direction must be closed)
+	either end can send a FIN
+	when receiving a FIN, must ACK 	
+
+Maximum size of a segment (MSS)
+ - largest chunk of data that TCP will send to the other end
+
+when connection is established, each end has the option of announcing the MSS it expects to receive
+default = 536 bytes
+
+Half-close
+ - the ability for one end of a connection to terminate its output, while still receiving data from the other end 
+
+-----------------------------------------------
+Chapter 19. TCP: Interactive Data Flow
+
+
+
+-----------------------------------------------
+Chapter 25. Simple Network Management Protocol
+
+ - network management stations (managers) 
+ 	communicating with 
+ - network elements (host, routers, X terminals, printers etc) that have an agent (management software)
+
+TCP/IP network management:
+	1. Management Information Base (MIB): specifies what variables the network elements maintain
+	2. Structure of Management Information (SMI): set of common structures and an identification scheme used to reference variables in MIB
+	3. Protocol between manager and element: SNMP
+	
+SNMP - 5 types of messages exchanged between manager and agent (UDP datagrams)
+ - fetch the value of one or more variables : get-request
+ - fetch the next variable: get-next-request
+ - set the value of variable(s) : set-request
+ 
+ - return the value of variable(s) : get-response
+ - notify manager when something happens to agent: trap
+ 
+ 
+-----------------------------------------------
+Chapter 26. Telnet and Rlogin : Remote Login
+
+use client-server paradigm
+
+Remote login:
+ - single TCP connection between client-server
+ - password sent in clear text (new implementations use Kerberos to hide it) 	
+	
+Telnet protocol:
+ - NVT = Network Virtual Terminal = imaginary device from which both ends of connection (client and server) map their real terminal to and from
+	- char device
+
+
+-----------------------------------------------
+Chapter 27 . FTP : File Transfer Protocol
+
+- internet standard for file transfer
+- uses 2 TCP connections:
+	1. control connection : normal client-server fashion
+			server does a passive open on port 21
+			client does an active open to port 21
+		stays up for the entire time that the client communicates with server
+		used for commands from the client to the server and for the server's replies
+		
+	2. data connection : created each time a file is transferred between the client and server		
+
+Data representation
+	1. File type
+	2. Format control
+	3. Structure
+	4. Transmission mode
+
+Data connection:
+	sending a file from server to client
+	sending a file from client to server
+	sending a listing of files from server to client
+
+new data connection for every file transferred	
+
+
+-----------------------------------------------
+Chapter 28 . SMTP : Simple Mail Transfer Protocol
+
+MTA - Mail Transfer Agent 
+	server programs that implement SMTP to move mail from one server to another
+
+POP3 and IMAP4 are used between the SMTP server and desktop mail client to allow clients to manipulate files on and download from their local mail server. 
+MDA = Mail Delivery Agent
+	the programs that implement POP3 and IMAP4
+
+
+-----------------------------------------------
+Chapter 29. NFS: Network File System
+
+RPC = Remote Procedure Call : client program calls function in server program
+	1. client calls a function (client stub) on local host 
+		stub packages procedure's arguments into a network message and sends this message to server
+	2. a server stub receives the network message and calls server procedure from server application
+	3. when the server function returns, it returns to server stub --> packages into a network message etc
+	4. client stub takes the return values from network message and returns it to client application
+
+NFS - transparent file access for clients and filesystems on a server
+
+
+
+finger protocol
+ - returns information on one or more users on a specified host
+
+WHOIS 
+	TCP-based query/response protocol, widely used for querying an official database in order to determine the owner of a domain name, an IP address, 
+		or an autonomous system number on the Internet. 
+		
+"whois -h rs.internic.net yahoo" whois  newsiasi.ro
+  or "telnet rs.internic.net whois"
+
+
+Network Address Translation (NAT) -  Network Masquerading, Native Address Translation or IP Masquerading
+	- technique of transceiving network traffic through a router that involves re-writing the source and/or destination IP addresses and usually 
+		also the TCP/UDP port numbers of IP packets as they pass through
+
+Tcpdump
+ - puts the interface in promiscuous mode (every packet going across the wire is captured)
+ 
+
+
+SO_KEEPALIVE option - causes a packet (called a 'keepalive probe') to be sent to the remote system if a long time 
+			(by default, more than 2 hours) passes with no other data being sent or received. 
+		     - this packet is designed to provoke an ACK response from the peer (enabling detection of a peer which has become unreachable)

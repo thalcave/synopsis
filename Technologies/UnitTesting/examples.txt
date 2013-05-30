@@ -1,0 +1,9 @@
+1. boost::filesystem::paths
+ 
+2. fill bkroot algorithm (compute Solution)
+
+3. gethostname?
+
+4. transaction file naming
+
+5. "mkdirPn" function which accepts privs parameter: create parent directories using this privs.

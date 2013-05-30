@@ -1,0 +1,147 @@
+a) separate the "normal" code from the code that deals with errors
+
+b) errors cannot be ignored (if we don't use a try-catch block, the program will be aborted)
+
+
+
+Throwing an exception = send info about the error into a large context
+
+Termination = the error is so critical there's no way to get back
+		to where the exception occured
+Resumption = exception handler is meant to rectify the situation;
+	     Implementation:	
+	     	- don't throw exception, but call a function that fixes the problem
+	     	- place the try block into a while loop	
+
+
+Exception specification:
+void function() throw(a, b, c) = function can throw exceptions of type a, b or c
+void function()		       = function can throw any type of exceptions
+void function() throw()	       = function will not throw exceptions
+
+
+if we throw an error that was not in the list, function unexpected is called;
+this fct will call a function reffered through a pointer (default is terminate());
+unexpected, set_unexpected()
+
+Catch all exceptions = catch(...)
+Re-throw exception = 
+catch(...){ throw }
+any catch clause will be ignored; exception is handled by the next-higher context
+
+
+If no handler at any level catches the exception, function terminate() is called
+this is a pointer to a fct, default is abort();
+no destructors are called
+terminate(), set_terminate()
+
+a destructor that throws an exception or causes one is a design error;
+in the process of cleaning up the stack to handle one exception, destructor is called
+and that generates a second exception, forcing a call to terminate();
+if we call a fct that may cause an exception, we must deal with this inside destructor
+
+C++ exception handling guaratees that when we leave a scope,
+all objects whose constructors have been completed will have destructors called;
+
+
+If an exception is thrown before a constructor is completed, the associated
+destructor will not be called for that object;
+
+An object of derived-type will match a handler of the base class;
+
+Logic_error and runtime_error
+
+Do not use:
+	- for asynchronous events
+	- for ordinary conditions
+	- for flow-of-control
+	- 
+
+
+in main, wrap code around a try - catch block so that any exception will be catched
+
+
+
+-------------------------------------------------------------------------
+
+- use references in catch clauses to avoid exceptions slicing 
+- an exception belongs to 2 groups --> 3 ways of catching it (2 base classes --> catch for exception, catch for a base and catch for the other one)
+- 
+
+
+Exception specifications
+-------------------------------------------------------------------------
+- the way exception specifications are, well, specified in C++ isn't always useful and can often be downright detrimental.
+
+a) Shadow type system that plays by different rules than the rest of the type system
+typedef void (*PF)() throw(A,B); // syntax error
+void (*pf)() throw(A,B);   // ok
+
+b) misunderstanding
+Here's what many people think that exception specifications do:	
+ - guarantee that functions will only throw listed exceptions (possibly none).
+ - enable compiler optimizations based on the knowledge that only listed exceptions (possibly none) will be thrown.
+ 
+But they'll actually do:
+ - enforce at runtime that functions will only throw listed exceptions (possibly none).
+ - enable or prevent compiler optimizations having to check whether listed exceptions are indeed being thrown.
+ 
+Example
+	// Example 3(a)
+	//
+	int Hunc() throw(A,B)
+	{
+		return Junc();
+	}
+
+Functionally, the compiler must generate code like the following, and it?s typically just as costly at runtime as if you?d hand-written it yourself 
+(though less typing because the compiler generates it for you):
+	// Example 3(b): A compiler?s massaged
+	// version of Example 3(a)
+	//
+	int Hunc()
+	try
+	{
+		return Junc();
+	}
+	catch( A )
+	{
+		throw;
+	}
+	catch( B )
+	{
+		throw;
+	}
+	catch( ... )
+	{
+		std::unexpected(); // will not return! but
+	}  // might throw an A or a B if you?re lucky
+
+
+
+Runtime performance:
+	some compilers will automatically refuse to inline a function having an exception specification
+	some compilers don?t optimize exception-related knowledge well at all
+
+
+Moral #1: Never write an exception specification.
+Moral #2: Except possibly an empty one, but if I were you I?d avoid even that.	
+
+
+
+
+---------------------------------------------------
+std::uncaught_exception() = It provides a way of knowing whether there is an exception currently active.
+If a destructor throws an exception while another exception is already active (i.e., during stack unwinding), the program is terminated.
+I do not know of any good and safe use for std::uncaught_exception. My advice: Don't use it.
+
+wrong code:
+T::~T() {
+      if( !std::uncaught_exception() ) {
+        // ... code that could throw ...
+      } else {
+        // ... code that won't throw ...
+      }
+    }
+
+

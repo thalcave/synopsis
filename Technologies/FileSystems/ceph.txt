@@ -1,0 +1,7 @@
+CEPH = distributed parallel file system
+2.6.34 kernel
+
+- it is object-based
+- it decouples metadata and data (many parallel file systems do this as well)
+- it uses a dynamic distributed metadata approach
+

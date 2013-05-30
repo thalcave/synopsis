@@ -1,0 +1,5 @@
+Ordered by size of archives (ASC)
+xz
+bzip2
+tar -cjvf
+tar -czvf

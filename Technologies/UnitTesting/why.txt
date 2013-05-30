@@ -1,0 +1,81 @@
+---------------------------------------------------------
+
+What?
+
+Unit: might be a single class or a single function
+the tester attempts to determine what states the unit can encounter while executing as part of the program
+Test cases are chosen to expose as many errors as possible
+
+When a unit is completed and tested, it is ready for integration with other units in the program.
+This is integration should also be tested. At this point, the test cases focus on the interaction between the units.
+
+
+
+* unit testing
+* integration testing
+* performance testing
+
+
+Functional tests:
+- are testing the functionality
+- black-box testing
+
+Unit tests:
+- are testing the code
+- white-box testing
+
+
+
+---------------------------------------------------------
+Why?
+
+The basic workflow of most developers is:
+- Write feature
+- Run the program once to test it
+- Write next feature
+etc.
+
+Your change is, instead of testing the program manually, you write a tiny program to do the test. 
+That takes about the same time after a while. BUT you will also get an "expert system" which knows whether your application is "correct"
+or not. 
+With the standard cycle, you just know that your current feature works, you have no idea how much else you broke today.
+
+
+* you get a regression suite that acts as a safety net in case of refactoring -
+the same can be said of integration tests, although it can be tough to say if the test covers a piece of code.
+
+* unit tests give an immediate feedback when modifying the code -
+and this feedback can be very accurate, pointing to the method where the anomaly is.
+
+* those tests are cheap to run :
+they run very fast (a few seconds typically), without any installation or deployment, just compile and test. So they can be run often.
+
+* it is easy to add a new test to reproduce a problem once it is identified,
+and it augments the regression suite, or to answer a question ("what happen if this function is not called with a null parameter ...").
+
+
+---------------------------------------------------------
+How?
+
+Guidelines:
+- Tests must help. If you feel that adding another test is just a waste of time, don't write that test.
+
+- If you can't think of a way to test something, then make a note and bring it up during the next team meeting and move on. 
+Someone else might have an idea. Also, bigger changes must have the support of the whole team.
+
+- Never attempt to achieve 100% test coverage. It's a waste of time.
+
+- Tests must be simple. If you can't create a simple test, that tells you about code rot in your application. 
+Don't try to fix code rot with more complex tests. That's a lose-lose solution.
+Accept that some things just would take too much effort to test. You can only do your best; there is no way to become better than "best".
+
+
+Potential problems:
+* They take too long to run - 
+we often just run the unit tests to check in, which occasionally leads to broken integration builds and backing out commits.
+
+* Some functional tests fail spuriously. 
+
+* Some unit tests are written in a very 'mock-heavy' style - they know too much about the implementation, 
+so that when it changes you have to change the tests too, which can be a real pain. 
+It's tricky to find a balance between mocking out too much stuff on one hand and having tests that test too many layers on the other, but we're still learning.

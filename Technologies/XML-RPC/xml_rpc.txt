@@ -1,0 +1,10 @@
+XML-RPC is a simple, portable way to make remote procedure calls over HTTP. 
+It can be used with Perl, Java, Python, C, C++, PHP and many other programming languages
+
+A procedure call is the name of a procedure, its parameters, and the result it returns.
+
+RPC = extension to the procedure call idea, 
+it says let's create connections between procedures that are running in different applications, or on different machines.
+
+Remote calls are "marshalled" into a format that can be understood on the other side of the connection.
+XML-RPC uses XML as the marshalling format

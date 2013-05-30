@@ -1,0 +1,20 @@
+Two commonly used methods for a request-response between a client and server are: GET and POST.
+GET - Requests data from a specified resource
+POST - Submits data to be processed to a specified resource
+PUT - Requests that the enclosed entity be stored under the supplied URI.
+DELETE - Deletes the specified resource.
+
+
+---------------------------------------------------
+
+REST =  Representational State Transfer.
+-simple HTTP is used to make calls between machines.
+- no cookies
+- in a stateless system like REST, you should always verify the validity of your input,
+
+REST API
+It uses the four HTTP methods GET, POST, PUT and DELETE to execute different operation
+CRUD - Create (Post), Read (Get), Update (Put), Delete (Delete)
+
+
+Formats: XML, CSV, JSON

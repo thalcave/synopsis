@@ -1,0 +1,19 @@
+print
+type (arg) - type of arg (number, string etc.)
+tostring - convert to string
+# - length (string, array etc)
+
+ipairs =iterate on array's pairs 
+	stop on first gap
+
+pairs = iterate on table's pairs, in arbitrary order
+
+table:
+- insert
+- remove
+- sort
+- concat
+- maxn
+
+
+assert

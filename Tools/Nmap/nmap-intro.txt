@@ -1,0 +1,94 @@
+nmap = free, open-source port scanner (unix, windows)
+nmapfe = graphical FrontEnd
+
+Six port states:
+- open: an app is actively accepting TCP connections, UDP datagrams
+- closed: accessible but no app is listening on it
+- filtered: cannot determine if it's open or closed
+- unfilterd: accessible but cannot tell if open or closed
+- open|filtered: cannot determine if open or filtered
+- open| closed
+
+--------------------------------------------------------------------------------------------
+Scan types:
+Basic:
+a) -sT = TCP connect
+- uses connect() (three way handshake)
+- it's very easy to detect and logged
+TCP connection:
+	Client				Server
+		 	SYN---->
+		        <---SYN/ACK
+			--->ACK
+			--->data transfer
+
+b) -sS = SYN stealth
+- sends only SYN packets (synchronize); less likely to be detected
+Stealth Scan:
+	Client				Server
+		 	SYN---->
+if port is opened:
+		        <---SYN/ACK
+			--->RST (reset connection): port is opened
+if port is closed:
+			<--- RST
+if port is filtered:
+			<--- no response
+
+Other types:
+a) -sF, -sN, -sX = FIN, null, XMAS
+- each scan type refers to the flags set in the TCP header
+- FIN is less likely to appear in logging system
+
+b) -sP = Ping scan
+
+c) -sU = UDP scan
+
+d) -sI = Idle scanning
+- send spoofed packets, impersonating another computer ("zombie") 
+every IP packet from a given source has an ID that uniquely identifying fragments of an original IP datagram; the protocol implementation assigns values to this mandatory field generally by a fixed value (1) increment. Because transmitted packets are numbered in a sequence you can say how many packets are transmitted between two packets that you receive.
+- the latest versions of Linux, Solaris and OpenBSD, Windows Vista are not suitable as zombie, since the IPID has been implemented with patches[3] that randomized the IP ID[
+
+1. scan for a host with a sequential and predictable sequence number (IPID)
+2. establish a TCP connection with a port on target, impersonating the zombie
+3. if port is opened, the target will send SYN/ACK to zombie
+4. zombie will respond with RST and will increment IPID
+5. attacker will send another packet to zombie; if IPID is incremented, than target's port is opened
+
+-----------------------------------------------------------------------------------------
+
+Timing and Hiding scans
+a) -T: Timing
+- 6 modes: 
+	0 - Paranoid (will wait 5 minutes between each packet send; almost impossible to detect a scan)
+	5 - Insane (as fast as it can)
+b) -D: Decoy:
+- doesn't hide IP, but reduces the chance of you being traced from your scan (difficult to tell which system is the "real" source).
+ nmap -n -D192.168.1.5,10.5.1.2,172.1.2.4,3.4.2.1 192.168.1.5
+
+c) -P: turns off ping
+-P0: switch off ICMP ping
+-PT: switch on TCP ping
+
+d) -f: Fragmenting packets
+- splits IP packet into tiny fragments (This makes it more difficult for a firewall or packet filter to determine the packet type.)
+
+----------------------------------------------------------------------------------------
+OS Fingerprinting: -O
+- infer the remote machine's operating system
+Certain parameters within the TCP protocol definition are left up to the implementation.  Different operating systems, and different versions of the same operating system, set different defaults for these values.  By collecting and examining these values, one may differentiate among various operating systems, and implementations of TCP/IP
+
+Reasons for OS Detection:
+- if an alert comes out (a daemon running on a system is exploitable), scan your whole network with OS detection to find machines which need patching before the bad guys do.
+- use OS detection to know which code to ship (code that matches architecture and OS)
+- network inventory
+- detecting unauthorized and dangerous devices (insecure, worm-infected laptops; wireless access points)
+
+Countermeasures:
+- The Linux IP Personality patch adds to your Linux 2.4 kernel the ability to have different 'personalities' network wise, that is to change some characteristics of its network traffic, depending on different parameters (anything you can specify in an iptables rule: src/dst IP address, TCP or UDP port, etc.); 
+
+--------------------------------------------------------------------------------------------
+Outputting logs: -o
+-oN: human readable log
+-oX: XML log
+-oG: grepable log

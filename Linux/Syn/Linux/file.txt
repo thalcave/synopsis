@@ -1,0 +1,7 @@
+/proc/version  - describes the Linux kernel version number
+/proc/cpuinfo 
+/proc/pci
+/proc/ide/hda/*
+/proc/sys/fs/* - info about the filesystem
+
+/usr/include/asm/unistd.h

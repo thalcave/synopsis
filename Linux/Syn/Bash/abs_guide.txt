@@ -1,0 +1,4 @@
+file - identify type of file using a magic number from the beginning of the file ( defined in /usr/share/misc/file/magic)
+
+# - comment
+

@@ -1,0 +1,216 @@
+Process
+	- created by fork
+	- exact duplicate of parent except ID and other things
+	wait - to wait a child to terminate
+
+
+
+Threads
+	- procedure that runs independently from its main program
+maintains its own:
+	stack pointer
+	registers
+	data, signals etc.
+	
+Common models for threaded programs:
+	manager/worker	- a single thread( manager ) assigns work to other threads( worker )
+	pipeline 	- a task is broken into a series of suboperations handled by different threads
+	peer		- similar to manager, only that the manager becomes also a worker
+
+
+There are several ways in which a Pthread may be terminated: 
+	The thread returns from its starting routine (the main routine for the initial thread). 
+	The thread makes a call to the pthread_exit subroutine (covered below). 
+	The thread is canceled by another thread via the pthread_cancel routine (not covered here). 
+	The entire process is terminated due to a call to either the exec or exit subroutines.
+
+pthread_join - blocks calling thread until the specified thread_id ends( only joinable threads can be joined )
+
+
+
+**********************************************************************************
+Threads
+
+-an execution environment within the execution environment of a C++ program
+
+Upon creation, each thread executes a thread function.
+Make sure that any data you pass to a thread by reference is not deallocated, even by a different thread, 
+until you're sure that the thread is done with it
+
+Thread
+	joinable thread (the default)
+		is not automatically cleaned up; the thread's exit state hangs around in the system (kind of like a zombie process) until another thread
+		calls pthread_join to obtain its return value. 
+	detached thread
+		is cleaned up automatically when it terminates.
+Thread
+	asynchronously cancelable = the thread may be canceled at any point in its execution
+	synchronously cancelable = the thread is canceled only when it reaches specific points in its execution
+	uncancelable = attempts to cancel the thread are quietly ignored
+	
+Cleanup handler =  function that should be called when a thread exits.
+
+asynchronous events = those occurring independently of the main program flow.
+	asynchronous actions are actions executed in non-blocking scheme, allowing the main program flow to continue processing
+
+synchronous I/O = start to access and wait for it to complete
+asynchronous I/O (non-blocking I/O) = form of input/output processing that permits other processing to continue before the transmission has finished.
+	(processing not depending on I/O can be executed)
+	- polling the device at intervals to detect whether the device is ready for next operation
+	- hardware interrupts can eliminate the need for polling
+	- multithreading, explicit asynchronous I/O API (with the cost of extra software complexity)
+
+
+----------------------------------------------------------------------------------------------------------
+
+Unless otherwise specified, each thread shares all aspects of its execution environment with other threads in the program. 
+Shared aspects of the execution environment include, but are not limited to, the following:
+	Static storage duration (static, extern) objects [3.7.1].
+	Dynamic storage duration (heap) objects [3.7.3]. Thus each memory allocation will return a unique addresses, regardless of the thread making the allocation request.
+	Automatic storage duration (stack) objects [3.7.2] accessed via pointer or reference from another thread.
+	Resources provided by the operating system. For example, files.
+	The program itself. In other words, each thread is executing some function of the same program, not a totally different program.
+
+Each thread has its own:
+	Registers and current execution sequence (program counter)
+	Automatic storage duration (stack) objects
+	
+
+Boost.thread:
+join()
+ - current thread of execution blocks until the initial function of the thread of execution represented by *this finishes and all resources are reclaimed
+sleep()
+ - the current thread of execution blocks until time is reached.
+yield()
+ - The current thread of execution is placed in the ready state.
+ 
+ 
+
+********************************************************
+race condition = multiple threads read from and write to the same memory without proper synchronization, resulting in an incorrect value being read or written.
+
+deadlock = each thread in the set is blocked waiting for some action by one of the other threads in the set. 
+	   each is waiting on the others, none will ever become ready again.
+	   
+livelock = similar to deadlock (every thread tries to avoid the lock, like 2 persons who meet on a hallway and try politely to step aside)
+
+priority failure = occurs when threads are executed in such a sequence that required work is not performed in time to be useful.
+
+Undefined Behavior =  can work "correctly" in some implementations  while in other implementations it may exhibit almost any "incorrect" behavior
+
+
+A program is thread-safe if it has no race conditions, does not deadlock, and has no priority failures.
+
+
+Boost.Threads destructors never throw exceptions.
+
+
+*********************************
+Rationale
+
+- C++ language doesn't directly support the concept of multithreading
+- Many platforms support multithreaded programming despite the fact that the language doesn't support it. 
+They do this through external libraries, which are, unfortunately, platform specific. 
+POSIX has tried to address this problem through the standardization of a "pthread" library. 
+However, this is a standard only on POSIX platforms, so its portability is limited.
+
+The Boost.Threads library was developed to provide a C++ developer with a portable interface for writing multithreaded programs on numerous platforms. 
+There's a hope that the library can be the basis for a more detailed proposal for the C++ standards committee to consider for inclusion in the next C++ standard.
+
+
+1) Rationale for the Low Level Primitives Supported in Boost.Threads
+- many programs are written at low-level
+- : the higher level concepts need to be implemented using at least some of the lower level concepts
+
+2)Rationale for the Lock Design
+-  Boost.Threads design for mutex lock concepts is not thread-safe 
+A lock object is not a synchronization primitive. A lock object's sole responsibility is to ensure that a mutex is both locked and unlocked in a manner 
+that won't result in the common error of locking a mutex and then forgetting to unlock it. 
+This means that instances of a lock object are only going to be created, at least in theory, within block scope and won't be shared between threads. 
+Only the mutex objects will be created outside of block scope and/or shared between threads. 
+Though it's possible to create a lock object outside of block scope and to share it between threads, to do so would not be a typical usage (in fact, to do so would likely be an error). Nor are there any cases when such usage would be required.
+
+
+3)Rationale for NonCopyable Thread Type
+
+***********************************************
+Mutexes
+- a mutex (short for mutual-exclusion) object is used to serialize access to a resource shared between multiple threads
+- a model that implements Mutex and its refinements has two states: locked and unlocked.
+- before using a resource, a thread locks the mutex; afterwards, it unlocks it
+
+pthread_mutex_init etc. is dangerous since it's easy to forget to unlock a locked mutex ==> deadlock
+
+
+
+
+Scoped Locking
+ - free the programmer from the need to explicitly lock and unlock mutex objects.
+ the lock object's constructor locks the associated mutex object and the destructor automatically does the unlocking
+
+Every mutex object follows one of several locking strategies
+a) recursive locking strategies
+- when a thread attempts to acquire a lock on the mutex object for which it already owns a lock, the operation is successful
+- a lock count is maintained and the owning thread must unlock the mutex object the same number of times that it locked it 
+	before the mutex object's state returns to unlocked.
+
+ boost::recursive_mutex
+ 
+ b)Checked Locking Strategy
+ - when a thread attempts to acquire a lock on the mutex object for which the thread already owns a lock, the operation will fail with some sort of error indication.
+ - attempts by a thread to unlock a mutex object that was not locked by the thread will also return some sort of error indicatio
+ 
+ c)Unchecked Locking Strategy
+ - when a thread attempts to acquire a lock on a mutex object for which the thread already owns a lock the operation will deadlock
+- less safe, but faster
+
+d)Unspecified Locking Strategy
+- unsp behaviour
+
+A Mutex is NonCopyable( copy construction and copy assignment.)To ensure that deadlocks don't occur. 
+
+
+Lock Concepts
+
+- a lock object provides a safe means for locking and unlocking a mutex object
+- lock objects are constructed with a reference to a mutex object and typically acquire ownership of the mutex object by setting its state to locked.
+- expose functions to query the lock status and to manually lock and unlock the mutex object.
+- instances of a lock object are only going to be created within block scope and won't be shared between threads
+	ONLY the mutex objects will be created outside of block scope and/or shared between threads
+
+ScopedLock Concept
+- a refinement of Lock
+
+
+*************************************************
+Class barrier
+
+- barrier = synchronization primitive used to cause a set of threads to wait until they each perform a certain function or each reach a particular point in their execution.
+
+When a barrier is created, it is initialized with a thread count N
+	 The first N-1 calls to wait() will all cause their threads to be blocked
+	 N-th call to wait() will allow all of the waiting threads, including the Nth thread, to be placed in a ready state
+	 Exactly one of the N threads will receive a return value of true, the others will receive a value of false
+Note that if the barrier is destroyed before wait() can return, the behavior is undefined
+
+	 
+
+Class condition
+- condition = synchronization primitive used to cause a thread to wait until a particular shared-data condition (or time) is met
+
+always used in conjunction with a mutex object
+	The mutex object must be locked prior to waiting on the condition( verified by passing a lock object to the condition object's wait() functions)
+	upon blocking on the condition object, the thread unlocks the mutex object. 
+	when the thread returns from a call to one of the condition object's wait functions the mutex object is again locked
+
+notify_all()
+	change the state of all threads waiting on *this to ready. If there are no waiting threads, notify_all() has no effect
+wait()
+	releases the lock on the mutex object associated with lock, blocks the current thread of execution until readied by a call to this->notify_one() 
+		or this->notify_all(), and then reacquires the lock.	
+	
+
+
+
+join - execution of calling thread is suspended until the target thread terminates
+wait - wait for a process to change state

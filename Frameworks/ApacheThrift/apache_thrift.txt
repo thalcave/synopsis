@@ -1,0 +1,4 @@
+Apache Thrift
+
+it allows for easy exchange of data (variables, objects) between applications written in different languages
+

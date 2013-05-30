@@ -1,0 +1,155 @@
+*******************
+Iterators
+- objects that can iterate over elements of a sequence
+- anything that behaves like an iterator is an iterator
+
+iterator = abstraction of the notion of pointer to an element of a sequence
+key concepts = 
+	element currently pointed to( dereferencig, -> and * )
+	point to next element (increment, ++)
+	equality ( == )
+
+	
+only random-access iterators can have an integer added or subtracted for relative adressing
+
+
+Iterator_traits template class
+ - small set of declarations describing related types of an iterator
+ 
+ template <class Cat, class T, class Dist=ptrdiff_t, class Ptr = T*, class Ref=T&>
+ struct iterator_traits
+ {
+	typedef Cat iter_category	//category
+	typedef Dist difference_type	//type of iterator distance
+	typedef T value_type	//type of element
+	typedef Ptr pointer		//returned by ->
+	typedef Ref reference	//returned by *
+ }
+
+Category
+-using iterator_traits<T>::iterator_category allows a programmer to provide alternative implementations so that a user who cares nothing about 
+the implementation of algorithms automatically gets the most appropriate implementation for each data structure used.
+
+inserter = output iterator (produces output into a container)
+ - back_inserter()
+ - front_inserter()
+ - inserter()
+ 
+Reverse iterator
+
+Stream iterators
+	- ostream_iterator - writing to an ostream
+	- istream_iterator - reading from an istream
+	- ostreambuf_iterator - writing to a stream buffer
+	- istreambuf_iterator - reading from a stream buffer
+
+Checked iterators
+
+- deducing type from arguments:
+template <class Cont, class Iter> 
+Checked_iter<Cont, Iter> 
+make_checked(Cont& c, Iter i)
+{
+	return Checked_iter<Cont, Iter>(c, i);
+}
+Checked_iter<vector<int>, vector<int>::iterator > ci1 = make_checked(vect, vect.begin());
+Checked_iter<vector<int>, vector<int>::iterator > ci2 = Checked_iter<vector<int>, vector<int>::iterator >;
+
+
+input iterator = can only step forward element-by-element with read access
+always prefer ++iterator than iterator++ (postfix involves a temporary)
+
+
+Functions
+	distance() - return the distance between two iterators
+	 ptrdiff_t = type returned by the subtraction operation between two pointers. 
+	 		(signed integral type, can be casted to compatible fundamental data types)
+	do not invoke for a large sequence
+	advance(Iterator it, Distance di)
+	count(In first, In last, const T& val) - how many val's exist
+	fill_n(Iterator it, count, value) - fills with "value" "count" positions starting from count
+
+
+
+
+-----------------------------------------------------------------------------------
+Allocator
+ - used to insulate container implementations from details of access to memory
+ - standard ways of allocating and deallocating memory
+pure abstraction: anything that behaves like an allocator is an allocator
+
+Standard Allocator
+- used by STL containers and algorithms
+- uses operator new() and operator delete(void*)
+
+
+
+Operator new() - objects on the free store (heap, dynamic memory)
+- allocates memory for an object AND then constructs the object calling its constructor
+
+	void* operator new(size_t)		//space for a single object
+	void* operator new[](size_t)		//space for array
+no store to allocate --> throw bad_alloc exception
+set_new_handler() - specifies new_handler (function called by new when fails)
+
+placement new:
+	new(ptr) T(val) - constructs a T at ptr
+ destructor must be explicitly called	
+
+void* raw = allocate (sizeof(Foo));
+					equal to 		Foo* p = new Foo();	
+Foo* p = new(raw)Foo();								
+
+// This is functionally what happens with Foo* p = new Foo()
+{
+	
+
+	 Foo* p;
+
+	 // don't catch exceptions thrown by the allocator itself
+	 void* raw = operator new(sizeof(Foo));
+
+	 // catch any exceptions thrown by the ctor
+	 try {
+	   p = new(raw) Foo();  // call the ctor with raw as this
+	 }
+	 catch (...) {
+	   // oops, ctor threw an exception
+	   operator delete(raw);
+	   throw;  // rethrow the ctor's exception
+	 }
+}
+
+
+
+
+template <class U>
+struct rebind { typedef allocator<U> other; }
+
+- provided to allow an allocator to allocate objects of arbitrary type
+typedef typename A::rebind<Link>::other Link_alloc;
+	equivalent to
+typedef allocator<Link> Link_alloc;	
+
+
+
+Functions
+	pointer allocate(size_type n, allocator<void>::const_pointer hint = 0) - allocates space for n objects, don't initialize
+	void deallocate(pointer p, size_type n) - deallocate n T's, don't destroy
+
+	void construct (pointer p, const T& val) { new(p) T(val); } 	//initialize *p by val
+	void destroy(pointer p) { p->~T();}				//destroy p but don't deallocate 
+
+
+free() does not invoke destructors for the memory it frees
+
+uninitialized_copy() 
+uninitialized_fill()		copy values into uninitialized space
+uninitialized_fill_n()
+
+Advices
+ - when writing an algorithm, decide which kind of iterator is needed to provide efficiency
+ - use iterator_traits to express suitable algorithms for different iterator categories
+ - use inserters to avoid container overflow
+ - prefer ++p over p++ (avoid a temporary)
+ - 	

@@ -1,0 +1,46 @@
+transaction:
+* Begin the transaction
+* Execute a set of data manipulations and/or queries
+* If no errors occur then commit the transaction and end it
+* If errors occur then rollback the transaction and end it
+
+
+LOCK TABLES
+* A session can release its locks explicitly with UNLOCK TABLES.
+* If a session issues a LOCK TABLES statement to acquire a lock while already holding locks,
+its existing locks are released implicitly before the new locks are granted.
+* If a session begins a transaction (for example, with START TRANSACTION),
+an implicit UNLOCK TABLES is performed, which causes existing locks to be released.
+
+If the connection for a client session terminates, whether normally or abnormally,
+the server implicitly releases all table locks held by the session (transactional and nontransactional).
+
+-------------------------------------------------------------------------------------------
+By default, MySQL runs with autocommit mode enabled. This means that as soon as you execute a statement that updates (modifies) a table, MySQL stores the update on disk to make it permanent.
+
+Beginning a transaction also causes table locks acquired with LOCK TABLES to be released,
+as though you had executed UNLOCK TABLES
+
+
+The correct way to use LOCK TABLES and UNLOCK TABLES with transactional tables, such as InnoDB tables, is to begin a transaction with SET autocommit = 0 (not START TRANSACTION) followed by LOCK TABLES, and to not call UNLOCK TABLES until you commit the transaction explicitly. For example, if you need to write to table t1 and read from table t2, you can do this:
+SET autocommit=0;
+LOCK TABLES t1 WRITE, t2 READ, ...;... do something with tables t1 and t2 here ...
+COMMIT;
+UNLOCK TABLES;
+When you call LOCK TABLES, InnoDB internally takes its own table lock, and MySQL takes its own table lock. InnoDB releases its internal table lock at the next commit, but for MySQL to release its table lock, you have to call UNLOCK TABLES. You should not have autocommit = 1, because then InnoDB releases its internal table lock immediately after the call of LOCK TABLES, and deadlocks can very easily happen. InnoDB does not acquire the internal table lock at all if autocommit = 1, to help old applications avoid unnecessary deadlocks.
+
+--------------------------------------------------------------------------------
+InnoDB uses automatic row-level locking. You can get deadlocks even in the case of transactions that just insert or delete a single row. That is because these operations are not really “atomic”; they automatically set locks on the (possibly several) index records of the row inserted or deleted.
+
+
+Explicit locking may be necessary when a client needs to perform an operation that spans multiple statements that
+must not be interrupted by other clients.
+Explicit locking can improve performance for multiple statements executed as a group while the lock is in effect.
+
+
+When accessing the auto-increment counter, InnoDB uses a special table-level AUTO-INC lock that it keeps to the end
+of the current SQL statement, not to the end of the transaction.
+The special lock release strategy was introduced to improve concurrency for inserts into a table containing an AUTO_INCREMENT column.
+Nevertheless, two transactions cannot have the AUTO-INC lock on the same table simultaneously,
+which can have a performance impact if the AUTO-INC lock is held for a long time. 
+

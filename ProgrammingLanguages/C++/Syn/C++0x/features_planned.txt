@@ -1,0 +1,16 @@
+Heading for a separate TR:
+	Modules
+	Decimal Types
+	Math Special Functions
+
+Postponed:
+Concepts
+- a mechanism for describing requirements on types, combinations of types, and combinations of types and integers. 
+- it is particularly useful for getting early checking of uses of templates
+- it also helps early detection of errors in a template body
+
+Garbage collection
+- C++0x provides a definition of what a GC can do if one is used and an ABI (Application Binary Interface) to help control its actions
+
+Reflection
+Macro Scopes

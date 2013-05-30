@@ -1,0 +1,10 @@
+NMap = Network mapper
+
+open source tool designed for large networks
+security scanner that creates a "map" of the network (discovering computers and services)
+
+uses raw IP packets to determine:
+- which hosts are available
+- what services (app name and version) are those hosts offering
+- what type of packet filters are in use
+etc.

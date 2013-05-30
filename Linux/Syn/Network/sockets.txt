@@ -1,0 +1,138 @@
+Internet socket =  an end-point of a bidirectional process-to-process communication flow across an IP based network
+	a socket is an interface between an application process or thread and the TCP/IP protocol stack provided by the operating system.
+The combination of an IP address and a port number is referred to as a socket
+
+sockets and port : many-to-one relationship
+
+3 Internet socket types:
+	1)Datagram sockets, also known as connectionless sockets, which use UDP
+	2)Stream sockets, also known as connection-oriented sockets, which use TCP or SCTP.
+	3)Raw sockets (or Raw IP sockets), typically available in routers and other network equipment; here the transport layer is bypassed
+
+socket() 
+	creates a new socket of a certain socket type, identified by an integer number, and allocates system resources to it.
+bind() 
+	is typically used on the server side, and associates a socket with a socket address structure, i.e. a specified local port number and IP address.
+listen() 
+	is used on the server side, and causes a bound TCP socket to enter listening state.
+accept() 
+	is used on the server side. It accepts a received incoming attempt to create a new TCP connection from the remote client, 
+	and creates a new socket associated with the socket address pair of this connection.
+
+connect() 
+	is used on the client side, and assigns a free local port number to a socket. In case of a TCP socket, it causes an attempt to establish a new TCP connection.
+send() and recv(), or write() and read(), or recvfrom() and sendto(), 
+	are used for sending and receiving data to/from a remote socket.
+close() 
+	causes the system to release resources allocated to a socket. In case of TCP, the connection is terminated.
+
+
+
+
+Berkeley sockets
+
+The Berkeley sockets application programming interface (API) comprises a library for developing applications in the C programming language 
+that perform inter-process communication, most commonly across a computer network.
+The Berkeley socket API forms the de facto standard abstraction for network sockets
+
+socket domain:
+	AF_INET, AF_INET6
+socket type:
+	SOCK_STREAM (reliable stream-oriented service or Stream Sockets)
+	SOCK_DGRAM (datagram service or Datagram Sockets)
+	SOCK_SEQPACKET (reliable sequenced packet service), or
+	SOCK_RAW (raw protocols atop the network layer).	
+
+Options:
+	TCP_NODELAY disables the Nagle algorithm (means of improving the efficiency of TCP/IP networks by reducing the number of packets that need to be sent over the network)
+	SO_KEEPALIVE enables periodic 'liveness' pings, if supported by the OS.
+
+the distinction between AF_ (address family) versus PF_ (protocol family) constants is a technical argument of no significant practical consequence
+
+
+----------------------------------------------------------
+
+Unix domain socket or IPC socket (inter-process communication socket)
+ - a data communications endpoint that is similar to an Internet socket, but does not use a network protocol for communication. 
+	 It is used in POSIX operating systems for inter-process communication. The correct standard POSIX term is POSIX Local IPC Sockets.
+
+ - Unix domain connections appear as byte streams, much like network connections, but all data remains within the local computer. 
+ 	UNIX domain sockets use the file system as address name space, i.e. they are referenced by processes as inodes in the file system. 
+	This allows two distinct processes to open the same socket in order to communicate. 
+	
+However, the actual communication (the data exchange) DOES NOT USE THE FILE SYSTEM, BUT BUFFERS IN KERNEL MEMORY.
+In addition to sending data, processes can send file descriptors across a Unix domain socket connection using the sendmsg() and recvmsg() system calls.
+
+
+socket family: 
+	AF_UNIX, AF_LOCAL)
+socket type: 
+	SOCK_STREAM (stream-oriented socket) 
+	SOCK_DGRAM (datagram-oriented socket)
+
+socketpair
+       returns two connected anonymous sockets (only implemented for a few local families like AF_UNIX)
+	
+- can be either unnamed or bound to a file system pathname
+
+differences, cons and pros:
+http://lists.freebsd.org/pipermail/freebsd-performance/2005-February/001143.html
+
+----------------------------------------------------------
+
+netlink - Communication between kernel and userspace (AF_NETLINK)
+
+Netlink is socket-like mechanism for IPC between kernel and user space processes, as well as between user-space processes alone (like e.g., unix sockets) 
+	or mixture of multiple user space and kernel space processes. 
+However, unlike INET sockets, it can't traverse host boundaries, as it addresses processes by their (inherently local) PIDs.
+
+It was designed and is used to transfer miscellaneous networking information between the Linux kernel space and user space processes. 
+Many networking utilities use netlink to communicate with linux kernel from user space, for example iproute2. 
+Netlink consists of a standard socket-based interface for userspace process and an internal kernel API for kernel modules. 
+It is designed to be a more flexible successor to ioctl. Originally netlink uses AF_NETLINK socket family.
+
+socket family
+	AF_NETLINK
+socket type (datagram oriented)
+	SOCK_RAW
+	SOCK_DGRAM	
+	(however, the netlink protocol does not distinguish between datagram and raw sockets)
+
+----------------------------------------------------------
+
+"send" is the same as "write" except that it has flags
+- when the message does not fit into the send buffer of the socket, send() normally blocks, unless the socket has been placed in non-blocking I/O  mode
+In non-blocking mode it would fail with the error EAGAIN or EWOULDBLOCK in this case.  The select(2) call may be used to determine when it is possible to send
+more data.
+
+EINTR = A signal occurred before any data was transmitted
+
+Alan Cox:
+WAITALL only has a receive meaning right now and seems to kind of fit: its RX (receive) meaning is "fill the whole buffer before returning from the syscall"
+
+"send" is like "write" without flags:
+If write() is interrupted by a signal after it successfully writes some data, it shall return the number of bytes written
+
+ENODATA: No message is available on the STREAM head read queue
+
+----------------------------------------------------------
+Raw sockets
+- read and write ICMP packets (ping etc.)
+- read and write IPv4 datagrams that kernel does not handle
+- build its own IPv4 header (used for TCP or UDP packets)
+
+int sockfd = socket(AF_INET, SOCK_RAW, protocol) 
+	protocol = IPPROTO_ICMP, IPPROTO_XXX
+
+- there is no concept of port with raw socket
+"bind" can be called, but it's rare
+"connect" can be called, but it's rare
+
+Output:
+- calling "sendto" or "sendmsg"	and specifying destination IP address
+Input:
+- UDP and TCP are NEVER passed to a raw socket
+- most ICMP packets are passed after kernel has finished processing the ICMP message
+
+Ping example:
+- send an ICMP echo request to some IP address, receive ICMP echo reply

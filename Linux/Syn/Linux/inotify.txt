@@ -1,0 +1,36 @@
+The Linux mechanism for communicating filesystem events to user space
+
+Inotify works through a new character pseudo-device. 
+Any application which wants to monitor filesystem activity need only open /dev/inotify and issue one of two ioctl() commands to it 
+	INOTIFY_WATCH
+		This call provides a filename and a mask of desired events; inotify will begin watching the given file (or directory) for activity. 
+	INOTIFY_IGNORE
+		This call will stop the stream of events for the given file.
+
+Possible events:
+  IN_ACCESS
+  IN_MODIFY
+  IN_ATTRIB
+  IN_CLOSE
+  IN_CLOSE_WRITE
+  IN_CLOSE_NOWRITE
+  IN_OPEN
+  IN_MOVED_FROM
+  IN_MOVED_TO
+  IN_DELETE_SUBDIR
+  IN_DELETE_FILE
+  IN_CREATE_SUBDIR
+  IN_CREATE_FILE
+  IN_DELETE_SELF
+  IN_UNMOUNT
+  IN_Q_OVERFLOW
+  IN_IGNORED
+
+The actual implementation of inotify is relatively simple. 
+The in-core inode structure is augmented with a linked list of processes interested in events involving that inode. 
+When an INOTIFY_WATCH call is made, an entry is made in the corresponding list (and the inode is pinned into memory for the duration). 
+Various parts of the filesystem code get an extra inotify_inode_queue_event() call when an action succeeds. 
+The rest is just the usual overhead of maintaining lists of events for processes, waking those processes up when new events arrive, etc.
+
+
+ dmesg |grep '^inotify device minor' |awk -F= '{ print $2 }'

@@ -1,0 +1,130 @@
+	Intrusive Data Structures
+
+
+------------------------------------------------------
+1. Introduction
+
+list = abstract data structure in which the objects can be accessed in a sequential manner
+linked list = one special implementation of a list
+
+- intrusive list = pointers that connect it are embedded in the participating objects
+
+	class Employee {
+		Employee* next;
+	}
+	class Department {
+		Employee* list_head;
+	}
+- more efficient, bi-directional access between the classes involved 	
+	
+
+
+- non-intrusive list = inside list, have pointers to external data
+	class Student { .. }
+	class Link {
+		Student* stud;
+		Link* next;
+	}
+	class Course {
+		Link* list_head;
+	}
+	
+
+	List {
+		Array arr;
+		count, size;
+	}
+	Array = [p1data, p2data, .....pndata] where Student *p1data;
+				
+-uni-directional access: Student does not know the Courses they are taking
+-easy to implement using templates (basis for container class library)
+
+
+------------------------------------------------------
+2. Built-in types and polymorphic containers
+
+cannot use intrusive container:
+	- built-in types (obviously, you cannot add pointers to the built-in type of objects)
+	- when the container contains objects of two or more different types
+	
+polymorphic container must be homogenous (use a base class):
+	//polymorphic intrusive container 
+	template <typename T>
+	class List {
+		T* listHead;
+	}
+	
+	class Fruit {
+		friend class List<Fruit>;
+		Fruit* next;
+	}
+	
+	class Apple: public Fruit {...}
+	class Orange:public Fruit {...}
+	
+	List<Fruit> myList;
+
+
+------------------------------------------------------
+3. Performance
+
+- in apps which frequently create and destroy objects, the main overhead comes from the allocation, initialization and destruction of objects,
+	not from adding and deleting items from the list.
+- when using non-intrusive lists, the best strategy is to maintain a list of free Links, instead of creating and destroying them at demand
+	(Stroustrup)
+	
+intrusive data structures advantages when saving to disk
+	- the most expensive operation when retrieving from disk is the recalculation of pointers
+		first list uses only half as many pointers as the second list
+
+Conclusions:
+	- the simple intrusive list is close to optimal in time, space and data hiding
+	- we cannot have an intrusive list of ints
+	- the allocation of Links for non-intrusive lists creates overhead		
+
+
+
+-----------------------------------------------------
+4. Data integrity
+
+- crash case:   Student* std = new Student();
+		list.add(std);
+		delete std;
+		access list.std	---> Bang, you're dead!
+
+Intrusive data structures can be protected against most pointer errors:
+	- implement linked lists as rings, not as NULL-terminated lists
+	- initialize all pointers to NULL, set them again to NULL when the object is disconnected from the data structure
+	- an object cannot be destroyed before all its pointers are NULL (if some pointer is not null, the object is still connected to some data structure)
+	
+
+------------------------------------------------------
+5. Inside or outside?
+
+- merging Link into the Element object:
+	template <typename T> class Link<T>;
+	class Employee: public Link<Employee> { ...}
+
+
+	template <typename T> class Link<T>;
+	class Employee {
+		Link<Employee> link;
+	}
+------------------------------------------------------
+6. Templates, manager classes, general data structures
+
+
+- to avoid unnecessary function calls between some classes when using a manager class, use friends
+class Graph;				//manager class
+class Node { friend class Graph; }	
+class Edge { friend class Graph; }
+- manager : represents the data structure
+Node, Edge: carry the required pointers or arrays
+
+
+
+
+------------------------------------------------------
+7. Interface standards, STL and bi-directional access
+
+

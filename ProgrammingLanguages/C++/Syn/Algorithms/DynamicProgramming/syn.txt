@@ -1,0 +1,32 @@
+Dynamic Programming
+ - solving problems exhibiting the properties of overlapping subproblems and optimal substructure
+ 
+Optimal substructure
+	optimal solutions of subproblems can be used to find optimal solution of overall problem
+Ex: travel salesman's problem	
+	
+1. break it in smaller subproblems
+2. solve these problems optimally using this 3-steps process recursively
+3. use these optimal solutions to construct an optimal solution for the original problem
+
+
+Overlapping subproblems
+	some subproblems are used to solve may different larger problems
+
+Ex: Fibonacci (F5 needs F4 and F3 who both need F2 --> F2 would be computed twice)
+
+
+
+Uses:
+	- optimal substructue
+	- overlapping subproblems
+	- memoization (optimization technique by having function calls avoid repeating the calculation of results for previously-processed input)
+	
+Approaches:
+	- top-down approach : problem is broken into subproblems, and these subproblems are solved and the solutions remembered, in case they need to be solved again. 
+		this is recursion and memoization combined together
+	- bottom-up approach : all subproblems that might be needed are solved in advance and then used to build up solutions to larger problems. 
+		(this approach is slightly better in stack space and number of function calls, 
+			but it is sometimes not intuitive to figure out all the subproblems needed for solving the given problem)
+			
+			

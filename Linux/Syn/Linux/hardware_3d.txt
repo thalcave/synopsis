@@ -1,0 +1,10 @@
+"hardware acceleration"
+	three-dimensional rendering uses the graphics processor on your video card instead of taking up valuable CPU resources drawing 3D image
+	
+"software acceleration" 
+	CPU is forced to draw everything itself using the Mesa software rendering libraries, which takes up quite a bit of processing power
+
+Xorg typically supports 2D hardware acceleration, it often lacks hardware 3D acceleration.
+
+
+Direct Rendering Infrastructure - DRI, is a framework for allowing direct access to graphics hardware in a safe and efficient manner. It includes changes to the X server, to several client libraries and to the kernel. The first major use for the DRI is to create fast OpenGL implementations.

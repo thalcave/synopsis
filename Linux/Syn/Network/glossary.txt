@@ -1,0 +1,54 @@
+
+router = connects two or more networks, forwarding packets; network layer
+bridge = connects network at link layer
+
+TCP segment = unit of data sent by TCP to IP
+IP datagram = unit of data sent by IP to network interface
+frame = stream of bits that flow over Ethernet
+
+multiplexing = process in which multiple signals are combined into one signal
+demultiplexing = reverse process
+
+iterative server = process requests one-by-one
+concurrent server = for each request, spawn other server to process it
+
+MTU - maximum transmission unit	
+
+
+promiscuous mode = allows a network device to intercept and read each network packet that arrives in its entirety
+
+RFC = Request for Comments : formalized memoranda addressing Internet standards
+
+spoofing = attempt to gain access to a system by posing as an authorized user. Synonymous with impersonating, masquerading or mimicking.
+IP (Internet Protocol) address spoofing = the creation of IP packets with a forged (spoofed) source IP address with the purpose of concealing 
+						the identity of the sender or impersonating another computing system.
+	forging the IP header to contain another IP source address
+
+
+ARQ - Automatic Repeat-request
+- error control method for data transmission which uses ACK's and timeouts
+ACK = sent by receiver to indicate that it has correctly received data
+timeout = reasonable point in time after the sender sends the frame/packet; if ACK is not received, re-transmit data
+
+Stop-and-wait ARQ:
+- simplest kind of automatic repeat-request (ARQ) method.
+	- sends one frame at time
+	- after sending each frame, the sender doesn't send any further frames until it receives an ACK (acknowledgement) signal. 
+
+
+SAS = sorcerer's apprentice syndrom: (TFTP)
+	a side timeouts --> duplicate packet is sent by the other side --> first side sends back 2 ACK etc.
+resend: have a timer; if timer goes off and no ACK is received, resend data	
+Solution: only the first ACK received would cause the next block of data to be sent :)
+	
+	
+authoritative - identifiers are not assigned randomly, but are allocated by some organization
+
+RX - received
+TX - transmitted
+
+
+root squashing = 
+ Very often, it is not desirable that the root user on a client machine is also treated as root when accessing files on the NFS server. To this end,  uid  0
+       is  normally  mapped  to a different id: the so-called anonymous or nobody uid. This mode of operation (called `root squashing') is the default, and can be
+       turned off with no_root_squash

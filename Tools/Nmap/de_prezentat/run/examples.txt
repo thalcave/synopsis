@@ -1,0 +1,32 @@
+Scan <number> most common ports
+ nmap -sS --top-ports 10 127.0.0.1
+Scan a port range:
+time nmap -sS -A -p 0-50000 fmicu
+
+Enables OS detection and Version detection, Script scanning and Traceroute
+nmap -A 127.0.0.1
+
+
+enable the most common scripts.
+nmap -sC -p22,111 rmanolescu
+
+range of IP addresses (gets MAC also if rpcbind is up and running)
+nmap --script default,safe 172.28.124.37-45
+
+nmap --script  http-auth   --script-trace --packet-trace -p22 127.0.0.1
+
+run smb* suite
+nmap --script smb-* 127.0.0.1
+
+
+-n: no reverse name resolution
+-Pn: no port scan
+-sn: no host scan
+-d: debug
+--open: only open ports
+-oN scan_result.txt
+
+nmap -n -Pn -p 22 --open  --script /mnt/download/Work/MyWork/Nmap/match-ssh-hostkey.nse  172.28.124.39-42 -d
+nmap -n -Pn -p 22 --open  --script /mnt/download/Work/MyWork/Nmap/match-ssh-hostkey.nse  --script-args 'ssh_searchkey="2048 7f:73:3c:ba:4e:76:dd:46:8c:d7:e7:e7:49:35:35:a5"'  172.28.124.39 -oN scan_result.txt
+nmap -n -Pn --open  --script mac-to-ip.nse --script-args 'searched_mac=00:21:70:F4:95:5F' 172.28.124.- -oN mac_result.txt
+

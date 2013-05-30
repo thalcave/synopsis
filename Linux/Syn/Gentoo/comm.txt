@@ -1,0 +1,3 @@
+qlist - list files owned by pkgname
+qlist -Iv | grep 4.1.2
+

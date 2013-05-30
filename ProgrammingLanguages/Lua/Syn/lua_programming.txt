@@ -1,0 +1,151 @@
+------------------------------------
+Chapter 2. First steps
+
+multiple assignment:
+- without third variable for temporary storage
+	a,b = 1, 2
+	a,b = b, a
+
+strings:
+- quote with "", '' or [[]]
+- concatenate with ".."
+- length operator: #
+
+any uninitialized var has "nil" value
+
+bool operators:
+- and = if first op is false or nil, first operand is used as result; otherwise, the second one
+- or  = if first op is not false or nil, first operand is used; otherwise, the second op is used as result
+- not = if operand is false or nil, result is true; otherwise, is false
+- "and" has higher precedence than "or"
+
+arithmetical operators: +,-,*,/,^(power), % (module operator)
+
+comments: "--" or "--[[ ... ]]"
+
+Variables and values
+cubbyholes (cubicle) = compartiment mic
+
+
+Control:
+a)
+if expression then
+	statement
+else
+	statement
+end
+
+b)
+while an expression do
+	statements
+end
+
+c)
+for var = start, end, step do --step is optional, usually left out, in which case +1 is used
+	statements
+end
+
+
+d)
+repeat
+	statement
+until expression
+
+e) do-block
+do
+	statements
+done
+
+
+------------------------------------
+Chapter 3. Functions
+
+- if a function is called with more args, the rest will be discarded
+- if a function is called with less args, the rest will be set to nil
+
+function name_func(args_list)
+....
+[return [value1, value2, value3]]
+end
+
+
+structured programming = a function has a single exit point
+
+rule:
+- if a function call returning multiple values is the last (or only) in an expression, all (if any) returned values are used
+- if a function call returning multiple values is in value list but is not the last expression,
+	only its first returned value (or "nil" if fct returns nothing) is used; the rest is discarded
+
+
+chunk = piece of code executed as an unit
+after a chunk has been compiled into bytecode, it is a function (albeit without a name)
+script = file containing Lua code = type of chunk
+
+
+Variable scope
+- has scope
+"local" keyword: declare a var local
+- variables from outer scopes are always visible in inner scopes, unless they are shadowed
+	- a function should have all local vars declared with "local" (to make sure that it won't overwrite its value)
+- the scope of a var declared with local begin with the following statement
+- a local var is never visible in 2 different chunks
+
+
+call stack - stack that keeps infos about the active subroutines
+- composed of: 
+	stack pointer
+	stack frames:
+	    S1:	
+		locals
+		return address
+		frame pointer
+		parameters
+	    S2:	
+		locals
+		return address
+		frame pointer
+		parameters
+	    Sn:	
+		locals
+		return address
+		frame pointer
+		parameters
+when a function is called, its stack frame is pushed onto call stack
+recursion uses call stack
+
+
+Tail calls
+- is always a return statement whose expression is a single function call
+
+functions are values --> function statement is a type of assignment
+	"myfunc = function(args)
+- possible to assign a function
+	"a = print
+	"if a ==print etc.
+
+anon. function:
+(function (args) statements end)(args)
+(func(a,b) print (a+b) end) (2,3)
+
+use of local functions:
+- only if it makes sense in a small part of the program (a closure recreated as a programs runs)
+- speed-up critical loops (access to local var is faster than access to global var)
+
+
+
+Upvalues and closures
+- upvalue = external local variable = var that is local to a containing scope
+- closure = function that has one (or more) upvalues
+- an upvalue is migrated from the stack to a safe place
+	"function MakeLessThan(N)
+		"return function(X)
+			"return X < N"	--N is upvalue: variable that is local to containing scope (that is MakeLessThan scope)
+		"end
+	"end
+
+GOTCHAS:
+- misspell the name of local var and use a global by error
+- do not forget to add local
+
+
+Lua has lexical scope = variable scope is determined by the structure of source code

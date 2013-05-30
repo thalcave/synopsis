@@ -1,0 +1,89 @@
+Portage = package management system. It provides compile-time option support (through USE flags)
+portage tree = collection of ebuilds, files that contain all information Portage needs to maintain software
+
+emerge --sync = update portage tree
+world = clasa pachetelor globale instalate EXPLICIT
+
+emerge --sync = updateaza portage
+emerge -vpuD paket_name = pretend to install
+emerge -uvD world = updateaza toate pachetele
+emerge unmerge pachet = dezinstaleaza pachetele
+
+/etc/make.conf - USE flags 
+
+etc-update - Update config files, make sure you do not let etc-update
+update config files you have edited
+
+
+when unmerging, no dependencies are removed
+revdep-rebuild - scans the entire system and looks for packages that require a rebuild.
+emerge --deepclean = locates and removes unused reverse dependencies
+	does not consider packages dynamically linked
+	
+	
+If you want to update every single package on your system, add the --deep argument:
+
+---------------------------------------------------------------
+
+UDEV = generic kernel device manager.
+It runs as a daemon on a Linux system and listens to events the kernel sends out if a new device is initialized or a device is removed from the system
+
+Gentoo can work with devfs kernel support, udev userland support or static /dev. 
+With the advent of the 2.6 kernel being stable on most archs, udev is recommended. 
+udev is developed in three separate projects: namedev, libsysfs and, of course, udev
+
+1)Namedev allows you to define the device naming separately from the udev program. 
+2)libsysfs project provides a common API to access the information given by the sysfs filesystem in a generic way.
+3)Every time the kernel notices an update in the device structure, it calls the /sbin/hotplug program. 
+Hotplug runs the applications linked in the /etc/hotplug.d/default directory where you will also find a symlink to the udev application.
+Hotplug directs the information given by the kernel to the udev application which performs the necessary actions on the /dev structure (creating or deleting device files).
+
+
+
+emerge udev
+You do not need to install hotplug unless you want your modules automatically loaded when you plug devices in
+
+emerge --sync && emerge -uDN world will bring your entire system up to speed with the "latest Gentoo". 
+
+
+USE flags
+- a flag is a keyword that embodies support and dependency-information for a certain concept
+If you define a certain USE-flag, Portage will know that you want support for the chosen keyword.
+
+the kde keyword. 
+	If you do not have this keyword in your USE variable, all packages that have optional KDE support will be compiled without KDE support. 
+	All packages that have an optional KDE dependency will be installed without installing the KDE libraries (as dependency).
+	If you have defined the kde keyword, then those packages will be compiled with KDE support, and the KDE libraries will be installed as dependency.
+
+
+There are two types of USE-flags: global and local USE-flags.
+
+    * A global USE-flag is used by several packages, system-wide. This is what most people see as USE-flags.
+    * A local USE-flag is used by a single package to make package-specific decisions.
+
+
+
+
+*****************************************************************************
+locale = set of parameters that define's user language, country and variants that the users wants to see in their user interface.
+	language identifier + region identifier
+
+Specifying only needed locales
+	locales are built by glibc
+	
+/etc/locale.gen
+	specify which locales you want and run locale-gen
+
+localepurge
+
+
+*****************************************************************************
+watchdog - tool that automatically reboot computer when something goes wrong( kernel goes crazy, processes that occupy 100% cpu etc)
+
+	a device: /dev/watchdog
+	computer writes to this device once a minute
+	if it fails to do so, it is rebooted
+
+
+
+

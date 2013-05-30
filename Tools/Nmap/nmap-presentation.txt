@@ -1,0 +1,245 @@
+I. Agenda
+II. Nmap
+	2. Intro
+	IMAGE NEEDED (logo)
+	what is: free, open-source port scanner; security scanner
+	dev by: Fyodor; September 1, 1997 - first version
+	runs on all major computer operating systems: Linux, Windows, BSD, Mac OS X, Solaris
+	console and graphical versions are available
+	purpose: discover computers and services on a computer network, thus creating a “map” of the network
+	legal issues: port scanning is not a crime
+
+	3. Port Scanning Basics
+	six port states recognized by Nmap (other apps classify ports: open or close)
+	- open: an app is actively accepting TCP connections, UDP datagrams
+	- closed: accessible but no app is listening on it
+	- filtered: cannot determine if it's open or closed
+	- unfiltered: accessible but cannot tell if open or closed
+	- open|filtered: cannot determine if open or filtered
+	- open| closed
+
+	Scan Types
+		4. Basic:-sT = TCP connect
+			- uses connect() (three way handshake)
+				IMAGE NEEDED
+			Client				Server
+				SYN---->
+				<---SYN/ACK
+				--->ACK
+				--->data transfer
+
+			- it's very easy to detect and logged
+			example: nmap -sT -p 30000 172.28.124.39
+		5. Basic: -sS = SYN Stealth
+			- sends only SYN packets (synchronize); less likely to be detected
+				IMAGE NEEDED
+			how it works:
+				if port is opened:
+					<---SYN/ACK
+					--->RST (reset connection): port is opened
+				if port is closed:
+					<--- RST
+				if port is filtered:
+					<--- no response
+			- less likely to be detected
+			example: nmap -sS -p 30000 172.28.124.39
+		6. Other types:
+			7. -sF, -sN, -sX = FIN, null, XMAS
+				- each scan type refers to the flags set in the TCP header
+				- less likely to appear in logging system
+				- less reliable than previous scans because not all systems follow RFC to the letter
+			sP = Ping scan
+			-sU = UDP scan
+			8. -sI = idle scan
+			- send spoofed packets, impersonating another computer ("zombie")
+				every IP packet from a given source has an ID that uniquely identifying fragments of an original IP
+				datagram; the protocol implementation assigns values to this mandatory field generally
+				by a fixed value (1) increment.
+				Because transmitted packets are numbered in a sequence you can say how many packets
+				are transmitted between two packets that you receive.
+				- the latest versions of Linux, Solaris and OpenBSD, Windows Vista are not suitable as zombie,
+					since the IPID has been implemented with patches[3] that randomized the IP ID[
+
+				IMAGE NEEDED
+
+				1. scan for a host with a sequential and predictable sequence number (IPID)
+				2. establish a TCP connection with a port on target, impersonating the zombie
+				3. if port is opened, the target will send SYN/ACK to zombie
+				4. zombie will respond with RST and will increment IPID
+				5. attacker will send another packet to zombie; if IPID is incremented, than target's port is opened
+
+				- closed or filtered are not distinguishable
+
+	Service and Application Version Detection
+	9. why: - detect which exploits a server is vulnerable to
+		- detect whether services are run on wrong ports or share the same port
+	10. example:
+		nmap -A -T4 -F 172.28.124.39
+		-A (aggressive) Enables OS detection and Version detection, Script scanning and Traceroute
+		- F (fast mode)
+	11. technique described:
+		- for an opened port
+			connect tcp
+			listen 5 sec (many apps send a greeting banner) - NULL probe
+			if not identified
+				close tcp connection
+				sends UDP probes:
+					each probe: specific port and string
+	Remote OS Detection
+	12. Reasons:
+		Determining vulnerability of target hosts
+			Rwho daemon on Solaris 7-9 is vulnerable, on Solaris 10 not
+		Network inventory and support
+		Detecting unauthorized and dangerous devices
+			detect a wireless access point (WAP), webcams, game console
+		example:
+			nmap -sV -O 172.28.124.39
+			nmap -O 172.28.124.39
+
+III. Nmap Scripting Engine
+13. Intro
+- allows users to write (and share) simple scripts to automate a wide variety of networking tasks
+- scripts are then executed in parallel
+- scripts are written in Lua scripting language
+- tasks handled:
+	- Network discovery
+	- More sophisticated version detection (e.g Skype2)
+	- Vulnerability detection
+	- Backdoor detection
+
+- script collection growth: IMAGE NEEDED
+example:
+	nmap -sC 172.28.124.39
+
+14. Why Lua?
+Perl, Python, and Ruby = difficult to embed efficiently
+- Lightweight programming language
+	easy to learn, has minimalist syntax and features.
+	small memory footprint
+	tiny to embed
+- used: In video game development (warcraft, Mafia, FarCry etc)
+	Snort is a free and open source network intrusion prevention system
+	Wireshark network packet analyzer
+	VLC media player
+- safe and secure
+	no buffer overflows
+- portable
+- interpreted
+- excellent documentation, actively developed
+
+
+15. Components of NSE
+- NSE libraries (modules)
+	57 Libraries written in Lua
+	make script writing more powerful and convenient
+	Scripts need only require the default libraries in order to use them
+	"nselib" directory
+
+	examples (show http page)
+		brute
+		- the brute library is an attempt to create a common framework for performing password guessing against remote services.
+		comm
+		- common communication functions for network discovery tasks like banner grabbing and data exchange.
+		mysql
+		shortport
+		- functions for building short portrules.
+
+		A few of the modules included in nselib are written in C or C++ rather than Lua:
+		bit
+		- bitwise operations on integers.
+		pcre
+		-perl Compatible Regular Expressions.
+- NSE Scripts
+	http://nmap.org/nsedoc/
+- Nmap API
+	an interface to Nmap's internal functions
+	an interface to the Nsock library for efficient network I/O
+
+Script:
+
+16. Script Categories
+- every script belongs to at least one category
+- auth: try to determine authentication credentials on the target system
+- default: the default set and are run when using the -sC or -A options
+- discovery: try to actively discover more about the network by querying public registries etc.
+- dos: may cause denial of service, usually because they crash a service as a side effect of testing it for a vulnerability.may cause denial of service, usually because they crash a service as a side effect of testing it for a vulnerability.
+- intrusive: the risks are too high that they will crash the target system
+- safe: scripts that don't crash services, use large amounts of network bandwidth or other resources, or exploit security holes
+
+17. Script Types and Phases
+1. Prerule scripts
+- these scripts run before any of Nmap's scan phases
+- can be useful for tasks which don't depend on specific scan targets (e.g  performing network broadcast requests to query DHCP and DNS SD servers)
+- contain a "prerule function"
+
+2. Host scripts
+- these scripts run during Nmap's normal scanning process AFTER Nmap has performed:
+	host discovery, port scanning, version detection, and OS detection against the target host
+- this type of script is invoked once against each target host which matches its "hostrule function"
+
+3. Service scripts
+- these scripts run against specific services listening on a target host (e.g more than 15 http service scripts to run against web servers)
+- these are the most common Nmap script type
+- they contain a "portrule function" for deciding which detected services a script should run against
+
+4. Postrule scripts
+- these scripts run after Nmap has scanned all of its targets
+- they can be useful for formatting and presenting Nmap output
+- they contain "postrule function"
+
+18. Command-line Arguments
+-sC: Performs a script scan using the default set of scripts
+--script <filename>|<category>|<directory>|<expression>|all[,...]
+--script-args: provides args to script
+--script-trace:	
+
+Script Selection
+- supports logical operator: not, and, or
+nmap --script "http-*"
+nmap --script "not intrusive"
+nmap --script "default and safe": scripts both in "default" and in "safe"
+nmap --script "default or safe": scripts in "default" or "safe" category
+
+examples:
+nmap --script default,safe 172.28.124.37-45
+
+19. Script Format
+	1. The Head: meta information
+	a. description Field
+	b. categories Field
+		categories = {"default", "discovery", "safe"}
+	c. author Field
+	d. license Field
+	e. dependencies Field
+	- an array containing the names of scripts that should run before this script
+	- listing a script in dependencies doesn't cause that script to be run but merely forces an ordering
+	among the scripts that are selected
+		dependencies = {"smb-brute"}
+
+	20. Rules:
+	- A rule is a Lua function that returns either true or false
+	- The script "action function" is only performed if the rule evaluates to true
+	- A prerule or a postrule will always evaluate to true
+
+	A script must contain one or more of the following functions that determine when the script will be run:
+	- prerule()
+		script runs before any of Nmap's scan phases
+	- hostrule(host)
+		runs during Nmap's normal scanning process AFTER Nmap has performed:
+			host discovery, port scanning, version detection, and OS detection against the target host
+	- portrule(host, port)
+		runs against specific services listening on a target host
+	- postrule()
+		runs after Nmap has scanned all of its targets
+
+	3. Action:
+	- contains all of the instructions to be executed when the script's prerule, portrule, hostrule or postrule triggers
+	- NSE scripts generally only return messages when they succeed, so they don't flood the user with pointless alerts.
+
+21. Script Writing Tutorial
+example scripts:
+
+
+
+22. NMap Links
+	

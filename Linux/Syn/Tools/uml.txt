@@ -1,0 +1,11 @@
+UML = fully-functional Linux kernel
+
+User-Mode Linux gives you a virtual machine that may have more hardware 
+and software virtual resources than your actual, physical computer.
+
+Processes inside the user-mode kernel have no access 
+to the hosting machine or to the outside world that's not explicitly provided.
+
+UML hardware support comes in the form of virtual devices which use resources on the host.
+
+The root_fs file needed for user-mode linux is a single file that contains an entire Linux filesystem.

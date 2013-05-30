@@ -1,0 +1,56 @@
+Boost.Asio library
+	- for programmers using C++ for systems programming, where access to operating system functionality such as networking is often required. 
+Goals:
+	Portability 
+		the library should support, and provide consistent behaviour across, a range of commonly used operating systems. 
+	Scalability
+		the library should allow, and indeed encourage, the development of network applications that scale to hundreds or thousands of concurrent connections
+	Efficiency
+		the library should support techniques such as scatter-gather I/O, and allow protocol implementations that minimise data copying. 
+	Model Berkeley sockets
+		the Berkeley sockets API is widely implemented and understood, as well as being covered in much literature. 
+	Ease of use
+		lower the entry barrier for new users by taking a toolkit, rather than framework, approach. 
+	Basis for further abstraction
+		the library should permit the development of other libraries that provide higher levels of abstraction. For example, implementations of commonly used protocols such as HTTP.
+
+-------------------------------------------------------------
+High-Performance Networking Programming in C
+- should encode our data in such a way that the protocol overhead is minimal and most of the bits are used to carry useful payload data.
+
+Vectored I/O (scatter/gather I/O)
+	method of input and output by which a single procedure call sequentially writes data from multiple buffers to a single data stream 
+		or reads data from a data stream to multiple buffers
+Scatter/gather refers to the process of gathering data from, or scattering data into, the given set of buffers. 
+
+
+There are several usages for vectored I/O:
+Atomicity: 
+	If the particular vectored I/O implementation supports atomicity, a process can write from or read into a set of buffers to or from a file without risk 
+	that another thread or process might perform I/O on the same file between the first process' reads or writes, thereby corrupting the file or 
+	compromising the integrity of the input;
+Concatenating output: 
+	An application that wants to write non-sequentially placed data in memory can do so in one vectored I/O operation. 
+	For example, writing a fixed-size header and its associated payload data that are placed non-sequentially in memory can be done by a single vectored I/O 
+	operation without first concatenating the header and the payload to another buffer;
+Efficiency: 
+	One vectored I/O read or write can replace many ordinary reads or writes, and thus save on the overhead involved in syscalls;
+Splitting input: 
+	When reading data that are in a format that defines a fixed-size header, one can use a vector of buffers in which the first buffer is the size of that header; 
+	and the second buffer will contain the data associated with the header.
+
+readv and writev[2] can be found in POSIX 1003.1-2001 and the Single UNIX Specification version 2
+
+
+-------------------------------------------------------------
+
+boost::asio::io_service io object = provides access to I/O functionality
+ boost::asio::deadline_timer t(io, boost::posix_time::seconds(5));
+the core asio classes that provide I/O functionality always take a reference to an io_service as their first constructor argument
+
+
+
+boost::asio::strand  - guarantees that, for those handlers that are dispatched through it, an executing handler will be allowed to complete 
+			before the next one is started; this is guaranteed irrespective of the number of threads that are calling boost::asio::io_service::run(). 
+Of course, the handlers may still execute concurrently with other handlers that were not dispatched through an boost::asio::strand, or were dispatched 
+through a different boost::asio::strand object.

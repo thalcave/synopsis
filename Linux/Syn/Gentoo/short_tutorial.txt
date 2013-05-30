@@ -1,0 +1,59 @@
+http://www.gentoo.org/doc/en/handbook/handbook-x86.xml
+
+
+***************************************************************
+Maintaining Software
+
+Portage = package management system
+portage tree = collection of ebuilds, files that contain all information Portage needs to maintain software
+
+
+Daily update:
+emerge --sync = update portage tree
+emerge -uavDN world = update all packages
+etc-update = update conf files (from /etc)
+http://en.gentoo-wiki.com/wiki/Upgrading_Packages
+
+
+Checking for broken packages:
+revdep-rebuild -i -p
+
+***************************************************************
+Working with packages
+
+Check for package:
+emerge --search <pname>
+	OR
+eix <pname> (much faster)
+
+List all files from a package:
+equery files <pname>
+
+Find to which package a file belongs:
+equery belongs <file>
+
+
+USE flags
+- a flag is a keyword that embodies support and dependency-information for a certain concept
+If you define a certain USE-flag, Portage will know that you want support for the chosen keyword.
+
+List USE flags for a package:
+equery uses <package>
+
+
+***************************************************************
+etc files:
+
+http://www.gentoo.org/doc/en/handbook/handbook-x86.xml?part=3&chap=1
+
+/etc/portage/package.mask
+	lists the packages you never want Portage to install
+/etc/portage/package.unmask
+	lists the packages you want to be able to install even though the Gentoo developers highly discourage you from emerging them
+/etc/portage/package.accept
+	keywords which lists the packages you want to be able to install even though the package hasn't been found suitable for your system or architecture (yet)
+/etc/portage/package.use
+	lists the USE flags you want to use for certain packages without having the entire system use those USE flags
+
+
+

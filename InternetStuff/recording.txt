@@ -1,0 +1,69 @@
+1. phonograph (by Edison) and later gramaphon
+a diaphragm directly controlled a needle, and the needle scratched an analog signal onto a tinfoil cylinder:
+
+Recording:
+* You spoke into Edison's device while rotating the cylinder, and the needle "recorded" what you said onto the tin
+* That is, as the diaphragm vibrated, so did the needle, and those vibrations impressed themselves onto the tin. 
+
+Playback:
+* the needle moved over the groove scratched during recording
+* the vibrations pressed into the tin caused the needle to vibrate, causing the diaphragm to vibrate and play the sound.
+
+analog wave = vibrations created by your voice
+
+Analog wave is scratched by the needle onto the tin
+
+every playback deteriorates the groove
+
+
+
+
+2. Digital data
+
+digital recording converts the analog wave into a stream of numbers and records the numbers instead of the wave.
+the conversion is done by a device called an analog-to-digital converter (ADC) (playback by DAC)
+The analog wave produced by the DAC is amplified and fed to the speakers to produce the sound.
+
+The analog wave produced by the DAC will be the same every time, as long as the numbers are not corrupted
+
+
+When you sample the wave with an analog-to-digital converter, you have control over two variables:
+* The sampling rate - Controls how many samples are taken per second
+* The sampling precision - Controls how many different gradations (quantization levels) are possible when taking the sample
+
+3. CD
+- stores digital data (numbers)
+A CD has a single spiral track of data, circling from the inside of the disc to the outside. 
+the data is stored as bumps on the CD
+
+
+CD player:
+* A drive motor spins the disc
+* A laser and a lens system focus in on and read the bumps.
+* A tracking mechanism moves the laser assembly so that the laser's beam can follow the spiral track
+
+The fundamental job of the CD player is to focus the laser on the track of bumps. 
+The laser beam passes through the polycarbonate layer, reflects off the aluminum layer and hits an opto-electronic device that detects changes in light. 
+The bumps reflect light differently than the "lands" (the rest of the aluminum layer), and the opto-electronic sensor detects that change in reflectivity. 
+The electronics in the drive interpret the changes in reflectivity in order to read the bits that make up the bytes.
+
+audio CD bit rate = 1.411 kbit/s
+sample rate = 44 kHz
+
+4. MP3
+- compression system for music
+
+* There are certain sounds that the human ear cannot hear.
+* There are certain sounds that the human ear hears much better than others.
+* If there are two sounds playing simultaneously, we hear the louder one but cannot hear the softer one.
+these sounds are removed in MP3
+
+for a 320 Kbps, it's impossible for human ear to detect the difference between CD and MP3 file
+
+
+5. Tapes
+
+The basic idea involves an electromagnet that applies a magnetic flux to the oxide on the tape. 
+The oxide permanently "remembers" the flux it sees. 
+
+A tape recorder's record head is a very small, circular electromagnet with a small gap in it

@@ -1,0 +1,14 @@
+*******************
+4.4.4
+new command-line switch "-findirect-inlining"
+	when turned on it allows the inliner to also inline indirect calls that are discovered to have known targets at compile time thanks to previous inlining.
+
+New warning options
+-Wframe-larger-than=NUMBER 
+
+New Languages and Language specific improvements
+-Wparentheses now warns about expressions such as (!x | y) and (!x & y).
+C++0X: Including support for auto, inline namespaces, generalized initializer lists, defaulted and deleted functions, new character types, and scoped enums.
+-Wconversion now warns if the result of a static_cast to enumeral type is unspecified because the value is outside the range of the enumeral type.
+
+

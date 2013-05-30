@@ -1,0 +1,163 @@
+every major STL abstraction is represented as a template( string, ostream, list, map etc)
+typedef basic_string<char> string;
+
+1. A template is not a class or a function. A template is a "pattern" that the compiler uses to generate a family of classes or functions.
+2. In order for the compiler to generate the code, it must see both the template definition (not just declaration)
+	and the specific types/whatever used to "fill in" the template. 
+	For example, if you're trying to use a Foo<int>, 
+	the compiler must see both the Foo template and the fact that you're trying to make a specific Foo<int>.
+ 3. Your compiler probably doesn't remember the details of one .cpp file while it is compiling another .cpp file.
+ 	this is called the "separate compilation model."
+1,2,3 --> cannot separate the definition of template from it;s declaration (unless using export or add a line
+template void foo<int> () in .cpp file )
+
+
+
+template<class T>				template<class T> 
+class Array					T createObject()
+{						{
+	T createObject(); 				...........
+	.....					}
+}
+
+
+
+
+Compiler creates new generated classes( Array_int, Array_float etc.)
+a class generated from template class is a perfectly ORDINARY class
+it's useful to debug a class MyCLass BEFORE turning it into a template
+
+Anything preceded by template<...> means the compiler
+won't allocate storage for it at that point, but will instead wait until it's told to (by a template instantiation)
+
+Ownership problem: container holds pointers to objects
+		   these pointers may be used somewhere else, we cannot delete them
+
+Iterator = an object that moves through a container of other objects
+	   and selects them one at a time
+similar to a "smart pointer"
+
+
+*************************************************************
+
+Function templates = special functions that can operate with generic types
+template <class T> func_declaration
+						= identical
+template <typename T> func_declaration
+ - means of implementing generic algorithms
+
+
+Class templates
+- a class has members that use template parameters as type
+- implementing containers etc.
+
+
+Class template = template used to generate template classes. You cannot declare an object of a class template.
+Template class = is an instance of a class template
+
+template instantiation = process of instantiating a class from a class template
+template specialization = a template id ( like Vector<int>)
+
+Template specialization(explicit specialization)
+-we want to define a different implementation for a template when a specific type is passed as template parameter, we can declare a specialization of that template
+template <>
+class container <char> etc
+
+---------------------------------------------------------------------------------
+
+Non-type parameters for templates
+-templates can also have regular typed parameters
+template <class T, int N>
+class MyClass
+
+int num = 10;
+const int aaa = 5;
+MyClass<float, 5> ex1;
+MyClass<float, aaa> ex2;
+MyClass<float, num> w1;		//wrong
+- use only constant expression or an adress of an object with external linkage
+a template can take a template as an argument
+
+Default type arguments
+template <class T, class S = size_t>
+class Vector {};
+
+Vector<int> aaa;
+Vector<int, int64_t> huge_vector;
+
+---------------------------------------------------------------------------------
+
+Templates and multiple-file projects
+-for compiler, templates are not normal functions and classes
+are compiled on demand, meaning that the code of a template function is not compiled until an instantiation with specific template arguments is required;
+at that moment, when an instantiation is required, the compiler generates a function specifically for those arguments from the template -->
+the implementation (definition) of a template class or function must be in the same file as its declaration
+
+
+parameterized type = class templates
+genericity = class templates
+
+Compilation unit = portion of a program which can be submitted to the compiler independently; a package specification or body, a subprogram body or a generic instantiation.
+
+
+nondependent names = names that don't depend on template parameters
+		     resolved when the template is defined
+dependent names = names whose definitions are considered to depend upon the template parameters
+	          resolved only when the template is instantiated
+
+
+Generate on demand = compiler generates code only for template class' functions that are use explicitly or implicitly
+( a function size() that is never used is not generated)
+	efficiency
+	flexibility
+
+- increase compilation time because compiler's processing is repeatedly interrupted to generate code
+solution: all necessary template code should be instantiated at once( explicit instantiation)
+Ex: in stringfwd.h:
+basic_string<char>;
+basic_string<wchar_t>;
+---------------------------------------------------------------------------------
+Virtual member functions
+-a member function template should not be virtual
+-an ordinary member function in a template class can be virtual
+
+
+---------------------------------------------------------------------------------
+there is no relationship between two classes generated from a single class template 
+Ex:
+	class Shape{} ; class Circle:public Shape {}
+	set<Shape*> s;
+	set<Circle*> c;
+a set of Circles is a set of Shapes, but is not possible to use it as a set of Shapes
+f(set<Shape*> s)
+
+f(c)	//wrong	
+
+
+Advice:
+[1] Use templates to express algorithms that apply to many argument types
+[2] Use templates to express containers
+[3] Provide specializations for containers of pointers to minimize code size
+[4] Always declare the general form of a template before specializations
+[5] Declare a specialization before its use
+[6] Minimize a template definition's dependence on its instantiation contexts
+[7] Define every specialization you declare
+[8] Consider if a template needs specializations for Cstyle strings and arrays
+[9] Parameterize with a policy object
+[10] Use specialization and overloading to provide a single interface to implementations of the same concept for different types
+[11] Provide a simple interface for simple cases and use overloading and default arguments to
+express less common cases
+[12] Debug concrete examples before generalizing to a template
+[13] Remember to e x p o r t template definitions that need to be accessible from other translation
+units
+[14] Separately compile large templates and templates with nontrivial context dependencies
+[15] Use templates to express conversions but define those conversions very carefully
+[16] Where necessary, constrain template arguments using a c o n s t r a i n t () member function;
+[17] Use explicit instantiation to minimize compile time and link time
+[18] Prefer a template over derived classes when runtime
+efficiency is at a premium
+[19] Prefer derived classes over a template if adding new variants without recompilation is important
+[20] Prefer a template over derived classes when no common base can be defined
+[21] Prefer a template over derived classes when builtin
+types and structures with compatibility
+constraints are important

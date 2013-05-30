@@ -1,0 +1,21 @@
+Branches are for the minority.
+
+only two branches:
+Fixes Branch:
+	while feature work continues on the trunk, a fixes branch is created to hold the fixes to the latest shipped version of the software.
+	this allows you to fix problems without having to wait for the latest crop of features to be finished and stabilized.
+Feature Branch:
+	if a particular feature is disruptive enough or speculative enough that you don't want the entire development team
+	to have to suffer through its early stages, you can create a branch on which to do the work.
+
+Fixes branch
+- used to apply bug fixes to a shipped version of the code
+- only merge from the trunk to the branch (you simplify the process and reduce the possibility of conflicts if you keep all merging
+	in one direction only)
+
+
+Feature branches
+- used by developers creating a major feature, or one which is speculative, and may not be included in the product.
+- make the changes on the branch and check them in
+
+Tags are typically used to create a static snapshot of the project at a particular stage

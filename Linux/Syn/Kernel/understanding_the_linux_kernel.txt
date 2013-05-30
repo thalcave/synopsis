@@ -1,0 +1,265 @@
+page frame = available RAM is partitioned into 4 or 8 KB (getpagesize())
+		dumpe2fs
+
+
+********************************************************
+Chapter 3. Processes
+
+- an instance of a program in execution
+ - lightweight processes:
+ 	means of achieving multitasking (better support for multithreading)
+	LWP shares all logical address space and system resources with other LWP
+	
+	has its own pid, scheduled as a regular process	
+	
+	
+process descriptor:
+	structure whose fields contain all the information related to a process
+State:
+	running
+	sleeping (suspended) until some conditions become true
+	stopped
+	zombie (child terminated, but parent had not issued a wait --> kernel cannot discard data contained
+			in dead process because parent might need it)	
+	orphan process: still executing but parent has died; they do not become zombie process but are inherited by init process
+max_pid: 32767 (2pow15)
+
+thread group = collection of LWP that correspond to the threads of a multithreaded app
+	all threads share the same pid
+
+each process has an associated set of resource limits
+
+process switch (context switch, task switch)
+	suspend the execution of the process running on CPU and resume the execution of some other process previously suspended
+	
+Creating processes:
+	traditional way: resources owned by parent are duplicated in child --> very slow
+		copy on write technique
+		
+LWP processes: 
+	created by clone (main use: to create threads)
+	child processes share memory space, file descriptors with parent
+	when created, a child executes a func (unlike fork where child continues code)
+	
+fork uses clone() with flags that provide the same effect as the traditional fork
+uses copy-on-write
+
+
+Kernel Threads
+- run only in Kernel Mode (regular process runs alternatively in User Mode and Kernel Mode)
+- executes a single kernel function (regular executes kernel function through system calls)
+
+Termination:
+- the usual way is to invoke exit() (releseas resources, execute registered functions and calls _exit())
+
+
+********************************************************
+Chapter 12. Virtual File System
+
+FileSystem = organization of data and metadata on a storage device
+mounting = associating a FileSystem to a storage device
+
+Virtual FileSystem 
+	= KERNEL SOFTWARE LAYER that handles all system calls related to a standard Unix filesystem
+	for each write, read etc. kernel substitutes the actual function that supports a native Linux fs, NT fs etc.
+	
+Disk-based filesystems
+	- ext2, ext3, reiserfs
+Network-filesystem
+	- NFS, smb, NCP
+Special-filesystems
+	- /proc etc.			
+
+
+Common file model consists of:
+
+- superblock object
+	- stores info concerning mounted filesystem
+	- at the root of filesystem
+- inode object
+	- every object managed within a file system is represented as an inode (including the operations that are possible on it)
+	- corresponds to a file control block stored on disk
+- file object
+	- stores info about the interaction between a process and an open file
+	- exists only during the period when a process accesses a file
+- dentry object
+	- stores info about the linking of a directory entry with the corresponding file
+	- translate between names and inodes
+	
+dentry cache = disk cache that contains the most recently used dentry --> speed up translation from a file pathname to the inode of the last pathname component
+
+	
+when looking for /tmp/test/, kernel creates (reads a directory entry into memory that is transformed by VFS into a dentry)
+	dentry for /
+	dentry for tmp
+	dentry for test
+		
+lseek: doesn't access the disk, only modifies the file object
+
+----------------------------------------------
+Disk cache
+	software mechanism that allows kernel to keep in RAM some info normally stored on a disk (improve access time, no disk access)
+
+buffer cache
+	consisting of buffers, each buffer holds a single disk block
+	most-recently used buffers (pages)
+page cache
+	each page in the cache corresponds to several blocks of a regular file
+
+
+
+********************************************************
+Chapter 13. Managing I/O Devices
+
+
+DMAC - direct memory access controller
+	auxiliary processor which can be instructed to transfer data between the RAM and I/O device
+	once activated by CPU, DMAC continues transfer by itself
+	used by slow devices: disk drives etc. for transferring a large number of bytes at once
+	
+-----------------	
+Device files
+	I/O devices are treated as files
+	two types of device files: 
+		block - access randomly
+		character - either cannot be accessed randmly (soundcard), either takes to long time
+write on /dev/lp0 --> directly print
+
+
+
+Old-style device files
+	- under /dev directory, two main attributes:
+		major number - a number that identifies device type	(include/linux/major.h)
+		minor number - a number that identifies a specific device		
+cons: 
+	most of devices present in /dev don't exist (device files are created so that admins don't have to create them before installing a new I/O driver)
+	minor/major are 8-bit number --> constraint, limitation	
+Devfs device files
+	virtual filesystem similar to the proc
+	allows drivers to register devices by name
+
+-----------------
+Device drivers
+	software layer that makes a hardware device respond to a well-defined programming interface (canonical set of VFS functions: open, write, read etc. that controls a
+	device)
+
+register a device driver = linking it to the corresponding device files; performed as soon as possible
+initializing = at the last possible moment (allocating precious resources of the system)
+
+
+Monitoring I/O operations
+
+	technique to signal end-of-operation or time-out
+	polling mode:
+		* CPU checks (polls) the device's status register repeatedly until its value signals that I/O operation has ended
+	interrupt mode:
+		* only if the I/O controller is capable of signaling the end of an I/O operation
+
+
+-----------------
+Block-device drivers
+
+sector = group of adjacent bytes; basic unit of data transfer; never possible to transfer less than a sector
+block = large number of adjacent bytes; power of 2, no larger than a page frame; multiple of sector size
+
+each block requires its own buffer (RAM memory area used by kernel to store the block's content); size of buffer matches size of corresponding block
+buffer head = descriptor of buffer head type associated with each buffer
+
+
+
+kernel tries to cluster blocks and handle them as a whole, reducing the average number of head movements
+
+when a process wishes to read/write a disk block --> creates I/O request; kernel schedules this operation and perform it later (waits for another requests that will be
+processed together)
+
+Block I/O Operations
+	- the I/O operation tranfers a single block of data, so the transferred data can be kept in a single RAM buffer
+when the kernel read/writes single blocks in a filesystem	
+
+Page I/O operations
+	- the I/O operation tranfers as many blocks of data as needed to fill a single page frame	
+reading and writing files
+
+
+
+
+********************************************************
+Chapter 14. Disk caches
+	software mechanism that allows kernel to keep in RAM some info normally stored on a disk (improve access time, no disk access)
+
+
+Page Cache
+	- disk cache consisting of pages; each page in the cache corresponds to several blocks of a regular file
+	kernel never tries to read a page from disk without looking into page cache to see if requested data isn't already there
+	
+
+Buffer cache
+	consists of 2 kinds of data structures:
+		set of buffer heads describing the buffers in the cache
+		hash table 	
+
+
+
+*********************************************************
+Chapter 17. The ext2 and ext3 filesystems
+
+
+
+
+
+
+
+
+
+*********************************************************
+Chapter 18. Networking
+
+
+*********************************************************
+Chapter 19. Process Communication:
+
+
+
+3.5 Shared Memory
+shm_open : creates/opens a new object
+mmap : map the shared memory object into VAS of process
+munmap: unmap ...
+shm_unlink: remove a shared memory object name
+
+POSIX shared memory objects have kernel persistence:  a  shared  memory
+object will exist until the system is shut down, or until all processes
+have unmapped the object and it has been deleted with shm_unlink(3)
+
+processes must synchronize their access to a shared memory object using semaphores
+
+
+
+
+shm_open(3)    Create and open  a  new  object,  or  open  an  existing
+              object.  This is analogous to open(2).  The call returns
+              a file descriptor for use by the other interfaces listed
+              below.
+
+ftruncate(2)   Set the size of the shared memory object.  (A newly cre-
+              ated shared memory object has a length of zero.)
+
+mmap(2)        Map the shared memory object into  the  virtual  address
+              space of the calling process.
+
+munmap(2)      Unmap  the shared memory object from the virtual address
+              space of the calling process.
+
+shm_unlink(3)  Remove a shared memory object name.
+
+close(2)       Close the file descriptor allocated by shm_open(3)  when
+              it is no longer needed.
+
+fstat(2)       Obtain a stat structure that describes the shared memory
+              object.  Among the information returned by this call are
+              the  object's  size  (st_size),  permissions  (st_mode),
+              owner (st_uid), and group (st_gid).
+
+fchown(2)      To change the ownership of a shared memory object.
+
+fchmod(2)      To change the permissions of a shared memory object.
+

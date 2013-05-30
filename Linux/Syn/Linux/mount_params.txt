@@ -1,0 +1,22 @@
+# xfs_info /dev/sdc1
+meta-data=/dev/sdc1              isize=256    agcount=32, agsize=17146879 blks
+         =                       sectsz=512   attr=1
+data     =                       bsize=4096   blocks=548700128, imaxpct=25
+         =                       sunit=0      swidth=0 blks, unwritten=1
+naming   =version 2              bsize=4096
+log      =internal               bsize=4096   blocks=32768, version=1
+         =                       sectsz=512   sunit=0 blks
+realtime =none                   extsz=65536  blocks=0, rtextents=0
+
+
+a) default etc/fstab : 
+/dev/sdb1   /backup/sas01       xfs     defaults          0 2
+
+b) with "nobarrier" (at mount): 
+/dev/sdb1   /backup/sas01       xfs     defaults,nobarrier 0 2
+~10% improvement when creating files
+~5% improvement when deleting files
+
+c) current etc/fstab: 
+/dev/sdb1   /backup/sas01       xfs     defaults,noatime,nodiratime,nobarrier,logbufs=8  0 2
+- like in b)

@@ -1,0 +1,65 @@
+two tables with 1.000.000 entries each
+delete them all
+
+
+show_innodb_status:
+297.44 deletes/s, 297.52 reads/s
+464.49 deletes/s, 464.47 reads/s
+311.10 deletes/s, 311.10 reads/s
+406.29 deletes/s, 406.40 reads/s
+492.35 deletes/s, 492.55 reads/s
+543.46 deletes/s, 543.46 reads/s
+
+
+deletion of 50.000 batch from ACTIVITY_LOG = +2m30s
+ DEBUG --2010-10-01 13:59:04 -backup.bkschd.Master[2337][/bkschd/bkschd/MasterImplementation.cpp:4132]deleted from ACTIVITY_LOG: 50000, will checkActiveMaster
+ DEBUG --2010-10-01 14:01:35 -backup.bkschd.Master[2337][/bkschd/bkschd/MasterImplementation.cpp:4132]deleted from ACTIVITY_LOG: 100000, will checkActiveMaster
+ DEBUG --2010-10-01 14:04:32 -backup.bkschd.Master[2337][/bkschd/bkschd/MasterImplementation.cpp:4132]deleted from ACTIVITY_LOG: 150000, will checkActiveMaster
+ DEBUG --2010-10-01 14:06:53 -backup.bkschd.Master[2337][/bkschd/bkschd/MasterImplementation.cpp:4132]deleted from ACTIVITY_LOG: 200000, will checkActiveMaster
+ DEBUG --2010-10-01 14:09:21 -backup.bkschd.Master[2337][/bkschd/bkschd/MasterImplementation.cpp:4132]deleted from ACTIVITY_LOG: 250000, will checkActiveMaster
+ DEBUG --2010-10-01 14:12:19 -backup.bkschd.Master[2337][/bkschd/bkschd/MasterImplementation.cpp:4132]deleted from ACTIVITY_LOG: 300000, will checkActiveMaster
+ DEBUG --2010-10-01 14:15:04 -backup.bkschd.Master[2337][/bkschd/bkschd/MasterImplementation.cpp:4132]deleted from ACTIVITY_LOG: 350000, will checkActiveMaster
+ DEBUG --2010-10-01 14:17:43 -backup.bkschd.Master[2337][/bkschd/bkschd/MasterImplementation.cpp:4132]deleted from ACTIVITY_LOG: 400000, will checkActiveMaster
+ DEBUG --2010-10-01 14:19:57 -backup.bkschd.Master[2337][/bkschd/bkschd/MasterImplementation.cpp:4132]deleted from ACTIVITY_LOG: 450000, will checkActiveMaster
+ DEBUG --2010-10-01 14:22:18 -backup.bkschd.Master[2337][/bkschd/bkschd/MasterImplementation.cpp:4132]deleted from ACTIVITY_LOG: 500000, will checkActiveMaster
+
+----------------------------------------------------------------------------------------------------------------------
+
+After I modified no of records to be deleted in a batch (from 50.000 to 10.000), the following results were obtained:
+
+a) delete  from ACTIVITY_LOG where date_time < FROM_UNIXTIME(UNIX_TIMESTAMP() - 1) LIMIT 10000
+first test: 
+deletion of 10.000 batch from ACTIVITY_LOG = ~40s 
+DEBUG --2010-10-01 14:29:11 -backup.bkschd.Master[2683][/bkschd/bkschd/MasterImplementation.cpp:4132]deleted from ACTIVITY_LOG: 10000, will checkActiveMaster
+ DEBUG --2010-10-01 14:29:47 -backup.bkschd.Master[2683][/bkschd/bkschd/MasterImplementation.cpp:4132]deleted from ACTIVITY_LOG: 20000, will checkActiveMaster
+ DEBUG --2010-10-01 14:30:30 -backup.bkschd.Master[2683][/bkschd/bkschd/MasterImplementation.cpp:4132]deleted from ACTIVITY_LOG: 30000, will checkActiveMaster
+ DEBUG --2010-10-01 14:31:00 -backup.bkschd.Master[2683][/bkschd/bkschd/MasterImplementation.cpp:4132]deleted from ACTIVITY_LOG: 40000, will checkActiveMaster
+....
+ DEBUG --2010-10-01 14:46:50 -backup.bkschd.Master[2683][/bkschd/bkschd/MasterImplementation.cpp:4136]deleting records from ACTIVITY_LOG succeded, deleted: 344497
+ 
+
+second test:
+DEBUG --2010-10-01 15:15:14 -backup.bkschd.Master[2880][/bkschd/bkschd/MasterImplementation.cpp:4116]start expiryLoggingRecords, seconds: 1
+DEBUG --2010-10-01 15:27:58 -backup.bkschd.Master[2880][/bkschd/bkschd/MasterImplementation.cpp:4136]deleting records from ACTIVITY_LOG succeded, deleted: 300000
+~12 min for 1.000.000 from ACTIVITY_LOG
+
+
+
+
+delete  from SUMMARY where UNIX_TIMESTAMP(LOCALTIME())-1 > UNIX_TIMESTAMP(end_time) LIMIT 10000
+first test:
+deletion of 10.000 batch from SUMMARY = ~5s
+ DEBUG --2010-10-01 14:46:53 -backup.bkschd.Master[2683][/bkschd/bkschd/MasterImplementation.cpp:4162]deleted from SUMMARY: 10000, will checkActiveMaster
+ DEBUG --2010-10-01 14:46:55 -backup.bkschd.Master[2683][/bkschd/bkschd/MasterImplementation.cpp:4162]deleted from SUMMARY: 20000, will checkActiveMaster
+ DEBUG --2010-10-01 14:46:57 -backup.bkschd.Master[2683][/bkschd/bkschd/MasterImplementation.cpp:4162]deleted from SUMMARY: 30000, will checkActiveMaster
+ DEBUG --2010-10-01 14:47:01 -backup.bkschd.Master[2683][/bkschd/bkschd/MasterImplementation.cpp:4162]deleted from SUMMARY: 40000, will checkActiveMaster
+ .....
+ DEBUG --2010-10-01 14:58:52 -backup.bkschd.Master[2683][/bkschd/bkschd/MasterImplementation.cpp:4167]deleting records from SUMMARY succeded, deleted: 1000125
+
+
+second test:
+DEBUG --2010-10-01 15:28:01 -backup.bkschd.Master[2880][/bkschd/bkschd/MasterImplementation.cpp:4162]deleted from SUMMARY: 10000, will checkActiveMaster
+DEBUG --2010-10-01 15:30:34 -backup.bkschd.Master[2880][/bkschd/bkschd/MasterImplementation.cpp:4167]deleting records from SUMMARY succeded, deleted: 300001
+~2m30s for 1.000.000 from SUMMARY
+
+

@@ -1,0 +1,37 @@
+nslookup <host> <DNS server>
+dig <host>
+host <host>
+
+/etc/resolv.conf
+
+tcpdump -evvv "udp [dst|src] port 53"	- only DNS replies/requests
+
+
+"whois -h rs.internic.net yahoo" whois  newsiasi.ro
+  or "telnet rs.internic.net whois"
+
+
+1. Netstat
+- tool for checking your network configuration and activity
+netstat -r = routing table
+netstat -i = interface statistics
+
+netstat:
+-a = listening sockets
+-t = active TCP conn
+-l = only listening
+-n = numeric address
+
+2. nmap (network mapper)
+= tool for network exploration and security auditing
+
+port scanning:
+nmap 172.17.216.39  -p30000-30009
+-sT = (TCP connect scan)
+
+open = an application is actively accepting TCP connections, UDP datagrams or SCTP associations on this port
+closed = accessible (it receives and responds to Nmap probe packets), but there is no application listening on it
+
+
+shows the different programs and their versions, and which ports they use
+rpcinfo -p 

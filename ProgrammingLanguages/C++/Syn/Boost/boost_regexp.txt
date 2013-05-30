@@ -1,0 +1,5 @@
+Regular expressions = a form of pattern-matching that are often used in text processing
+			a string that describes or matches a set of strings
+			
+
+Perl regular expressions are the default behavior in Boost.Regex 				

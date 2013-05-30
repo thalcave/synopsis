@@ -1,0 +1,44 @@
+mount point = physical location in the partition used as a root filesystem
+
+
+Special purpose file systems
+- kernfs
+pseudo-file system (dynamically generated at boot) that provides access to information on the currently running kernel
+- procfs
+allows entries to be generated dynamically. This is generally done at boot.
+- specfs (without mount point)
+special filesystem
+- devfs
+is an interface for a device driver that appears in a file system as if it were an ordinary file.
+- tmpfs
+temporary file storage facility (stored in volatile memory)
+- sysfs
+virtual file system provided by Linux 2.6.
+Sysfs exports information about devices and drivers from the kernel device model to userspace,
+
+memory FS:
+tmpfs, proc, ramfs
+
+http://www.gnu.org/software/libc/manual/html_node/Mount-Information.html
+The filenames /etc/mtab  should never be used directly. The portable way to handle these file is to use
+the macro _PATH_FSTAB, defined in fstab.h, or _PATH_MNTTAB, defined in mntent.h and paths.h, for fstab;
+and the macro _PATH_MOUNTED, also defined in mntent.h and paths.h, for mtab. There are also two alternate macro names FSTAB, MNTTAB, and MOUNTED defined but these names are deprecated and kept only for backward compatibility.
+The names _PATH_MNTTAB and _PATH_MOUNTED should always be used.
+
+
+Monitor mounts:
+1. Read uevents from kernel via a Netlink socket and filter out those where "ACTION" is not "mount".
+- libudev:
+Every time the kernel gets an event in the device structure, it asks udev to take a look.
+udev follows the rules in the /etc/udev/rules.d/ directory.
+udev then uses the information given by the kernel to perform the necessary actions
+on the /dev structure (creating or deleting device files).
+2. Read and parse "/proc/mounts" when you get an event with a "mount" action.
+3. Find a record for a mount point with device that was just mounted and filter it out if it's not the directory you are watching.
+ DeviceKit-Disks
+
+
+ Filesystem in Userspace = FUSE
+
+ Apps:
+ devkit-disks --monitor-detail (only for block devices)

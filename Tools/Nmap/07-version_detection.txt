@@ -1,0 +1,75 @@
+	Chapter 7. Service and Application Version Detection
+
+- nmap uses a database, nmap-services, to map ports to more than 2,200 well-known services
+- this lookup is usually accurate
+
+
+Why do a "service and app version detection"?
+- maybe people run services on different ports
+- you really want to know which servers and versions are running
+	(having an accurate version number helps dramatically in determining which exploits a server is vulnerable to)
+- many services share the same port number
+
+
+
+High speed, parallel operation via non-blocking sockets
+Determines the application name and version number where available—not just the service protocol.
+
+---------------------------------------------
+examples
+nmap -A -T4 -F www.microsoft.com
+-A (aggressive) = Enables OS detection and Version detection, Script scanning and Traceroute
+-sV = enables version detection
+-F = tells Nmap to scan only ports registered in nmap-services.
+
+-----------------------------
+Technique
+for an open port
+	if excluded
+		leave
+
+	connect tcp
+	listen 5 seconds on it: Many common services (FTP, SSH, SMTP, Telnet, POP3, and IMAP servers) identify themselves
+					in an initial welcome banner
+				"NULL probe":  Nmap just listens for responses without sending any probe data
+		If the service is fully identified
+			leave (we are done with that port)
+
+	/* not identified or soft-match */
+	close TCP connection
+	start UDB probe
+		every probe has a list of port numbers that are considered to be most effective.
+		For example, the probe called GetRequest that recognizes web servers (among other services)
+		lists 80-85, 8000-8010, and 8080-8085 as probable ports.
+
+		Each probe includes a probe string which is sent to the port
+		Responses that come back are compared to a list of regular expressions
+
+	in most cases, NULL probe will suffice
+
+probe rarity = an indication of how likely the probe is to return useful data
+to control how many probes are tried when performing a version scan, choose an intensity level appropriate for a scan
+the higher an intensity level, the more probes will be tried.
+So if a very comprehensive scan is desired, a high intensity level is appropriate—even though
+it may take longer than a scan conducted at a lower intensity level.
+Nmap's default intensity level is 7 but Nmap provides the following switches for different scanning needs:
+--version-intensity <intensity level between 0 and 9>
+nmap -sSV -T4 -F -d --version-trace insecure.org
+
+-------------------------------------------
+Post-processors
+
+Nmap is usually finished working on a port once it has deduced the service and version information.
+However, there are certain services for which Nmap performs additional work.
+
+1. Nmap Scripting Engine Integration
+Some services cannot be recognized by simply sending a standard probe and matching a pattern to the response
+(Skype v2 service was designed to be difficult to detect due to the risk that incumbent carriers
+(such as phone companies providing DSL lines) would consider them a competitor and degrade or block the service from their subscribers)
+
+
+2. RPC Grinding
+
+SunRPC (Sun Remote Procedure Call) is a common Unix protocol used to implement many services including NFS
+
+

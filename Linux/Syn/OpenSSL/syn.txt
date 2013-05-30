@@ -1,0 +1,56 @@
+SSL = Secure Sockets Layer. 
+- cryptographic protocols
+- it is the standard behind secure communication on the Internet, integrating data cryptography into the protocol. 
+-data is encrypted before it leaves the computer and decrypted only at destination
+
+OpenSSL = API +command line tool
+
+BIO = abstraction library that handles files and sockets, secure or not
+
+
+SSLv2 = contained a number of security flaws which ultimately led to the design of SSL version 3.0
+This later served as the basis for TLS (Transport Layer Security) version 1.0
+
+SSLv23_method understands:
+- sslv2
+- sslv3
+- tlsv1
+- best choice when compatibility concern
+
+
+Salted Hash
+- 'Dictionary Attacks' are run against hashed passwords 
+- Brute Force attack -  all entries in a dictionary were hashed using MD5 and those hash values then are compared against the password database
+- the purpose of Salted Hash is to have this type of attack fail by attaching a random value - the so called salt - to each password 
+and only then compute the hash over password and salt
+- have to store three fields instead of user name and password: user name, salt and the salted hash of the password
+
+******************************************************************************************
+Secure Sockets Layer (SSL) is a security protocol that:
+* Encrypts information sent over the network.
+* Validates that a message sent to a recipient arrived without tampering.
+* Authenticates the server identity to prevent server spoofing.
+* With SSL 3.0, authenticates the client identity.
+
+Certification Authority (CA) =  a person or a group of people who owns the CA certificate and creates and manages server and client certificates
+-  issues trusted root certificates
+
+A client and server, or even two servers, can communicate with one another only if the server or client
+trying to make the connection has a trusted root certificate for the receiving server's certificate.
+
+******************************************************
+Replace certificates
+
+1) identify Unitix clients (there are scripts on them which can be used to get new certs)
+-for non-Unitix clients, which are under Puppet?
+
+2) double set of certs
+
+
+3) ctrl sends new certs to client
+Done by CISCO:
+1. autoenrollment with Key Rollover
+- router automatically requests a certificate from the certification authority
+- when the certificate xpires, a new certificate is requested.
+
+2. Manual Certificate Enrollment with Key Rollover

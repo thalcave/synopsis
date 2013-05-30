@@ -1,0 +1,92 @@
+Advanced Unix Programming
+
+
+man -k owner = apropos owner
+man 3 intro 
+truncate(char* filename, off_t length) - truncates a file	(truncate(file, 0) - empties file)
+
+l > /tmp/exfifo &
+tr '[a-z]' '[A-Z]' < /tmp/exfifo
+
+
+Sparse files
+create: open a file, lseek to a position, write something
+"od -cx" - dump files in octal and other formats
+
+fsync - synchronize a file's in-core state with storage device
+flock - applies or removes an advisory lock on a file
+fcntl - manipulate file descriptor (duplicate fd, fd flags, lock a file)
+
+Move files:
+	1. link (old, new);	(creates a new hard link)
+	2. unlink(old)
+or use rename(old, new);
+
+Copy files: cp
+	1. open source, open destination
+	2. read from source, write to destination
+	
+
+telldir(), seekdir() - tell/restore position in a dir
+atexit() - register a function to be called at normal process termination	
+stty - change and print terminal line settings
+
+popen - opens a process by creating a pipe,forking,and invoking the shell (uses pipe, fork and exec)
+
+Non-blocking I/O
+ - open with O_NONBLOCK
+ - use "fcntl" if file is already open (F_GETFL, F_SETFL)
+EAGAIN - error returned when using non-blocking I/O to indicate that no input was available for reading or no output possible for writing 
+
+-CPU overhead for fine-grained nonblocking --> have your process awakened at the right time:
+	register the I/O events that is interested in
+FD_ZERO  - initialize a set
+FD_SET   - add a fd to a set
+FD_CLR   - remove a fd from a set
+FD_ISSET - check if fd is in set	
+	specify a timeout value
+
+fileno() - examines a stream and returns its integer description (file descriptor)
+
+
+
+SIGPIPE - pipe is broken (the other process has closed the pipe)
+signal(SIGPIPE, SIG_IGN)	--ignore SIGPIPE signal
+
+----------------------------
+Fork
+
+differences between parent and child:
+	- pid
+	- parent pid
+	- value returned by fork
+	- execution time charged (in child, starts from 0)
+	- file locks, signals, alarms are not inherited by child
+
+open file descriptors for child are duplicated (as calling dup2)
+
+
+
+-----------------------------------
+IPC
+
+message queue - allows exchange of data between processes in the form of messages
+every message has a message priority = message type
+
+
+Semaphores
+- an integer whose value is never allowed to fall below zero
+ keeps track of a count and notifies interested processes when the count changes
+
+binary semaphore - 0 or 1
+mutex = simple form of binary semaphore 
+
+decrementing a semaphore = waiting on semaphore (when count reaches 0, the requestor must wait for the resource to become available)
+incrementing a semaphore = notifying the semaphore
+
+
+
+
+--------------------------------------------
+8) Sleep with subsecond precision:
+select() with all three sets empty, nfds zero, and a non-NULL timeout as a fairly portable way to sleep with subsecond precision.

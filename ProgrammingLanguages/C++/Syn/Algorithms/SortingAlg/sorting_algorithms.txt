@@ -1,0 +1,38 @@
+stable sorting algorithms = maintain the relative order of records with equal keys (i.e., values)
+	e.g if we are sorting pairs (i,j) only after (i), ...
+
+1) Merge sort:
+- O(n log n) comparison based sorting algorithm
+- divide and conquer (recursively breaking down a problem into two or more sub-problems of the same (or related) type,
+		      until these become simple enough to be solved directly.
+		      The solutions to the sub-problems are then combined to give a solution to the original problem.)
+
+merge sort:
+1. If the list is of length 0 or 1, then it is already sorted. Otherwise:
+	2. Divide the unsorted list into two sublists of about half the size.
+	3. Sort each sublist recursively by re-applying merge sort.
+	4. Merge the two sublists back into one sorted list
+
+two main ideas to imrove runtime:
+- A small list will take fewer steps to sort than a large list.
+- Fewer steps are required to construct a sorted list from two sorted lists than two unsorted lists
+
+- useful for sorting data on disk that is too large to fit entirely into primary memory
+
+wmatt@gmx.at
+b.walter@tele2.at
+alfons.falch@aon.at
+info@haus-christopherus.com
+walch.rudighof@pettneu.at
+thezusammen@googlegroups.com
+
+Sehr geehrte Damen und Herren,
+
+wir sind 8 Personen und suchen 4 Doppelzimmer , mit Fruehstueck, von 3 Januar bis 10 Januar.
+Bitte, sagen Sie mir ob frei Zimmer Sie haben und schicken Sie mir eine Angebot.
+Wenn Sie genug Zimmer fuer 8 Personen nicht haben, bitte sagen Sie mir wie viele Zimmer haben Sie (es ist keine Probleme, wenn wir getrennt sein werden; wir wollen nur in gleichen Ort stehen).
+
+Ich wuerde mich ueber eine Antwort freuen.
+
+Mit freundlichen Gruessen,
+Florin Micu.

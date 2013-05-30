@@ -1,0 +1,248 @@
+2.
+- by using the keyword explicit, you can prohibit a single argument constructor from defining
+an automatic type conversion.
+explicit Stack(int); Stack s; s = 40	//not allowed because explicit; otherwise would create a 40-length stack
+X x;			X x
+Y y(x) 	//explicit	Y y = x	//implicit
+
+*********************************************************************************************
+Chapter 3.
+static_cast = create a new object by converting the old object
+		float x; static_cast<int>(x)
+dynamic_cast = downcast a polymorphic type to its real static type
+const_cast = adds or removes the constness of a type
+
+return 0 in main is implicit; 
+constant static member can be initialised inside class
+
+
+allocator = special object to handle allocation and de-allocation of memory
+
+
+objects are destroyed when exceptions are thrown
+
+
+*********************************************************************************************
+Chapter 4.
+make_pair(1, "aaa").....pair<int,string> (1,"aaa")
+
+-----------------------------------------------
+Auto_ptr
+	- smart pointer to avoid memory leaking
+	- is a pointer that serves as the owner of the object it refers
+	
+{
+	std::auto_ptr<T> pt1, pt2;
+	pt1.reset(pt2.get());	--> error, destructor of T is called twice if we don't release it	
+	pt1 = p2; --> warning, ownership transfer
+	pt1.reset(pt2.release()) --> warning, ownership transfer
+}
+
+std::auto_ptr<ClassA> ptr( new CLassA()); ( cannot use assignment operator)
+
+strict ownership - 2 or more auto_ptrs must not own the same object at the same time
+	copy ctor and assignment operator TRANSFER OWNERSHIP of the objects they refer( previous owner has null pointer)
+	
+Function behave
+	as sink - an auto_ptr is passed by value --> the object gets deleted when function end
+	as source - when an auto_ptr is returned --> transferred ownership to caller
+	
+Allowing an auto_ptr to pass by reference is a VERY BAD DESIGN
+( a fct that gets an auto_ptr by reference might or might not transfer ownership)
+
+
+auto_ptr as member:
+	no longer need a destructor
+	may use a const auto_ptr<T> (prevents accidentaly transfer of owneship)
+	
+WARN: Copy ctor and assignment operator of your class would try to transfer ownership by default
+	write your copy ctor and....		
+		
+-----------------------------------------------		
+Scoped_ptr:
+	when only needed inside a scope
+	make sure that you don't transfer ownership accidentaly (non-copyable class) --> may be used as a class member
+	don't use it in Factory
+
+pointer aliasing = multiple pointers that references the same location or variable
+		
+
+*********************************************************************************************
+Chapter 5. Standard Template Library = containers, iterators, algorithms
+
+- algorithms = work with iterators, not containers
+	min_element, max_element, sort, find, reverse
+range = interval [begin, end)
+
+
+
+Iterator adapters 
+	insert iterators
+	stream iterators
+	reverse iterators
+		
+Insert iterators 
+	back_inserter = inserts at end( calls push_back)
+	front_inserter = insert at front
+	general inserter = inserts at a specific position
+Stream iterators
+ - read and write from a stream
+Reverse iterators
+ - they operate in reverse
+ - created via rbegin() and rend()
+ 
+
+
+ Remove elements 
+ - remove() removes some elements, but the size remained the same
+ - use erase() to removes "removed" elements
+ end = remove(list.begin(), list.end(), 3); list.erase( end, list.end() ) or
+ list.erase( remove(list.begin(), list.end(), 3), list.end() )
+ 
+ or list.remove(3);
+ 
+ for associative containers, call member functions to remove elements
+ - map.erase(3)
+
+for_each( list.begin(), list.end(), my_function)	/* do an operation for each element */
+find_if ( list.begin(), list.end(), isPrime )		/* find first element that is prime */
+
+Functor = object that behaves like a function
+- overload () in class X
+- X x; x() --> calls the operator
+for_each(list.begin(), lis.end(), x())
+
+
+Elements of a container
+ - must have a copy constructor
+ - must have an asignment operator
+ - destructor has to be public
+it may be a good idea to have
+ - default constructor, == operator, sorting criterion
+
+
+
+Errors and exceptions
+ - iterators must be valid
+ - ranges must be valid
+ - second and later ranges must have at least as many elements as the first one
+ - 
+
+
+
+*********************************************************************************************
+Chapter 6. STL containers
+strings can be seen as containers of chars
+splice(), unique()
+
+deques, unlike vector, frees memory of removed elements
+
+*********************************************************************************************
+Chapter 7. STL iterators
+iter_swap( it1, it2 ) - swap values that it1 and it2 refers
+
+
+*********************************************************************************************
+Chapter 8. STL function objects
+a functor is an object that has operator () defined
+
+
+*********************************************************************************************
+Chapter 9. STL algorithms
+	Nonmodifying algorithms: for_each(), count(), max_element(), find(), search()
+	Modifying algorithms : for_each(), transform(), copy(), merge(), replace(), replace_if()
+	Removing algorithms: remove(), remove_if(), unique()
+	Mutating algorithms: reverse(), rotate(), partition()
+	Sorting algorithms: sort(), make_heap()
+	Sorted range algorithms: binary_search(), lower_bound(), upper_bound(),
+	Numeric algorithmsi: accumulate(), partial_sum()
+	
+PRINT_ELEMENTS(), INSERT_ELEMENTS()
+
+
+*********************************************************************************************
+Chapter 10. Special containers
+
+Container adapters = adapt standard containers to fit special needs
+ - stack, queue, priority queue
+
+Stack = use deque
+stack.top() = 5 --> modify top
+- LIFO
+
+Queue = FIFO
+
+Priority queue
+-
+
+
+*********************************************************************************************
+Chapter 13. IO Stream classes
+- cout << x << y 		x is evaluated first
+- skipws flag
+
+- goodbit - all bits are cleared					good()
+- eofbit - end-of-file encountered					eof()
+- failbit (read a letter instead a int)					fail()
+- badbit - fatal error ( data is lost, corrupted etc.)			bad()
+
+if( cin >> x) : 
+	cin >> x returns cin
+	 --> if(cin) --> if(!fail())
+
+Streams throw no exceptions
+ - but it's possible to define, for every flag, to throw an exception when the flag is set
+ - exceptions()
+exceptions() - returns the flag that trigger exceptions
+exceptions(flags) - sets flags that trigger exceptions
+str.exceptions( failbit | badbit | eofbit)
+
+Manipulators 
+ - flush
+ - endl
+ - ends - insert a string termination character into buffer
+ - ws - reads and ignores whitespaces
+Flags
+- setf, unsetf, flags,  
+showpos, uppercase, 
+
+
+File access
+- post_type seekp <--> tellp
+- post_type seekg <--> tellg
+post_type : 
+
+tie = member function that connect a stream to an output stream ( sync so the second buffer is flushed before an operation to first stream)
+assure that before writing to error stream, standard output is flushed:
+	cerr.tie(&cout);
+
+rdbuf() = returns a pointer to a stream buffer
+
+Stream classes for strings:
+istringstream, ostringstream, stringstream
+
+
+*********************************************************************************************
+Chapter 15. Allocators
+
+
+special objects to handle allocation and deallocation of memory
+- provide an interface to allocate, create, destroy and deallocate objects
+
+
+
+Pointer-to-member
+- in addition to the address of the function, a pointer to a member function also needs to track the this pointer adjustment needed for a particular member function
+(have a Derived, a base class...derived object has a base object etc etc)
+
+- 
+
+
+
+
+Development and Design
+
+deal with complexity - divide and conquer --> break a problem into subproblems
+
+waterfall model - development progresses in a linear fashion
+	analysis --> development --> testing

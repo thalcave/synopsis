@@ -1,0 +1,100 @@
+ELF = Executable and Linking Format = file format that defines how an object file is composed and organized
+ - relocatable file: an object file that holds code and data suitable for linking with other object files to create an executable or a shared object file
+	.o, .ko
+ - executable file:  object file that holds a program suitable for execution
+ - shared object file: holds code and data suitable for linking in two contexts
+	these are the files that you usually see with suffix .so
+	
+readelf -h /name_of_elf	 				
+(file)
+
+----------------------------------------------------------------------------
+
+Entry point = memory address, corresponding to a point in the code of a computer program which is intended as destination of a long jump, be it internal or external.
+entry point = table of all the methods within the library
+	Calls into the library "jump through" this table, looking up the location of the code in memory, then calling it
+
+
+
+Library = collection of subprograms used to develop software.
+ - a set of routines which were copied into a target application by the compiler, linker, or binder, producing a standalone executable application. 
+
+
+DSO = mechanism which provides a way to build a piece of program code in a special format for loading at run time into the address space of an executable program. 
+	The DSO gets knowledge of the executable program symbol set as if it had been statically linked with it in the first place
+
+
+ldd /bin/sh
+	linux-gate.so.1 =>  (0xffffe000)
+there's not supposed to be a linux-gate.so.1 file present anywhere on the file system; 
+it's a virtual DSO, a shared object exposed by the kernel at a fixed address in every process' memory:
+cat /proc/self/maps:
+	the line marked [vdso] is the linux-gate.so.1 object in that process
+
+
+
+	
+dynamically linked = linked in name only, so that the executable file contains only the information needed to locate the code of a procedure - the name of the DSO 
+that contains it and the name of the entry point. When the executable program is loaded, the DSO is also loaded, and the linkage between them is fixed in memory only.
+
+statically linked = Linked as a physical part of an executable file. The linkage between calls and subprograms is completely fixed at link time
+
+
+----------------------------------------------
+
+Static library = computer library in which links are resolved at compile-time by a linker
+	static library = collection of object models that are placed together into an archive file
+	the object models are brought in by linker only if needed
+
+The following points characterize a static library:
+	Program has no main function to serve as entry point
+	Functions and objects to be exported must have external linkage (e.g. not be using the static keyword)
+
+
+
+Dynamic linking
+- data in a library is not copied into a new executable or library at compile time, but remains in a separate file on disk.
+- majority of the work of linking is done at the time the application is loaded (loadtime) or during the execution of the process (runtime)
+ -plugins are one common usage of dynamically linked libraries
+ 
+
+
+Dynamic loading
+- subset of dynamic linking where a dynamically linked library loads and unloads at run-time on request
+- the request to load such a dynamically linked library may be made implicity at compile-time( by adding library references)
+  or explicitly by the application at run-time (using a run-time linker API)- use dlopen, dlclose and dlsym
+ 
+
+
+Shared library
+	mechanism that allows a single copy of code to be shared amongst programs
+	libraries are also often classified according to how they are shared among programs.
+	Dynamic libraries almost always offer some form of sharing
+	Static libraries, by definition, cannot be shared; they are linked into each program.
+
+/etc/ld.so.cache = cache file that indicates were libraries can be found
+$LD_LIBRARY_PATH
+- the code must be compiled as PIC (if not, the dynamic loader would create multiple copies of the same library in memory)
+
+a) sharing of code located on disk by unrelated programs.
+b) sharing of code in memory, when programs execute the same physical page of RAM, mapped into different address spaces
+ PIC = Position Independent Code = object code that can execute at different locations in memory
+	- commonly used for shared libraries so that the same library code can be mapped to a location
+	 in each application (using the virtual memory system) where it won't overlap the application or other shared libraries
+	Position-independent code can be copied to any memory location without modification and executed
+
+the most common filename extension for shared library files is .so
+- filenames always start with lib, and end with .a (archive, static library) or .so (shared object, dynamically linked library), 
+with an optional interface number
+
+
+
+Benefits of static libraries
+ - simple to use
+ - standalone executable (contains everything it needs)
+ - no PIC needed
+
+Benefits of shared libraries
+ - code sharing saves system resources
+ - several programs depending on a shared library can be fixed at once by replacing the common library
+ - linking dynamically at runtime

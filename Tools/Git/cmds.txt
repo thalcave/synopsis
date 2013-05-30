@@ -1,0 +1,55 @@
+https://github.com/thalcave/algorithms.git
+
+GitHub
+
+1. Create a new repository on the command line
+touch README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/thalcave/algorithms.git
+git push -u origin master
+
+Push an existing repository from the command line
+git remote add origin https://github.com/thalcave/algorithms.git
+git push -u origin master
+
+
+2. Create a new repository on github
+a. create repo on github
+b. clone it locally
+git clone https://github.com/thalcave/filemon.git
+
+c.
+add new files, commit them
+git push -u origin master
+
+
+Branches
+
+git branch [new-head-name] [reference to] :  create branch
+git checkout [head-name] : switch to this branch (overwrites files in curdir)
+git branch : lists the existing heads
+git diff head1..head2 : diff between heads
+git log head1..head2 : changelog between heads
+git merge [branch] : merge branch in current head
+git branch -d head : deletes a head
+
+
+Remote repo
+
+git fetch - Download objects and refs from another repository
+git pull  - runs git fetch with the given parameters and calls git merge to merge the retrieved branch heads into the current branch
+git push  - sends data to remote server
+git push -u origin master
+git remote show origin
+
+Rebase
+git rebase
+
+Stash
+git stash list
+git stash save <message>
+git stash apply stash@{0}
+git stash pop
+git stash clear

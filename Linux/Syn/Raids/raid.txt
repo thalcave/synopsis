@@ -1,0 +1,53 @@
+parity bit = bit that is added to ensure that the number of bits with the value one in a set of bits is even or odd.
+1010001 (3) --> PB = 1 --> 11010001
+1101001 (4) --> PB = 0 --> 01101001
+
+
+RAID0: splits data evenly across two or more disks(striped) without parity
+
+RAID1: An exact copy (or mirror) of a set of data on two disks
+
+RAID2: stripes data at the bit (rather than block) level,
+
+RAID3: uses byte-level striping with a dedicated parity disk.
+is very rare in practice.
+
+
+RAID4: uses block-level striping with a dedicated parity disk
+
+RAID5: uses block-level striping with parity data distributed across all member disks
+
+
+
+RAID 6 extends RAID 5 by adding an additional parity block;
+	thus it uses block-level striping with two parity blocks distributed across all member disks.
+
+The usable capacity of a RAID 6 array is (n-2) *Smin
+n = the total number of drives in the array
+Smin = the capacity of the smallest drive in the array.
+
+
+RAID10: arrays consist of a top-level RAID-0 array (or stripe set) composed of two or more RAID-1 arrays (or mirrors).
+
+"RAID 0+1": a mirror made of stripes
+In contrast to RAID 10, so-called RAID 0+1 arrays consist of a top-level RAID-1 mirror
+composed of two or more RAID-0 stripe sets.
+A single-drive failure in a RAID 0+1 configuration results in one of the lower-level stripes completely failing
+(as RAID 0 is not fault tolerant), while the top-level mirror enters degraded mode.
+
+
+
+RAID5 vs RAID10
+RAID 6 imposes that aforementioned 6x write penalty and RAID 5 imposes a 4x penalty, RAID 1+0 imposes just a 2x penalty and has
+other significant benefits:
+* Better write performance. RAID 1+0 imposes only a 2x write performance hit.
+
+* Faster rebuild speed. Rebuilding a failed disk that takes part in a mirror is a much faster process than rebuilding a failed disk
+from a RAID 6 array. If you implement a hot spare, the rebuild process can go quite quickly, making it less likely that you’ll suffer
+the simultaneous loss of a second disk.
+
+* Can withstand the loss of multiple disks (in some cases). This is a bit of a shaky proposition, but is important to note.
+In every case, RAID 6 can withstand the loss of two disks in an array; this is one of the main value propositions for those who use RAID 6.
+As long as disks aren’t lost on both sides of the mirror sets, RAID 1+0 can also withstand the loss of multiple disks.
+If the stars were aligned correctly, you could theoretically lose every disk on one side of the mirror and still be operational on the other copy of the data. Again, don’t count on losing disks on one side of the mirror, but it’s still important to understand.
+Performance degradation during rebuild process is minimal. When a RAID 6 disk fails, the rebuild process can have a seriously negative impact on overall storage performance due to the need to recalculate parity. With RAID 10, re-establishing a broken mirror is a relatively behind-the-scenes process.

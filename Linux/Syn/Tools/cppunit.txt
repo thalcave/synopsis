@@ -1,0 +1,26 @@
+unit test framework = software tools to support running and writing unit tests
+
+black box test - a test that runs a program and check if it was succesfully or not
+white box test - when we can access internal code
+
+failure = unit test reports that a test condition was evaluated to false
+error = unexpected problem
+application = software objects linked together; unit tests = use application's objects;
+A unit test should test a particular behaviour within production code.
+test coupling = a test depends on the result of other tests
+
+XP = Extreme Programming
+TDD = test driven development
+	1.write a test and see it fail
+	2.write the code so that test will succeed
+	3.verify both the new code and the test
+plain assert = most generic type of test assertion, which take a Boolean condition that must evaluate
+
+
+
+Factory Method is a creational pattern. 
+Model an interface for creating an object which at creation time can let its subclasses decide which class to instantiate
+"Manufacturing" an Object.the use of factories gives the programmer the opportunity to abstract the specific attributes 
+of an Object into specific subclasses which create them.
+"Define an interface for creating an object, but let the subclasses decide which class to instantiate. The Factory method lets a class defer instantiation to subclasses" 
+

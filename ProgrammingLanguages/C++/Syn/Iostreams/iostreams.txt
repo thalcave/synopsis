@@ -1,0 +1,36 @@
+<< = inserter for streams
+>> = extractor for streams
+
+Stream = object that formats and holds bytes
+	Input stream = istream
+	Output stream = ostream
+
+good(), eof(), bad(), fail()
+
+File streams
+	ifstream, ofstream
+	assure() to check if it's ok
+	rdbuf() = returns a pointer to the object's streambuf
+		ifstream if("file1.txt");
+		ofstream of("file2.txt");
+		of << if.rdbuf();	
+
+Seeking in iostreams
+a)Streampos = absolute location in a file
+	- first call a "tell" function(tellp or tellg) that returns a streampos
+	- call seekp or seekg with streampos
+b)Use overloaded versions of seekp and seekg
+ios::beg, ios::cur, ios::end
+in.seekg(0, cur::end) = end of file
+in.seekg(0, cur::begin) = begin of file
+
+
+Stringstreams have replaced strstreams
+Strstream = works directly with memory
+
+
+Formatting
+Class ios contains members to store all formatting data
+
+
+-----------------------------------

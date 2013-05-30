@@ -1,0 +1,25 @@
+vmstat
+urpmi.addmedia
+rpmdrake
+awk
+drakconf
+uname
+stat
+lsmod, lspci
+fdisk -l 
+ipcs - provide information on ipc facilities
+find . -name aads
+mount
+
+fsck, fstab, mkfs
+kill -l
+
+chkconfig -  updates  and queries runlevel information for system services
+
+fdisk - create partitions
+mke2fs - format & create fs
+mkswap - format and create swap
+
+
+find . -mindepth 2 -type f -exec cp {} . --backup=t \; 
+sed 's/florinm.ro.schlund.de/localhost.localdomain/g' 5bkctrl.conf >> aaa

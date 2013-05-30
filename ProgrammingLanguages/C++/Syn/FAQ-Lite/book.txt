@@ -1,0 +1,330 @@
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+*******************************************************************
+Chapter 11. References
+- a reference is an alias
+- use references when you can, pointers when you must
+	a pointer is a separate object
+	a reference is merely an alternate name
+
+
+*******************************************************************
+Chapter 12. New and delete
+
+Fred* f = new Fred();
+	1 step: allocate sizeof(Fred) bytes of memory using "operator new(size_t nbytes)" (memory allocator primitive similar to malloc)
+	2 step: call the apropriate constructor of class
+
+delete f
+	1 step : call the destructor of object p
+	2 step : release the memory using deallocation primitive "operator delete(void* p)"
+
+- allocates and initialize an object
+- returns a pointer of correct type (malloc returns void* which can be converted but is not type-safe)
+- flexibility: it can be overloaded for different classes
+
+------------------------------------------------------------------------
+{
+memcpy(): bitwise copying is evil
+if a class doesn't have a CopyCtor --> an implicit one is used (bitwise copy for primitive types):
+	class Evil { char* data; }
+	Evil ev1;
+	Evil ev2 = ev1; --> ev2.data points to the same string as the original
+(the compiler-synthesized copy constructor and assignment operators copy only the pointer (shallow copy) rather than the referent (deep copy))
+	if ev1 is destroyed --> ev2.data is a dangling pointer
+}
+------------------------------------------------------------------------
+
+
+delete p : will delete the referent *p, not the pointer itself
+if "operator new" runs out of memory, will throw bad_alloc --> check p must NOT be performed
+if "operator new" is replaced: new Fred() with new(nothrow) Fred() , will not throw --> must check p
+Calling delete p when p is NULL is safe and is guaranteed to do nothing
+
+if a pointer is deleted twice:
+	Fred* p1 = new Fred();
+	Fred* p2 = p1;
+	delete p1; 	the object *p is safely destructed and the memory pointed to by p is safely returned to the heap
+	delete p2; 	the remains of what used to be an object at *p are passed to the destructor (which could be disastrous),
+				and the memory pointed to by p is handed back to the heap a second time
+
+What if delete p (not delete[] p) is used to delete an array allocated via new Fred[n]?
+	catastrophe
+	char* p = new char[n];
+	delete p;	//error: should've been delete[] p
+
+------------------------------------------------------------------------
+
+placement new:
+	new(ptr) T(val) - constructs a T at ptr
+ destructor must be explicitly called: p->~Foo()
+(the only time a destructor should be called explicitly is when the programmer is in total control of the storage allocation and lifetime of the object
+	in other words, only with objects initialized by the placement new syntax. )
+
+
+void* raw = allocate (sizeof(Foo));
+					equal to 		Foo* p = new Foo();
+Foo* p = new(raw)Foo();
+
+// This is functionally what happens with Foo* p = new Foo()
+{
+
+
+	 Foo* p;
+
+	 // don't catch exceptions thrown by the allocator itself
+	 void* raw = operator new(sizeof(Foo));		//allocate memory
+
+	 // catch any exceptions thrown by the ctor
+	 try {
+	 //placement new
+	   p = new(raw) Foo();  // call the ctor with raw as this
+	 }
+	 catch (...) {
+	   // oops, ctor threw an exception
+	   operator delete(raw);
+	   throw;  // rethrow the ctor's exception
+	 }
+}
+
+this is the reason why memory WILL NOT LEAK if Foo ctor throws an exception
+
+------------------------------------------------------------------------
+
+
+How can class Fred guarantee that Fred objects are created only with new and not on the stack?
+	make ctors private or protected
+	provide static create functions that returns pointers to new created objects
+
+
+Is it legal (and moral) for a member function to say delete this?
+Yes, but be very carefully:
+1. The this object must have been allocated via new, not by new[] nor by placement new nor by a local object on the stack nor by a global nor by a member of another object.
+	It has to have been allocated by plain, ordinary new.
+2. The member function that contains delete this; must be the last member function that is invoked on the this object.
+3. The remainder of the member function after the delete this; line must not touch any piece of the this object,
+	including calling any other member functions or touching any data members.
+4. No other piece of code should even examine the this pointer itself after the delete this; line.
+	No one may examine it, compare it with another pointer, compare it with NULL, print it, cast it, do anything with it.
+5. Make sure no one else does a delete on the object. For example, if the object is still being held by an auto_ptr (which would be a good thing!),
+	the release() member function must be called on the auto_ptr; otherwise the auto_ptr will delete the object again, which would be a disaster.
+
+
+After p = new Fred[n], how does the compiler know that there are n objects to be destructed during delete[] p?
+	Whenever someone says Fred* p = new Fred[n], the runtime system is required to store the number of objects, n, in a place
+		that can be retrieved knowing only the pointer, p.
+
+	a) might store it in a map: map<void*,size_t>
+		the code generated by delete[] p would look up the pointer in the associative array, would extract the associated size_t,
+		then would remove the entry from the associative array.
+	slower but safer: if someone forgets [], only first object will be destroyed
+
+	b) the code generated by p = new Fred[n] might allocate an extra sizeof(size_t) bytes of memory (possibly plus some alignment bytes) and put the value n
+		just before the first Fred object. Then delete[] p would find n by looking at the fixed offset before the first Fred object
+		(that is, before *p) and would deallocate the memory starting at the beginning of the allocation
+		(that is, the block of memory beginning the fixed offset before *p).
+
+
+*******************************************************************
+Chapter 19. Friends
+friends can be:
+	functions
+	other classes
+	individual member functions of other classes
+considered tight cohesion, a good thing:
+	overall effect: keep private things private
+	eliminate potential misuse by unknonw users when making members public
+
+if encapsulation is viewed as a suite of member functions withing a class, friendship breaks it
+encapsulation barrier encapsulates an abstraction, not just a class so friends are part of encapsulation
+
+when should a function be implemented as a friend rather than a member?
+when it can improve readability of code
+
+The compiler ignores the access level (private:, protected:, or public:) where friend functions are declared. 
+However, for documentation purposes, they should normally be declared in the public: part of the class since friend functions are inherently public: 
+(most friend functions are non-member functions and are therefore conceptually declared outside the class).
+
+friendship 
+	is not tranzitive
+	is not inheritated (if Base is a friend, Derived is not) - if it were, everyone would derive from friend to gain access
+	is not virtual: friend functions don't bind dynamically
+
+Virtual Friend Function Idiom:
+	 the friend function should call a hidden (usually protected) virtual member function
+Ex: printing an entire hierarchy of class
+    provide a friend operator<< for Shape that calls a protected(private) virtual member function
+    
+ 		
+	
+
+
+
+****************************************************************************
+Chapter 26. Exception Tactics
+
+zombie object - an object whose constructor failed but did not throw; instead, an internal flag is set to indicate that the object is unusable
+			class provides an inspector member that user can see if object is zombie or not
+
+Under what circumstances can an overridden virtual member function
+	throw exceptions other than those listed by the specification of the member function in the base class?
+When the exception is an object of a class that is publicly derived from one of the classes mentioned in the exception specification of the base class's member function.
+This ensures that users of the base class won't be surprised.
+
+
+Two common reasons a program might crash:
+- If an exception is thrown but not caught, terminate() is called, which calls abort() by default.
+	The solution is to wrap main() in a try block that has a catch (...) clause
+	If that doesn't work, look for a constructor of a file-scope static object that might throw an exception.
+	Another way to handle this problem is to replace the terminate function with one that prints an appropriate message before it calls abort().
+-If an exception is thrown that didn't match anything on the exception specification list, unexpected() is called, which calls terminate() by default,
+	which calls abort() by default.
+	The solution is to replace the behavior of unexpected() with a function that prints an appropriate message..or a better solution: remove exception specification list
+
+
+
+PART IV. TOPICS
+	programming guidelines
+
+
+*******************************************************************
+Chapter 29. Mixing Overloading with Inheritance
+	overload - same scope, same name, different signature
+	override - different scopes, same name, same signature, virtual required
+
+hiding rule = an entity in an inner scope hides things with the same name in an outer scope
+
+
+*******************************************************************
+Chapter 31. Using objects to prevent memory leaks
+
+memory leak = program allocates memory off the heap and doesn't return it when it's no longer needed
+	--> system runs out of free memory and crashes
+
+Easiest way to avoid memory leaking = place pointers inside objects
+	pointer return by new should be stored as a class member
+	class destructor should call delete
+
+Ownership 	- every allocated resource is owned by exactly one resource manager object
+Responsability  - resource manager object is responsible with deallocation
+Focus		- resource manager does nothing other than manage the individual resource
+
+--------------
+Should the object that manages a resource also perform operations that may throw exceptions?
+	Not usually.
+WARNING - if ctor throws after an allocation, dtor is not called --> memory leak
+	USE smart pointers
+
+either an object should focus on being a resource manager( non-violating the 3 rules --> not doing anything else)
+	or should delegate the resource management responsability to other class( auto_ptr, shared_ptr etc)
+
+
+Should an object manage two or more resources?
+	not usually....use composition to combine multiple "pure" resource manager objects
+
+
+
+
+Apple a;
+Apple b;
+b = a;
+
+Copy(value)-semantics 		= a and b are different apples that have exactly the same color, shape etc
+Reference(pointer)-semantics	= a and b are two references to the same apple
+Move-semantics 		= transfer ownership of a resources held by an object to a new object
+
+
+-------------------------------
+How easy is it to implement reference counting with pointer semantics?
+
+reference-counting = each object keeps track of how many pointers are pointing at it
+	when the object no longer has pointers pointing at it, the object deletes itself
+
+
+Copy-on-write semantics  - allows users to think they're copying Fred objects,
+	but in reality the underlying implementation doesn't actually do any copying unless and until some user actually tries to modify the copied Fred object
+
+
+- users can freely copy Fred objects,
+but the actual data isn't copied unless and until a copy is actually needed. This can help improve performance in some cases.
+- different than shared ownership
+
+
+****************************************************************************
+Chapter 32. Wild Pointers
+
+
+Wild pointer = pointer that refers to garbage
+	uninitialized pointer, dangling reference
+
+- never return a reference or a pointer to a local (auto) object
+- avoid storing the address of a local object created in an inner scope in a pointer in an outer scope
+
+safe to bind a reference variable to a temporary object?
+	Yes, as long as that reference isn't copied into another reference or pointer.
+	- normally, a temporary object lasts only until the end of the full expression in which it appears:
+		int f = funct();
+	- however, C++ deliberately specifies that binding a temporary object to a reference to const on the stack lengthens
+		the lifetime of the temporary to the lifetime of the reference itself, and thus avoids what would otherwise be a common dangling-reference error.
+		const int& f = funct();
+	- if we remove const, it would be an error: only lvalues can be bound to references to non-const.
+	- it doesn't work for references that are members of objects
+When the reference goes out of scope, which destructor gets called?
+	- the same destructor that would be called for the temporary object. It's just being delayed.
+
+	Derived factory(); // construct a Derived object
+	void g() {
+	  const Base& b = factory(); // calls Derived::Derived here
+	  // ...use b...
+	} // calls Derived::~Derived directly here - not Base::~Base + virtual dispatch!
+
+
+
+****************************************************************************
+Chapter 33. High-Performance Software
+	bad performance is due to bad design.
+
+Techniques to improve
+	a)knowing where the bottleneck is: cpu-bound, network-bound, i/o bound, database bound etc
+
+	b)for network or i/o bounds, minimize operations even if increase granularity
+
+granularity = the amount of computation in relation to communication, i.e., the ratio of computation to the amount of communication.
+	Fine-grained("tightly coupled") parallelism = individual tasks are relatively small in terms of code size and execution time.
+		The data are transferred among processors frequently in amounts of one or a few memory words.
+	Coarse-grained("loosely coupled") = data are communicated infrequently, after larger amounts of computation.
+
+
+
+
+*******************************************************************
+Chapter 37. Private and protected inheritance
+
+Private and protected inheritance
+	- from user point, similar to composition( has-a, not a isa-a): an inner object is contained inside the outer object
+	- it;s not allowed to convert a derived pointer to its private or protected base class pointer
+
+difference:
+	Private inh: only members and friend of derived class can acces base object
+	Protected  : members and friends of classes derived from protected derived can access base object
+class carB : private Engine	--> carB is not a kind-of Engine
+
+Main difference between composition and private/protected Inh:
+	- composition cannot access protected members of base class
+	- MEMBERS of carB can convert a carB* to Engine*
+
+use composition when you can, P&P inheritance when you have to
+
+composition
+	fewer dependencies between classes
+P&P inh:
+	- when the relationship is a has-a but the interface of contained class is insuficient
+	- when you want to build a class Fred that uses code in a class Wilma, and the code from class Wilma needs to invoke member functions from your new class, Fred
+	Fred calls non-virtuals in Wilma, and Wilma calls (usually pure virtuals) in itself, which are overridden by Fred
+
+
+In a private or protected derived class, how can a member function that was public in the base class be made public in the derived class?
+	The name (not the entire signature) of the member function should be declared in the public interface of the derived class preceded by the keyword using
+		using Base::f;

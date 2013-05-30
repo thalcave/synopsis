@@ -1,0 +1,2 @@
+cat /proc/sys/kernel/core_pattern
+ulimit -Sc unlimited

@@ -1,0 +1,38 @@
+********************************************
+Chapter 5. Using strings
+- begins at 1, not 0
+
+string. lower
+	upper
+	reverse
+- take an arg by value, return and does not modify arg
+string. rep("a", 5) - repeats string N times
+	sub(string, start, end)
+	len
+tostring
+string.format
+
+	
+-1 = last char in the string (end)
+-2 = second-to-last...and so on
+
+Pattern-matching
+- gsub = global substitution
+
+bracket class: [ /,.- ] = matches a char if it's a " " "/" "," "." or "-"
+^ (caret) = will match only at the beginning
+	find(string, "^abc") --> only if string begins with "abc"
+$ = will match only at the end
+	find(string, "abc$") --> only if string ends with "abc"
+
+p[aeiou]t = pat or pet or...
+p[a-d]t = pat or pdt or..
+[a-emnv-z] - matches letters a through e, mn, v through z
+[^aeiou] - match any char that ISN'T a vowel
+
+string.gsub(Str, "%s+", " ")
+- turns all whitespaces into a single space
+%s - mathches a whitespace char
+
++ - as many as possible
+

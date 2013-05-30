@@ -1,0 +1,146 @@
+scripts to automate a wide variety of networking tasks
+
+tasks handled:
+- Network discovery
+- More sophisticated version detection
+- Vulnerability detection
+- Backdoor detection
+
+-sC = enable the most common scripts
+"--script" option to choose your own scripts
+
+Script Categories:
+- auth: try to determine authentication credentials on the target system
+- default: the default set and are run when using the -sC or -A options
+- discovery: try to actively discover more about the network by querying public registries etc.
+- dos: may cause denial of service, usually because they crash a service as a side effect of testing it for a vulnerability.may cause denial of service, usually because they crash a service as a side effect of testing it for a vulnerability.
+- intrusive: the risks are too high that they will crash the target system
+- safe: scripts that don't crash services, use large amounts of network bandwidth or other resources, or exploit security holes
+
+-------------------------------------------------------------------------------------
+
+Script Types and Phases
+
+1. Prerule scripts
+- these scripts run before any of Nmap's scan phases
+- can be useful for tasks which don't depend on specific scan targets (e.g  performing network broadcast requests to query DHCP and DNS SD servers)
+- contain a "prerule function"
+
+2. Host scripts
+- these scripts run during Nmap's normal scanning process AFTER Nmap has performed:
+	host discovery, port scanning, version detection, and OS detection against the target host
+- this type of script is invoked once against each target host which matches its "hostrule function"
+
+3. Service scripts
+- these scripts run against specific services listening on a target host (e.g more than 15 http service scripts to run against web servers)
+- these are the most commong Nmap script type
+- they contain a "portrule function" for deciding which detected services a script should run against
+
+4. Postrule scripts
+- these scripts run after Nmap has scanned all of its targets
+- they can be useful for formatting and presenting Nmap output
+- they contain "postrule function"
+
+
+-------------------------------------------------------------------------------------
+Command-line Arguments
+-sC: Performs a script scan using the default set of scripts
+--script <filename>|<category>|<directory>|<expression>|all[,...]
+--script-args: provides args to script
+--script-trace:
+
+
+Script Selection
+- supports logical operator: not, and, or
+nmap --script "http-*"
+nmap --script "not intrusive"
+nmap --script "default and safe": scripts both in "default" and in "safe"
+nmap --script "default or safe": scripts in "default" or "safe" category
+
+
+-------------------------------------------------------------------------------------
+Script format:
+1. The Head: meta information
+a. description Field
+b. categories Field
+	categories = {"default", "discovery", "safe"}
+c. author Field
+d. license Field
+e. dependencies Field
+- an array containing the names of scripts that should run before this script
+- listing a script in dependencies doesn't cause that script to be run but merely forces an ordering
+among the scripts that are selected
+	dependencies = {"smb-brute"}
+
+
+
+2. Rules:
+- A rule is a Lua function that returns either true or false
+- The script "action function" is only performed if the rule evaluates to true
+- A prerule or a postrule will always evaluate to true
+
+A script must contain one or more of the following functions that determine when the script will be run:
+- prerule()
+	script runs before any of Nmap's scan phases
+- hostrule(host)
+	runs during Nmap's normal scanning process AFTER Nmap has performed:
+		host discovery, port scanning, version detection, and OS detection against the target host
+- portrule(host, port)
+	runs against specific services listening on a target host
+- postrule()
+	runs after Nmap has scanned all of its targets
+
+3. Action:
+- contains all of the instructions to be executed when the script's prerule, portrule, hostrule or postrule triggers
+- NSE scripts generally only return messages when they succeed, so they don't flood the user with pointless alerts.
+
+
+-------------------------------------------------------------------------------------
+Script Language
+- see intro to Lua
+
+NSE had to be easy to use, small in size, compatible with the Nmap license, scalable, fast and parallelizable
+- Perl, Python, and Ruby = difficult to embed efficiently
+Lua :
+	small
+	distributed under the liberal MIT open source license,
+	coroutines for efficient parallel script execution,
+	designed with embeddability in mind
+	excellent documentation
+	actively developed by a large and committed community.
+used: In video game development (warcraft, Mafia, FarCry etc)
+Snort is a free and open source network intrusion prevention system
+Wireshark network packet analyzer
+VLC media player
+
+
+--------------------------------------------------
+NSE Libraries:
+57 Libraries written in Lua
+Scripts need only require the default libraries in order to use them
+
+examples:
+brute
+ - the brute library is an attempt to create a common framework for performing password guessing against remote services.
+comm
+ - common communication functions for network discovery tasks like banner grabbing and data exchange.
+mysql
+shortport
+- functions for building short portrules.
+
+A few of the modules included in nselib are written in C or C++ rather than Lua:
+bit
+- bitwise operations on integers.
+pcre
+ -perl Compatible Regular Expressions.
+
+
+--------------------------------------------------
+NMap API
+
+Network I/O API
+- Nsock, the Nmap socket library
+
+Exception Handling
+
+-------------------------------------------------------------------------------------

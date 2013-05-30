@@ -1,0 +1,40 @@
+Autoconf, Automake and Libtool are packages for making your software more portable and to simplify building it.
+
+Autoconf = tool that makes your packages more portable by performing tests to discover system characteristics before the package is compiled. 
+	   Your source code can then adapt to these differences.
+Automake = tool for generating `Makefile's--descriptions of what to build--that conform to a number of standards. 
+	   Automake substantially simplifies the process of describing the organization of a package and performs additional functions such as dependency 
+	   tracking between source files. 
+
+Libtool  = command line interface to the compiler and linker that makes it easy to portably generate static and shared libraries, 
+	   regardless of the platform it is running on.
+
+Building a program = two steps: 
+1)configuration step
+	-the configuration step would generate `Makefile's, and perhaps other files, which would then be used during the build step.
+2)build step. 
+	-the build step used the standard Unix make program. The make program reads a set of rules in a `Makefile', and uses them to build a program. 
+
+Configure -->  transform the `Makefile.in' file into a `Makefile' used by the make program.
+A `Makefile.in' file has to describe how to build the program
+Automake is a program run by a developer. The developer writes files named `Makefile.am' and Automake reads the `Makefile.am' files and produces `Makefile.in' files
+
+Makefile.am --> Makefile.in -->Makefile
+(programmer)    (automake)     (configure) 
+
+A `Makefile' = a specification of dependencies between files 
+		and how to resolve those dependencies such that an overall goal, known as a target, can be reached.
+
+***************************************************************************************************
+Project:
+	`Makefile.am' is an input to automake. 
+	`configure.in' is an input to autoconf.
+
+$aclocal	--> collect all of the macro definitions for autoconf to use when generating `configure'
+$autoconf --> create configure script
+$automake --add-missing -->Makefile.in
+$./configure --> creeaza Makefile.
+***************************************************************************************************
+
+
+The primary goal of Automake is to generate `Makefile.in's from Makefile.am

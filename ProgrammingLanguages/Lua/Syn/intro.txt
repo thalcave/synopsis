@@ -1,0 +1,63 @@
+imperative programs =
+	define sequences of commands for the computer to perform.
+	computation in terms of statements that change a program state
+	explicitly provided algorithm.
+
+
+
+
+Declarative Programming=
+	expresses the logic of a computation without describing its control flow.
+	"what" rather than "how"
+
+ 	Functional programming =  computation as the evaluation of mathematical functions and avoids state and mutable data.
+		Erlang, Haskell, Lisp, Lua
+	Logic programming
+
+
+
+Metaprogramming
+	the writing of computer programs that write or manipulate other programs (or themselves) as their data,
+	or that do part of the work at compile time that would otherwise be done at runtime
+The ability of a programming language to be its own metalanguage is called reflection or reflexivity.
+reflection is the process by which a computer program can observe and modify its own structure and behavior
+
+automatic (generative) programming identifies a type of computer programming in which some mechanism generates a computer program
+rather than have human programmers write the code.
+
+
+
+Lightweight programming language
+	very small memory footprint (amount of main memory that a program uses or references while running)
+	easy to implement (important when porting a language)
+	has minimalist syntax and features.
+
+first-class function:
+- the language supports constructing new functions during the execution of a program,
+storing them in data structures, passing them as arguments to other functions, and returning them as the values of other functions
+
+
+-----------------------------------------------------------
+
+Lua = lightweight, reflective, imperative and functional programming language
+scripting language
+a balance between power and size
+
+multi-paradigm:
+- does not contain explicit support for inheritance, but allows it to be easily implemented
+- allows programmers to implement namespaces, classes
+- first-class functions
+
+
+supports only a small number of atomic data structures:
+	bool, numbers (double-precision floating point by default), and strings
+single native data structure, the table = associative array
+
+advanced features:
+	first-class functions
+	garbage collection
+	closures (a first-class function with free variables that are bound in the lexical environment.)
+	tail calls (subroutine call which is followed by a return to the calling code): return A(data);
+	coercion (automatic conversion between string and number values at run time)
+	coroutines (cooperative multitasking)
+	dynamic module loading

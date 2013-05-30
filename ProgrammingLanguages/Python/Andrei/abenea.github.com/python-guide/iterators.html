@@ -1,0 +1,279 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Iterators</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '.',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="" href="index.html" />
+    <link rel="next" title="Collections" href="collections.html" />
+    <link rel="prev" title="Classes" href="classes.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="_static/small_flask.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+  
+  
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="collections.html" title="Collections"
+             accesskey="N">next</a></li>
+        <li class="right" >
+          <a href="classes.html" title="Classes"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html"></a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="iterators">
+<h1>Iterators<a class="headerlink" href="#iterators" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="the-iteration-protocol">
+<span id="iteration-protocol"></span><h2>The Iteration Protocol<a class="headerlink" href="#the-iteration-protocol" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">for</span></tt> statement or list comprehensions are usually used to iterate through
+<a class="reference external" href="http://docs.python.org/library/stdtypes.html#sequence-types-str-unicode-list-tuple-bytearray-buffer-xrange">sequences</a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">i</span>
+</pre></div>
+</div>
+<p>But it is also possible to manually iterate through a sequence. The code above
+is equivalent to:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">print</span> <span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+        <span class="k">break</span>
+</pre></div>
+</div>
+<p>The function <a class="reference external" href="http://docs.python.org/library/functions.html#iter" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">iter()</span></tt></a> returns an iterator object. Calling <a class="reference external" href="http://docs.python.org/library/functions.html#next" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">next()</span></tt></a> on
+this object returns a new element from the sequence. When the sequence is
+exhausted, <a class="reference external" href="http://docs.python.org/library/functions.html#next" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">next()</span></tt></a> raises a <a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.StopIteration" title="(in Python v2.7)"><tt class="xref py py-exc docutils literal"><span class="pre">exceptions.StopIteration</span></tt></a> exception.</p>
+<p><tt class="docutils literal"><span class="pre">iter(a)</span></tt> calls <tt class="docutils literal"><span class="pre">a.__iter__()</span></tt> and <tt class="docutils literal"><span class="pre">next(a)</span></tt> calls <tt class="docutils literal"><span class="pre">a.next()</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="n">it</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">__iter__</span><span class="p">()</span>
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">print</span> <span class="n">it</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+        <span class="k">break</span>
+</pre></div>
+</div>
+<p>To force an iterator to return the rest of the elements you can use
+<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">list()</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">it</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The <a class="reference external" href="http://docs.python.org/library/itertools.html#module-itertools" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">itertools</span></tt></a> module contains some useful tools for creating and
+manipulating iterators.</p>
+</div>
+<div class="section" id="iterator-classes">
+<h2>Iterator Classes<a class="headerlink" href="#iterator-classes" title="Permalink to this headline">¶</a></h2>
+<p>Let&#8217;s write an iterable class which returns the first <em>end - 1</em> natural numbers:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">SimpleRange</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">=</span> <span class="n">end</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">SimpleRangeIterator</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now we can define the iterator:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">SimpleRangeIterator</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sr</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sr</span> <span class="o">=</span> <span class="n">sr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">sr</span><span class="o">.</span><span class="n">end</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span>
+</pre></div>
+</div>
+<p>If we make the iterator itself iterable, we can combine the two classes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">SimpleRange</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">=</span> <span class="n">end</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">end</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">SimpleRange</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">print</span> <span class="n">i</span>
+<span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">SimpleRange</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">==</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <strong>__iter__()</strong> method must return <em>self</em> to make the iterator iterable.</p>
+<p>Note that <a class="reference external" href="http://docs.python.org/library/functions.html#range" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">range()</span></tt></a> returns a list, not an iterator.</p>
+<div class="section" id="exercise">
+<h3>Exercise<a class="headerlink" href="#exercise" title="Permalink to this headline">¶</a></h3>
+<p>Write an infinite iterator (never raises <a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.StopIteration" title="(in Python v2.7)"><tt class="xref py py-exc docutils literal"><span class="pre">exceptions.StopIteration</span></tt></a>) for
+<a class="reference external" href="http://en.wikipedia.org/wiki/Fibonacci_number">Fibonacci numbers</a>.</p>
+<p><strong>Unit test</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="k">def</span> <span class="nf">test_fibonacci</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="n">Fibonacci</span><span class="p">(),</span> <span class="mi">13</span><span class="p">))</span> <span class="o">==</span> \
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">89</span><span class="p">,</span> <span class="mi">144</span><span class="p">]</span>
+
+<span class="n">test_fibonacci</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="generator-functions">
+<h2>Generator Functions<a class="headerlink" href="#generator-functions" title="Permalink to this headline">¶</a></h2>
+<p>There&#8217;s a more convenient way of writing iterators:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">gen_colors</span><span class="p">():</span>
+    <span class="k">print</span> <span class="s">&#39;starting gen_colors&#39;</span>
+    <span class="k">yield</span> <span class="s">&#39;red&#39;</span>
+    <span class="k">yield</span> <span class="s">&#39;green&#39;</span>
+    <span class="k">yield</span> <span class="s">&#39;blue&#39;</span>
+    <span class="k">print</span> <span class="s">&#39;gen_colors finished&#39;</span>
+
+<span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">gen_colors</span><span class="p">():</span>
+    <span class="k">print</span> <span class="n">color</span>
+</pre></div>
+</div>
+<p><em>Generator functions</em> use <tt class="docutils literal"><span class="pre">yield</span></tt> instead of <tt class="docutils literal"><span class="pre">return</span></tt>. There are two
+important differences between the two keywords:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">yield</span></tt> can be used multiple times</li>
+<li><tt class="docutils literal"><span class="pre">yield</span></tt> suspends the execution of the function, allowing it to be resumed
+when the next element is requested.</li>
+</ul>
+<p>Generator functions do not start running when they are called. Instead they
+return a <em>generator object</em>, which implements the iteration protocol. The body
+of the function starts executing when the first value is requested via the
+<strong>next()</strong> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">g</span> <span class="o">=</span> <span class="n">gen_colors</span><span class="p">()</span>
+<span class="k">print</span> <span class="s">&#39;got generator object&#39;</span><span class="p">,</span> <span class="n">g</span>
+<span class="k">print</span> <span class="nb">next</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="k">print</span> <span class="nb">next</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="id1">
+<h3>Exercise<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>Write a generator function for <a class="reference external" href="http://en.wikipedia.org/wiki/Fibonacci_number">Fibonacci numbers</a>.</p>
+<p><strong>Unit test</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">itertools</span>
+<span class="k">def</span> <span class="nf">test_fibonacci</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">islice</span><span class="p">(</span><span class="n">fibonacci</span><span class="p">(),</span> <span class="mi">13</span><span class="p">))</span> <span class="o">==</span> \
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">89</span><span class="p">,</span> <span class="mi">144</span><span class="p">]</span>
+
+<span class="n">test_fibonacci</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="generator-expressions">
+<h2>Generator Expressions<a class="headerlink" href="#generator-expressions" title="Permalink to this headline">¶</a></h2>
+<p><em>Generator expressions</em> are like list comprehensions except they are wrapped in
+<tt class="docutils literal"><span class="pre">()</span></tt> instead of <tt class="docutils literal"><span class="pre">[]</span></tt> and return a generator object instead of a list:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span> <span class="p">[</span><span class="n">x</span><span class="o">*</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="k">print</span> <span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span><span class="n">x</span><span class="o">*</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)):</span>
+    <span class="k">print</span> <span class="n">i</span>
+</pre></div>
+</div>
+<p>Note that the parenthesis can be omitted if the generator expression is the only
+argument passed to a function.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Iterators</a><ul>
+<li><a class="reference internal" href="#the-iteration-protocol">The Iteration Protocol</a></li>
+<li><a class="reference internal" href="#iterator-classes">Iterator Classes</a><ul>
+<li><a class="reference internal" href="#exercise">Exercise</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#generator-functions">Generator Functions</a><ul>
+<li><a class="reference internal" href="#id1">Exercise</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#generator-expressions">Generator Expressions</a></li>
+</ul>
+</li>
+</ul>
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Overview</a><ul>
+      <li>Previous: <a href="classes.html" title="previous chapter">Classes</a></li>
+      <li>Next: <a href="collections.html" title="next chapter">Collections</a></li>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/iterators.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  
+  </body>
+</html>

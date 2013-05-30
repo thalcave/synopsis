@@ -1,0 +1,152 @@
+30) Algorithms improvements
+standard library algorithms are improved
+- addition of new algorithms
+	bool all_of(Iter first, Iter last, Pred pred) : true if all pred is true for all
+	bool none_of(Iter first, Iter last, Pred pred);
+	
+- effects of move: Moving can be much more efficient than copying
+STL operations for STL types, such as string and vector, are usually hand-optimized to gain the effects of moving through techniques 
+such as replacing copies with optimized swaps. However, if your type has a move operation, you gain the performance benefits automatically from the standard algorithms.
+
+- use of lambdas: allows us to define operations ``inline:''
+
+31) Container improvements
+some new ones:
+	array (a fixed-sized container)
+	forward_list (a singly-linked list)
+	unordered containers (the hash tables)
+
+new features
+	initializer lists - use of initializer-list constructors to allow a container to take an initializer list as its argument
+		vector vs = { "Hello", ", ", "World!", "\n" };
+	move operators - containers now have move constructors and move assignments (in addition to the traditional copy operations)
+		reduce copying overhead
+		most important implication of this is that we can efficiently return a container from a function (no vectors are copied)
+	improved push operation
+		uses "move" not "copy"
+	emplace operation - get rid of "copy/move" but make space in the vector and then construct the desired value in that space
+		why copy/move anything? make space in vector and construct it directly
+		vector<pair<string,int>> vp;
+		string s;
+		int i;
+		while(cin>>s>>i) vp.emplace_back(s,i);
+	Compile-time evaluation
+		 constexpr is used to ensure compiler time evaluation
+
+
+32) Scoped allocators
+
+
+33) std::array
+is a fixed-sized random-access sequence of elements
+very much like a built-in array without the problems.
+
+
+34) std::forward_list
+a singly-linked list
+forward iteration (only) and guarantees that elements don't move if you insert or erase one
+It occupies minimal space (an empty list is likely to be one word) and does not provide a size() operation
+
+35) Unordered containers
+A unordered container is a kind of hash table. 
+C++0x offers four standard ones:
+	unordered_map
+	unordered_set
+	unordered_multimap
+	unordered_multiset
+not named "hash" because incompatibilities between names
+
+36) std::function and std::bind
+
+
+37) unique_ptr
+auto_ptr will be deprecated
+	- cannot be used in containers
+
+unique_ptr:
+- owns the object it holds a pointer to
+- is not CopyConstructible, nor CopyAssignable, however it is MoveConstructible and MoveAssignable.
+- stores a pointer to an object and deletes that object using the associated deleter when it is itself destroyed (such as when leaving block scope (6.7)).
+- if you really want to transfer ownership from the lvalue unique_ptr, you have to use an explicit std::move() call:
+
+
+38) shared_ptr
+
+39) weak_ptr
+
+
+41) Memory model
+memory model = an agreement between the machine architects and the compiler writers to ensure that most programmers do not have to think
+			about the details of modern computer hardware
+The key guarantee is: Two threads of execution can update and access separate memory locations without interfering with each other
+
+
+42) Threads, mutex, locks
+
+
+43) Time utilities
+If you want to know the current time_point you can call now() for one of three clocks: system_clock, monotonic_clock, high_resolution_clock
+
+
+
+44) std::future and std::promise
+future and promise are used for returning a value from a task spawned on a separate thread
+future and promise enable a transfer of a value between two tasks without explict use of a lock:
+- when a task wants to return a value to the thread that launched it, it puts the value into a promise.
+	somehow, the implementation makes that value appear in the future attached to the promise.
+	the caller (typically the launcher of the task) can then read the value
+
+FUTURE
+if we have unique_future<X> called f, we can get() a value of type X from it:
+	X v = f.get();	// if necessary wait for the value to get computed
+If the value isn't there yet, our thread is blocked until it arrives
+If the value couldn't be computed, the result of get() might be to throw an exception
+
+
+We might not want to wait for a result, so we can ask the unique_future if a result has arrived:
+	if (f.has_exception()) {	// f.get() will throw
+		// do something
+	}
+	else if (f.has_value()) {
+		// do something
+	}
+	else {
+		// do something else
+	}
+
+PROMISE
+If you have a promise and need to send a result of type X (back) to a future, there are basically two things you can do: pass a value and pass an exception:
+
+	try {
+		X res;
+		// compute a value for res
+		p.set_value(res);
+	}
+	catch (...) {	// oops: couldn't compute res
+		p.set_exception(std::current_exception());
+	}
+
+
+whoever wants a task done:
+- creates a thread
+- give the promise to it
+- keep the corresponding future as the place for the result
+this is done by async()
+
+
+45) std::async()
+-  async functions use the standard techniques for deferring function execution
+
+The idea behind async() is the same as the idea behind the range-for statement: Provide a simple way to handle the simplest,
+rather common, case and leave the more complex examples to the fully general mechanism (do not use it for I/O)
+async() can be requested to launch in a new thread, in any thread but the caller's, or to launch in a different thread only if async() ``thinks'' that is it a good idea
+
+
+
+46) Random number generation
+
+
+47) Regular expressions
+
+
+

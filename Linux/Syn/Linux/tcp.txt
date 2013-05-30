@@ -1,0 +1,69 @@
+identd = A user identification daemon for Linux, which implements the Identification Protocol (RFC1413). 
+This protocol is used to identify active TCP connections. 
+The daemon listens to TCP port 113 (auth) and can be run either as a stand-alone daemon or through inetd(8)
+
+
+
+TCP Connection Hash Table Size is too big, and that is why /proc/net/tcp takes so long.
+
+ hash tables are too big. Set a smaller one 
+during this patch by using the new tcpehashorder= command line option.
+It sets the hash table size as 2^order*4096 on i386. You can see the 
+default order by looking at the dmesg of an machine booted without 
+this option set.
+You can find out how much it costs you by looking at 
+/proc/net/sockstat. If the tcp_ehash_buckets value is the same as 
+with the default hash tab size then it didn't cost you anything. 
+If the value is very similar it's probably still ok; just if you 
+get e.g. average bucket length >5-10 it's probably too small. 
+The smaller the hash table the faster should identd work.
+
+
+
+***************************************************************************
+Is there something that changed from 2.2 -> 2.4 with regards to the
+speed of netstat and /proc/net/tcp?A simple cat or wc -l on the file feels like about on the order of two
+magnitudes slower ("time" reports around a second when the file has 450
+entries).
+http://www.cs.helsinki.fi/linux/linux-kernel/2001-40/1228.html
+
+
+***********************************************************************
+A slpd regularly needs to check the LISTEN sockets on the local system to announce the 
+services provided by them on the network. Problem is that reading
+/proc/net/tcp can be extremly slow, because it requires to lock/unlock
+hundred thousands of rwlocks. On some architectures (especially IA64 and
+PPC64) read_unlock seems to be quite slow and a simple cat /proc/net/tcp
+on a box with only a few sockets open can take over a second of systime.
+
+OpenSLP Server (slpd) SLPv2 (RFC 2608) = IETF standard protocol that is used to discover/advertise 
+services on the network. You can use SLP for anything from locating a suitable printer on your floor 
+to discovering what LDAP directories are available in your organization.
+
+
+
+
+
+S******************************************************************************
+Hash table = a data structure that associates keys with values
+- the primary operation it supports efficiently is a lookup: given a key , find the corresponding value
+- it works by transforming the key using a hash function into a hash = a number that the hash table uses to locate the desired value.
+
+TCP hash table =
+	- Each entry in this table stores IP addresses and TCP ports characterizing a TCP connection.
+	- the access to the hash table is carried out through a key, consisting of the source IP address and the source TCP port. 
+	  The key is mapped by a hash function into the index of a list (better said, a bucket) of structures identifying transferred connections.
+
+
+/proc/sys/kernel/thread-max
+
+
+
+
+This patch makes the files /proc/net/tcp and /proc/net/tcp6 not acquire
+the readlock for every bucket. 
+On ppc64 and ia64 the readlocks are so expensive, that reading /proc/net/tcp
+takes 0.25 seconds on a usual p670 LPAR.
+And it locks 65536 buckets where just 20 chains are used at all in a normal
+non-netserver setup.
+Readlock only non-empty hash chains to avoid 65536 readlocks.

@@ -1,0 +1,20 @@
+********************************************
+Chapter 6. Handling and avoiding errors
+
+default behaviour of Lua interpreter when encounters an error:
+- print a message
+- print stack traceback
+- terminate
+
+assert (condition, error_msg)
+ - returns every arg that was passed : local fileHandle = assert(io.open(FileName, "r"))
+ 
+error(msg) -- will raise an error
+
+convention: if a function fails, first returned value should be nil
+
+pcall & xpcall
+Code,Errmsg = pcall(function)
+- if function raise error, Code will be set, Errmsg also
+xpcall(function, error_handler)
+- avoids loss of stack

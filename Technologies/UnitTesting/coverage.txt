@@ -1,0 +1,6 @@
+compile with --coverage
+make && make test
+lcov  -q --directory . --output-file coverage.info --remove ./coverage.info "/usr*"
+genhtml coverage.info --output-directory out
+
+

@@ -1,0 +1,11 @@
+most fundamental feature is port scanning
+
+probe = an action taken or an object used for the purpose of learning something about the state of the network.
+For example, an empty message can be sent simply to see whether the destination actually exists.
+ping is a common utility for sending such a probe.
+
+
+a probe would yield:
+	full match
+	soft match: recognizes service type, but no version info
+	no match at all

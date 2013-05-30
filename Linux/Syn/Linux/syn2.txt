@@ -1,0 +1,130 @@
+In a file system, a file is represented by an inode, a kind of serial number containing information about the actual data that makes up the file: 
+to whom this file belongs, and where is it located on the hard disk.
+Every partition has its own set of inodes; throughout a system with multiple partitions, files with the same
+inode number can exist.
+Each inode describes a data structure on the hard disk, storing the properties of a file, including the physical
+location of the file data. When a hard disk is initialized to accept data storage, usually during the initial system
+installation process or when adding extra disks to an existing system, a fixed number of inodes per partition is
+created. This number will be the maximum amount of files, of all types (including directories, special files,
+links etc.) that can exist at the same time on the partition. We typically count on having 1 inode per 2 to 8
+kilobytes of storage.
+
+/proc/sys/fs/**/
+
+Hard link: associate two or more file names with the same inode. Hard links share the same data
+blocks on the hard disk, while they continue to behave as independent files.
+There is an immediate disadvantage: hard links can't span partitions, because inode numbers are only
+unique within a given partition.
+·
+Soft link or symbolic link (or for short: symlink): a small file that is a pointer to another file. A
+symbolic link contains the path to the target file instead of a physical location on the hard disk. Since
+inodes are not used in this system, soft links can span across partitions.
+
+
+ Each dentry corresponds to one filename component in the file-system and the object associated with that name (if there is one). 
+ Each dentry references its parent which must exist in the dcache. dentrys also record file-system mounting relationships.
+
+
+static_cast = For well-behaved and reasonably well-behaved casts,
+		including things you might now do without a cast (such as an automatic type conversion).
+		
+const_cast = 	To cast away const and/or volatile.
+
+reinterpret_cast = To cast to a completely different
+		meaning. The key is that you\'ll need to cast back to the original
+		type to use it safely. The type you cast to is typically used only for
+		bit twiddling or some other mysterious purpose. 
+		This is the most dangerous of all the casts.
+		
+dynamic_cast = 	For type-safe downcasting (this
+		cast will be described in Chapter
+
+
+************************************************************
+Containers
+	sequences  -- vector, list, deque, stack, queue, and priority_queue
+	associations -- set, multiset, map and multimap
+
+clear(), insert(), erase(), push_back()
+
+
+Set, map, multiset and multimap = associative containers 
+
+******
+Smart pointers are objects which store pointers to dynamically allocated (heap) objects. 
+They behave much like built-in C++ pointers except that they automatically delete the object pointed to at the appropriate time. 
+Smart pointers are particularly useful in the face of exceptions as they ensure proper destruction of dynamically allocated objects. 
+They can also be used to keep track of dynamically allocated objects shared by multiple owners.
+
+
+Auto_ptr  = owns a dynamically allocated object and perform automatic cleanup when the object is no longer needed.
+ auto_ptr<T> pt( new T );
+ 
+scoped_ptr	<boost/scoped_ptr.hpp>		Simple sole ownership of single objects. Noncopyable.	
+scoped_array	<boost/scoped_array.hpp>	Simple sole ownership of arrays. Noncopyable.	
+shared_ptr	<boost/shared_ptr.hpp>		Object ownership shared among multiple pointers	
+shared_array	<boost/shared_array.hpp>	Array ownership shared among multiple pointers.	
+weak_ptr	<boost/weak_ptr.hpp>		Non-owning observers of an object owned by shared_ptr.	
+intrusive_ptr	<boost/intrusive_ptr.hpp>	Shared ownership of objects with an embedded reference count.
+ 
+ 
+
+
+****************************************************************
+File Systems
+- file systems update their structural information (called metadata) by synchronous writes
+  each metadata update may require many separate writes, and if the system crashes during the write sequence, metadata may be in inconsistent state.
+  --> fsck takes a long time
+Journaling FS:  uses a separate area called a log or journal
+		before metadata changes are actually performed, they are logged to this separate area.
+		the operation is then performed. If the system crashes during the operation, there is enough information in the log
+		to "replay" the log record and complete the operation.
+Advantage :   very quick filesystem check time on large file systems
+Disadvantage: that they are slower than other filesystems.
+
+Some journaling filesystems: BeFS, HTFS, JFS, NSS, Spiralog filesystem, VxFS and XFS.
+
+
+When speed is the most important thing and normal files are rather big, 
+it is preferable to have a big size for the blocksize. This allows for the fewer jumps on the harddisk in order to retrieve the whole file.
+However, if on a partition with big blocksize are stored small files, a lot of space is not used (unless using reiserfs), 
+because the smallest allocation unit is the block (the wasted storage space is sometimes called slack space and is most visible on 16-bit fat partitions).
+
+
+Each running process has a file descriptor table which
+contains pointers to all open i/o streams.  When a
+process starts, three entries are created in the first
+three cells of the table.  Entry 0 points to standard
+input, entry 1 points to standard output, and entry 2
+points to standard error.  Whenever a file or other i/o
+stream is opened, a new entry is created in this table,
+usually in the first available empty slot.
+
+The socket system call returns an entry into this
+table; i.e.  a small integer.  This value is used for
+other calls which use this socket.  The accept system
+call returns another entry into this table.  The value
+returned by accept is used for reading and writing to
+that connection.
+
+
+
+************************************************************************
+Syslets = small, simple, lightweight programs (consisting of system-calls, 'atoms') that the kernel can execute autonomously 
+(and, not the least, asynchronously), without having to exit back into user-space
+
+- can be freely constructed and submitted by any unprivileged user-space context 
+
+they have access to all the resources (and only those resources) that the original context has access to.
+
+
+readahead - perform file readahead into page cache
+
+
+
+************************************************************************
+Extended file attributes (xattr)
+- extended attributes: <name,value> pairs associated with inodes 
+
+- file system feature that enables users to associate files with metadata not interpreted by the filesystem
+- used to provide additional functionalities (e.g.,security features as ACL) 
