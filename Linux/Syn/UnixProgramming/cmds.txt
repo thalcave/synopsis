@@ -1,0 +1,6 @@
+pstree = shows tree of processes
+
+size <executable> = Display the sizes of section inside binary files
+readelf -h <executable>
+
+getconf -a = list all system configuration variables
