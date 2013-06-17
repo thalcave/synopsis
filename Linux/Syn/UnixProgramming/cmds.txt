@@ -4,3 +4,15 @@ size <executable> = Display the sizes of section inside binary files
 readelf -h <executable>
 
 getconf -a = list all system configuration variables
+
+
+
+# View page faults statistics
+ps -o min_flt,maj_flt <pid>
+/usr/bin/time -v ./executable
+
+#Check existence of a pid
+kill -0 <pid>
+stat /proc/<pid>
+ps -p <pid>
+
