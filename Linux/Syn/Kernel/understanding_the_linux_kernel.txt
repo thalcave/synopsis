@@ -116,11 +116,28 @@ DMAC - direct memory access controller
 	auxiliary processor which can be instructed to transfer data between the RAM and I/O device
 	once activated by CPU, DMAC continues transfer by itself
 	used by slow devices: disk drives etc. for transferring a large number of bytes at once
+
+-----------------
+Device drivers
+	kernel software layer that makes a hardware device respond to a well-defined programming interface (canonical set of VFS functions: open, write, read etc. that controls a
+	device)
+register a device driver = linking it to the corresponding device files; performed as soon as possible
+initializing = at the last possible moment (allocating precious resources of the system)
+
+
+Monitoring I/O operations
+
+	technique to signal end-of-operation or time-out
+	polling mode:
+		* CPU checks (polls) the device's status register repeatedly until its value signals that I/O operation has ended
+	interrupt mode:
+		* only if the I/O controller is capable of signaling the end of an I/O operation
+
+
 	
 -----------------	
 Device files
 	I/O devices are treated as files
-	two types of device files: 
 		block - access randomly
 		character - either cannot be accessed randmly (soundcard), either takes to long time
 write on /dev/lp0 --> directly print
@@ -137,23 +154,6 @@ cons:
 Devfs device files
 	virtual filesystem similar to the proc
 	allows drivers to register devices by name
-
------------------
-Device drivers
-	software layer that makes a hardware device respond to a well-defined programming interface (canonical set of VFS functions: open, write, read etc. that controls a
-	device)
-
-register a device driver = linking it to the corresponding device files; performed as soon as possible
-initializing = at the last possible moment (allocating precious resources of the system)
-
-
-Monitoring I/O operations
-
-	technique to signal end-of-operation or time-out
-	polling mode:
-		* CPU checks (polls) the device's status register repeatedly until its value signals that I/O operation has ended
-	interrupt mode:
-		* only if the I/O controller is capable of signaling the end of an I/O operation
 
 
 -----------------
