@@ -16,3 +16,6 @@ kill -0 <pid>
 stat /proc/<pid>
 ps -p <pid>
 
+
+#show listing of last logged in users
+last
