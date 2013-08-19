@@ -19,3 +19,6 @@ ps -p <pid>
 
 #show listing of last logged in users
 last
+
+# info about IPC
+ipcs
