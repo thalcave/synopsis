@@ -11,12 +11,12 @@ IP = basic protocol for sending data over the Internet
 encapsulation:
 	Application				  ||DATA||	
 	Transport			    || UDP |DATA||
-	Network				||IP HEADER|DATA||
-	Link		 ||HEADER|IP HEADER|FRAME|FOOTER||
+	Network			  ||IP HEADER| UDP |DATA||
+	Link	    ||FRAME HEADER |IP HEADER| UDP |DATA| FRAME FOOTER||
 
 tos = type of service
 
-Path MTU discovery :
+Path MTU discovery (trial-and-error, brute-force):
 	setting the DF (Don't Fragment) option bit in the IP headers of outgoing packets. 
 	any device along the path whose MTU is smaller than the packet will drop it and send back an ICMP "Fragmentation Needed" message containing its MTU
 	the source host reduces its assumed path MTU appropriately
@@ -137,6 +137,17 @@ if one fragment is loss, all datagram must be resent
 ICMP Unreachable Error (fragmentation required) : when Don't fragment bit is set although fragmentation is needed
 
 
+A number of UDP's attributes make it especially suited for certain applications:
+- DNS, DHCP, TFTP, streaming media, real-time applications (VoIP, online games)
+
+* transaction-oriented = suitable for simple query-response protocols such as the Domain Name System or the Network Time Protocol.
+* datagrams = suitable for modeling other protocols such as in IP tunneling or Remote Procedure Call and the Network File System.
+* simple = suitable for bootstrapping or other purposes without a full protocol stack, such as the DHCP and Trivial File Transfer Protocol.
+* stateless = suitable for very large numbers of clients, such as in streaming media applications for example IPTV
+* lack of retransmission delays = makes it suitable for real-time applications such as Voice over IP, online games, and many protocols built on top of the Real Time Streaming Protocol.
+* Works well in unidirectional communication, suitable for broadcast information such as in many kinds of service discovery and shared information such as broadcast time or Routing Information Protocol
+
+
 -----------------------------------------------
 Chapter 12. Broadcasting and Multicasting
 
@@ -224,19 +235,21 @@ Chapter 17. TCP: Transmission Control Protocol
 
 - connection-oriented:
 	a connection must be established between 2 apps
-- reliable:
-	data is broken into chunks (UDP has fixed size) whose sizes are determined by TCP: segments
-	if an ACK for segment is not received, segment is retransmitted
-	ACK is sent when data received
-	if invalid checksum, data is discarded
-	if TCP segments arrive out of order, they are rearranged
-	duplicated data is discarded
-	
+	socket pair: client IP, client port, server IP, server port
+- reliable: data is delivered in order
+		data is broken into chunks (UDP has fixed size) whose sizes are determined by TCP: segments
+		if an ACK for segment is not received, segment is retransmitted
+		ACK is sent when data received
+		if invalid checksum, data is discarded
+		if TCP segments arrive out of order, they are rearranged
+		duplicated data is discarded
 	||IP Header|TCP Header| TCP Data||
 
-socket pair: client IP, client port, server IP, server port
+- full-duplex communication
+- stream interface: continuous sequence of octets
+- graceful connection shutdown: data sent before closing connection is not lost
 
-- full-duplex service	
+
 
 
 -----------------------------------------------
@@ -249,12 +262,21 @@ Chapter 18. TCP: Connection establishment and termination
 
 Establishment - 3-way handshaking:
 	client sends a SYN (synchronize sequence number) segment specifying port from server (active open)
-	server responds with its own SYN segment (passive open)
+	server responds with its own SYN/ACK segment (passive open)
 	client ACK this SYN
+	SYN
+		SYN/ACK
+	ACK
+
 
 Termination - four segments needed (full-duplex --> each direction must be closed)
 	either end can send a FIN
-	when receiving a FIN, must ACK 	
+	when receiving a FIN, must ACK 
+	
+	FIN
+		ACK
+		FIN
+	ACK
 
 Maximum size of a segment (MSS)
  - largest chunk of data that TCP will send to the other end

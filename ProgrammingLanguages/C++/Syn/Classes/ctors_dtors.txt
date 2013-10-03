@@ -14,7 +14,8 @@ public:
 
 2)RAII
 	Resource Acquisition Is Initialisation
-the most important part of RAII is that destructors release the resources, not that they're acquired in constructors.
+the most important part of RAII is that destructors release the resources, not that they're acquired in constructors:
+* if an exception is thrown (and proper exception handler) --> only code executed in current scope is of destructors of objects declared in scope
 
 A more precise acronym:
 - RRID (Resource Reclamation Is Destruction)

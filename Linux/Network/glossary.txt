@@ -1,5 +1,9 @@
+gateway = alows 2 different networks to communicate with each other
+* network node equipped for interfacing with another network that uses different communication protocols
 
 router = connects two or more networks, forwarding packets; network layer
+* reads the address information on the packet and determines the right destination, it then uses the information in its routing table or routing policy to direct the packet to the next network
+
 bridge = connects network at link layer
 
 TCP segment = unit of data sent by TCP to IP

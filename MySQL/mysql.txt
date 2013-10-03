@@ -1,3 +1,10 @@
+ACID
+Atomicity: transaction executed full or not at all: ""all or nothing"
+Consistency: after a transaction is executed, state of DB is consistent
+Isolation: parallel operations have the same result as sequential
+Durability: once a transaction is committed, it will remain so (even if power loss, crash, error etc.)
+
+
 transaction:
 * Begin the transaction
 * Execute a set of data manipulations and/or queries
