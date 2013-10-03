@@ -1,0 +1,7 @@
+O(1) = number is even or odd; lookup-table
+O(logn) = binary search or binary search tree
+O(n) = finding an element in unsorted array
+O(n*logn) = quicksort, mergesort
+O(n^2) = bubble sort, insertion sort, selection sort
+
+
