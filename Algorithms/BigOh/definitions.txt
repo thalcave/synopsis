@@ -1,0 +1,37 @@
+--------------------------------------------------------------------------------------
+Orders of common functions
+
+O(1): constant time
+- if the problem size doubles, the no. of operations remains the same
+- number is even or odd; lookup-table
+
+O(logn): logarithmic time
+- binary search or binary search tree
+
+
+O(n): linear time
+- if the problem size doubles, the no. of operations also doubles
+- finding an element in unsorted array
+
+O(n*logn): loglinear
+- quicksort, mergesort
+
+O(n^2): quadratic time
+- if the problem size doubles, the no. of operations will quadruple
+- bubble sort, insertion sort, selection sort
+
+O(n^c): polynomial
+
+O(c^n): exponential
+- fibonacci recursive
+
+O(n!): factorial
+
+
+--------------------------------------------------------------------------------------
+
+asymptotic = "dropping all factors and keeping the largest growing term"
+
+Big O of a sum of functions is big O of the largest function:
+	O(n^2) + O(n) + O(1) --> complexity = O(n^2)
+	for bigger numbers, O(n) is not relevant anymore

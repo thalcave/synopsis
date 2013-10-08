@@ -1,0 +1,70 @@
+graph data structure = a finite (and possibly mutable) set of ordered pairs (called edges or arcs) of certain entities called nodes or vertices.
+
+
+----------------------------------------------------------------------
+binary search tree (BST) is a node-based binary tree data structure which has the following properties:
+* The left subtree of a node contains only nodes with keys less than the node's key.
+* The right subtree of a node contains only nodes with keys greater than the node's key.
+* The left and right subtree must each also be a binary search tree.
+* There must be no duplicate nodes.
+
+		Avg		W
+Space		O(n)		O(n)
+Search		O(log n)	O(n)
+Insert		O(log n)	O(n)
+Delete		O(log n)	O(n)
+
+
+
+----------------------------------------------------------------------
+Red-black tree
+
+In addition to the requirements imposed on a binary search trees, with red–black trees:
+* A node is either red or black.
+* The root is black
+* All leaves are black. (All leaves are same color as the root.)
+* Every red node must have two black child nodes.
+* Every path from a given node to any of its descendant leaves contains the same number of black nodes.
+
+		Avg		W
+Space		O(n)		O(n)
+Search		O(log n)	O(log n)
+Insert		O(log n)	O(log n)
+Delete		O(log n)	O(log n)
+
+Usage:
+* CFQ
+
+
+----------------------------------------------------------------------
+B-tree
+
+* generalization of BST:a node can have more than two children
+* all leaves are at the same level
+
+		Avg		W
+Space		O(n)		O(n)
+Search		O(log n)	O(log n)
+Insert		O(log n)	O(log n)
+Delete		O(log n)	O(log n)
+
+
+Usage:
+* the B-tree is optimized for systems that read and write large blocks of data. It is commonly used in databases and filesystems.
+
+
+
+----------------------------------------------------------------------
+Heap Trees (or just Heaps) is a binary tree:
+* complete (all levels of the tree, except possible the last one, are fully filled)
+* all nodes are greater than (maxheap)|less than (minheap) each of its children
+
+		Avg		W
+Space		O(n)		O(n)
+Search		n		n
+Insert		O(log n)	O(log n)
+Delete		O(log n)	O(log n)
+
+
+----------------------------------------------------------------------
+Trie

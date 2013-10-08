@@ -1,0 +1,61 @@
+How to Determine Complexities
+
+O(n): linear
+	for (i = 0; i < n; ++i)
+	{
+		statement
+	}
+
+
+O(n*m) = o (n^2)
+	for (i = 0; i < n; ++i)
+	{
+		for (j = 0; j < m; ++j)
+		{
+			statement
+		}
+	}
+
+	
+O(n^2):
+	for (i = 0; i < n; ++i)
+	{
+		for (j = i+1; j < n; ++j)
+		{
+			statement
+		}
+	}
+
+	
+	
+When a statement involves a method call, the complexity of the statement includes the complexity of the method call. 
+Assume that you know that method f() takes constant time, and that method g() takes time proportional to (linear in) the value of its parameter k. 
+	f(k);  // O(1)
+	g(k);  // O(k)
+
+When a loop is involved, the same rule applies. For example: 
+	for (j = 0; j < N; j++) g(N);
+has complexity O(n^2). 
+The loop executes N times and each method call g(N) is complexity O(N).
+
+
+N * f(j) --> N * O(1) --> O(n)
+	for (j = 0; j < N; j++) 
+	{
+		f(j)
+	}
+
+N * g(j) --> N * O(n) --> O(n^2)
+	for (j = 0; j < N; j++) 
+	{
+		g(j)
+	}
+
+N * g(k) --> N * O(k) --> O(n*k)
+	for (j = 0; j < N; j++) 
+	{
+		g(k)
+	}
+	
+
+----------------------------------------------------------------------------------------

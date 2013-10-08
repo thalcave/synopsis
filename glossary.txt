@@ -1,0 +1,31 @@
+**********************************************************
+Distribute computing
+
+distributed system = software system in which components located on networked computers communicate and coordinate their actions by passing messages
+- The components interact with each other in order to achieve a common goal. 
+- There are many alternatives for the message passing mechanism, including RPC-like connectors and message queues.
+
+significant characteristics of distributed systems:
+	concurrency of components
+	lack of a global clock
+	independent failure of components
+An important goal and challenge of distributed systems is location transparency.
+Examples of distributed systems vary from SOA-based systems to massively multiplayer online games to peer-to-peer applications.
+
+peer-to-peer (P2P) network = 
+
+Distributed Systems
+* Client-server (2-tier, 3-tier, n-tier exhibit this style)
+
+* Shared nothing architecture: 
+- each node is independent and self-sufficient
+- no single point of contention
+- Google: a SN system can scale almost infinitely by adding nodes in form of inexpensive computers
+
+* Peer-to-peer:
+- type of decentralized and distributed network architecture in which individual nodes in the network (called "peers") act as both suppliers and consumers of resources, in contrast to the centralized client–server model where client nodes request access to resources provided by central servers.
+
+* Representational State Transfer (REST)
+
+* Service-oriented (SOA)
+- pieces of software providing application functionality as services to other applications. This is known as Service-orientation

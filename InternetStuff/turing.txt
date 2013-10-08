@@ -1,0 +1,18 @@
+halting problem = "Given a description of an arbitrary computer program, decide whether the program finishes running or continues to run forever"
+Alan Turing proved in 1936 that a general algorithm to solve the halting problem for all possible program-input pairs cannot exist
+
+Turing test = is a test of a machine's ability to exhibit intelligent behaviour equivalent to, or indistinguishable from, that of a human
+
+The Turing machine = theoretical computing machine invented by Alan Turing
+* a simple form of computer, composed by a tape, a ribbon of paper, has a head that can read the symbols, write a new symbol in place, and then move left or right.
+* the Turing machine is said to be in a certain state, and then a program is a list of transitions, having a current state and a symbol under the head, 
+what should be written on the tape, what would be the next state, and where the head should move
+
+
+
+Chine Room:
+* Suppose that I'm locked in a room and ... that I know no Chinese, either written or spoken
+* He further supposes that he has a set of rules in English that "enable me to correlate one set of formal symbols with another set of formal symbols," that is, the Chinese characters. 
+These rules allow him to respond, in written Chinese, to questions, also written in Chinese, in such a way that the posers of the questions - who do understand Chinese - 
+are convinced that Searle can actually understand the Chinese conversation too, even though he cannot.
+*  Similarly, he argues that if there is a computer program that allows a computer to carry on an intelligent conversation in written Chinese, the computer executing the program would not understand the conversation either.

@@ -37,6 +37,34 @@ Bit			1. Physical	Media, signal and binary transmission
 
 
 -----------------------------------------------
+Chapter 3. IP: Internet Protocol
+
+A datagram delivery service which is:
+* unreliable: no guarantees that IP datagram successfully gets to its destination
+- any required reliability must be provided by upper layers (e.g TCP)
+* connectionless:
+- no state is maintained
+- datagrams can be delivered out of order (different routes, maybe)
+
+Datagram: max size = 65536 bytes (64 kB)
+
+IP Header:
+* length (header, total)
+* TTL (upper limit on number of routers)
+* checksum (for IP Header)
+* source & destination IP address
+* protocol (TCP, UDP, ICMP etc.)
+
+
+IP address: {network||subnet|host}
+class B:	16bits: network		8bits: subnetid	8bits: hostid
+- subnetting reduces the size of routing tables
+	    
+
+
+
+
+-----------------------------------------------
 Chapter 4. ARP - Address Resolution Protocol
 
 
@@ -129,6 +157,20 @@ Chapter 10. Dynamic Routing
 Chapter 11. UDP: User Datagram Protocol
 
 - simple, datagram-oriented, transport layer protocol
+
+no reliability
+
+
+UDP header:
+* source port number
+* destination port number
+* length
+* checksum (for header & data)
+
+- TCP and UDP sockets can share the same port; at demultiplexing, IP header tells if it's UDP or TCP
+- UDP checksum is optional, for TCP is mandatory
+
+Max size: 65536
 
 IP fragmentation
 	IP compares MTU with the datagram size and performs fragmentation if needed

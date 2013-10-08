@@ -1,0 +1,72 @@
+ACID
+Atomicity: transaction executed full or not at all: ""all or nothing"
+Consistency: after a transaction is executed, state of DB is consistent
+Isolation: parallel operations have the same result as sequential
+Durability: once a transaction is committed, it will remain so (even if power loss, crash, error etc.)
+
+
+transaction:
+* Begin the transaction
+* Execute a set of data manipulations and/or queries
+* If no errors occur then commit the transaction and end it
+* If errors occur then rollback the transaction and end it
+
+
+CRUD:
+Create (INSERT)
+Read   (SELECT)
+Update (UPDATE)
+Delete (DELETE)
+
+
+CAP
+Consistency = all clients have the same view of data
+Availability = each client can always read and write
+Partition tolerance = the system continues to operate despite arbitrary message loss or failure of part of the system
+
+CAP Theorem = a distributed system cannot satisfy all three of these guarantees at the same time
+
+***************************************************************************************************
+Relational databases
+MySQL, MS SQL, PostgreSQL, Oracle, SQLite
+
+relational database = database that has a collection of tables of data items, all of which is formally described and organized according to the relational model
+relational model = each table schema must identify a column (the primary key), to uniquely identify each row. 
+	a relationship can then be established between each row in the table and a row in another table by creating a foreign key = a column in one table that points to the primary key of another table. 
+
+primary key = key (single or multiple attributes) which uniquely specifies a record inside a table
+	cannot be null
+	each table can have at most a primary key
+	
+unique key
+	allows null values
+	a table can have multiple unique keys
+	
+foreign key = a field in a table that matches the primary key of another table
+	
+index = a way to provide quicker access to data at the cost of additional writes and the usage of more disk space
+	another data structure is created and sorted:
+		binary search is possible
+		smaller (contains only indexed data) --> less time in reading blocks from disk
+	implemented via B-tree, bitmaps
+	not considered part of the database
+
+	
+***************************************************************************************************
+NoSQL database = non-relational database with data model:
+
+1. Document
+- data is encapsulated in standard format (JSON, XML etc)
+CouchDB, MongoDB, Redis, 
+Column
+Document
+Key-Value
+Graph
+
+2. Graph
+- a graph with nodes, edges and properties is used to represent and store data
+Neo4j
+
+3. Key-value
+- allow the application to store its data in a schema-less way. The data could be stored in a datatype of a programming language or an object
+Cassandra, 

@@ -1,0 +1,7 @@
+Collision:
+1. Chaining
+Key --> List
+Key --> Tree
+
+2. Coalescence:
+* find the first free slot to insert Key,Value
