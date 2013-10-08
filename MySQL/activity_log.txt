@@ -1,6 +1,0 @@
-select NULL,date_time,message_number,severity,message,originator,activity,node_name,job_id,session_id,added_at
-from ACTIVITY_LOG into OUTFILE '/tmp/activity_log';
-
-for i in `seq 1 50000`; do cat /tmp/activity_log >> tmp/big_activity_table; done
-
-LOAD DATA INFILE '/tmp/activity_log' INTO TABLE ACTIVITY_LOG;

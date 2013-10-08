@@ -13,8 +13,22 @@ merge sort:
 	3. Sort each sublist recursively by re-applying merge sort.
 	4. Merge the two sublists back into one sorted list
 
-two main ideas to imrove runtime:
+two main ideas to improve runtime:
 - A small list will take fewer steps to sort than a large list.
 - Fewer steps are required to construct a sorted list from two sorted lists than two unsorted lists
 
 - useful for sorting data on disk that is too large to fit entirely into primary memory
+
+
+2) Quicksort
+Best case: O(n logn)
+Avg  case: O(n logn)
+Worst case:O(n*n)
+
+
+Algorithm:
+* pick pivot from list
+* smaller elems go to minlist, greater elems go to maxlist
+* recursively apply the steps above for minlist and maxlist
+	concatenate(quicksort(minlist), pivot, quicksort(maxlist))
+

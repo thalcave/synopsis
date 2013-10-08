@@ -1,5 +1,0 @@
- ZZEE Active SQL Backup v 0.9.3
-
-
-InnoDB Hot Backup Utility. 
- 
