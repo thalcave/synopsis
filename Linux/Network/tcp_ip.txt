@@ -279,19 +279,29 @@ Chapter 17. TCP: Transmission Control Protocol
 	a connection must be established between 2 apps
 	socket pair: client IP, client port, server IP, server port
 - reliable: data is delivered in order
-		data is broken into chunks (UDP has fixed size) whose sizes are determined by TCP: segments
-		if an ACK for segment is not received, segment is retransmitted
-		ACK is sent when data received
+		data is broken into chunks (UDP has fixed size) whose optimal sizes are determined by TCP: segments
+		if an ACK for segment is not received (in time), segment is retransmitted
+		ACK is sent when data received (delayed, hoping that data will be sent alongside ACK: piggyback with the data)
 		if invalid checksum, data is discarded
 		if TCP segments arrive out of order, they are rearranged
 		duplicated data is discarded
 	||IP Header|TCP Header| TCP Data||
 
 - full-duplex communication
-- stream interface: continuous sequence of octets
+- stream interface: continuous sequence of octets (similar to a file opened on Unix)
 - graceful connection shutdown: data sent before closing connection is not lost
 
+Broadcasting and multicasting are not applicable for TCP! (exactly two end points communicating!)
 
+
+TCP Header:
+* source port, destination port
+* header length
+* checksum
+* sequence number
+* ACK number
+* flags: URG, PSH, RST, FIN, SYN, ACK
+* size
 
 
 -----------------------------------------------
@@ -328,11 +338,38 @@ default = 536 bytes
 
 Half-close
  - the ability for one end of a connection to terminate its output, while still receiving data from the other end 
+ 
+ 
+TIME_WAIT state: when TCP performs an active close and sends the final ACK, that connection must stay in TIME_WAIT state for
+twice the maximum segment lifetime (MSL): this lets TCP to resend the final ACK in case this ACK is lost
+- while TCP is in TIME_WAIT, socket pair defining the connection cannot be reused (SO_REUSEADDR socket option can be specified to address this)
 
 -----------------------------------------------
 Chapter 19. TCP: Interactive Data Flow
 
 
+Nagle's Algorithm
+Problem (small packet problem): 
+* an application repeatedly emits data in small chunks (frequently 1-byte size)
+* TCP packets have a 40-bytes header (20 bytes for TCP, 20 for IPv4)
+* 41 bytes are sent for 1 byte of useful info
+Solution:
+* combine a number of small outgoing messages
+Algorithm:
+* as long there is a sent package for which no ACK was received, sender keeps buffering its output (no additional small segments are being sent, but instead buffered)
+
+use TCP_NODELAY to disable this algorithm
+
+TCP's sliding window:
+* method of controlling the flow of packets
+* it allows the sender to transmit multiple packets before it stops and waits for an ACK
+
+||Sent bytes and acknowledged{|Sent bytes but not yet acknowledged|Not sent, recipient ready to receive|}Not sent, recipient not ready to receive||
+				Window already sent			Usable Window
+			     { 				     Send Window                                 }
+
+
+Congestion: big pipe feeding small pipe
 
 -----------------------------------------------
 Chapter 25. Simple Network Management Protocol

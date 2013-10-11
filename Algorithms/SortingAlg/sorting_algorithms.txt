@@ -23,7 +23,7 @@ two main ideas to improve runtime:
 2) Quicksort
 Best case: O(n logn)
 Avg  case: O(n logn)
-Worst case:O(n*n)
+Worst case:O(n^2)
 
 
 Algorithm:
@@ -32,3 +32,19 @@ Algorithm:
 * recursively apply the steps above for minlist and maxlist
 	concatenate(quicksort(minlist), pivot, quicksort(maxlist))
 
+3) counting sort:
+* sorting a collection of objects according to keys that are small integers
+O(n+k): n - input size
+	k - number of keys
+
+space: O(n+k)
+
+
+4) Radix sort
+ * sorts data with integer keys by grouping keys by the individual digits which share the same significant position and value. 
+ sort after last digit
+ sort after second to last digit...
+ 
+ 
+ time:  O(kN)
+ space: O(k+N) 
