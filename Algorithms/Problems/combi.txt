@@ -1,0 +1,47 @@
+-------------------------------------------------------------
+P1 Write a method to return all subsets of a set
+
+Solution 1:
+* a subset can be viewed as a sequence of yes/no for set elements
+S = {a b c d}
+s = {y n y y} --> s = {a c d}
+instead y/n, use 0/1 --> problem is to generate all possible combinations of bits = all possible integers
+
+for i = 0  to S.size()
+	current_set = {}
+	cnum = i
+	//iterate on bit level
+	j = 0
+	while (cnum)
+	{
+		if (cnum & 1)	//last bit is set
+			current_set.add(Set[j]);
+			++j
+		cnum >>= 1;
+	}
+	
+Solution 2:
+
+
+
+-------------------------------------------------------------
+P2 Print all valid combinations of n-pairs of parens
+
+n: 3
+S: ()()(), ((())), ()(()), (())()
+
+recursive approach
+
+perm(int l, int r, str[], count)
+	if (l < 0 || r < l)	//invalid
+		return;
+		
+	if (l == 0 && r ==0)
+		print str
+	else
+		if (l > 0)
+			str[count] = '('
+			perm(l-1, r, count+1, str)
+		if (r > l)
+			str[count] = ')'
+			perm(l, r-1, count+1,str)

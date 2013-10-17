@@ -1,0 +1,101 @@
+*******************************************************************************************
+
+1. Write Code on Paper
+2. Know your resume
+3. Don't memorize solutions
+4. Talk out loud
+
+
+Most challenging
+a. Developer
+* implement server recovery operation
+- multiple threads, each thread handling a connection with a different host
+- depending on raid type; different BackupTrees, different types of recovery: full, resume, only of a BackupTree
+- corner cases: a server closes connection etc
+- implemented with a Template Method Pattern: abstract base class defining the skeleton; concrete classes (Full, Resume, Tree) implementing the recovery
+b. Team leader:
+* motivate older employees: kind of failed
+* increase quality for EHB:
+- hired testers
+- switched from Waterfall to Agile
+- CI
+- unit testing
+
+What you learned:
+* writing the smartest code isn't everything: should also be maintainable, easy to understand etc.
+* developer's work is relevant if it brings profit, it's not like programming for the sake of art
+* in a large company, you have to sell your project
+
+Most interesting:
+a. Developer:
+- system programming (file system, processes, IPC - shared memory)
+b. TL:
+- interacting with different areas and people: monitoring, networking
+
+Hardest Bug:
+* 
+
+Enjoyed Most:
+- system programming (file system, processes, IPC - shared memory)
+
+Conflicts with teammates:
+* dispute over an Adapter utilization: instead of sending a whole structure over the network,
+send only the needed part
+
+
+Questions to ask:
+* how much of your day do you spend coding?
+* how many meetings do you have weekly?
+* ratio of testers to developers?
+
+* trial period?
+* how often is the performance assessed? how is the performance measured? (LOC, bugs etc)
+* how many working hours/week? is the working time flexible? working from home possible?
+* travel? on-call? weekends?
+* how much annual leave?
+
+
+*******************************************************************************************
+
+Technical question:
+* resolve ambiguity (ask questions)
+* design an algorithm
+* write pseudo-code but say it's pseudo!
+* write code
+* test code and fix for mistakes
+
+
+
+Approaches:
+1. Exemplify
+- write some specific examples, see if a general rule can be detected
+2. Pattern matching
+- consider similar problems
+3. Simplify & generalize
+4. Base case:
+- solve it first for a base case (e.g one element)
+5. Data structure brainstorm
+- see which data structure matches
+
+*******************************************************************************************
+
+
+Chapter 17: Networking
+
+1. What happens after typing URL into a browser
+* browser contacts DNS server to find IP of URL
+* DNS server replies with IP
+* browser opens a TCP connection on a port (80 for HTTP, 443 for HTTPS)
+* web server send HTML code
+* browser renders the code in display window
+* connection is closed when window closes
+
+
+2. How host A sends packet to host B when
+a) they are on same network
+- host address bits are used to identify the host
+b) they are on different networks
+- router uses network mask to identify the network and route the packet (using routing table)
+- host is identified using host bits
+
+

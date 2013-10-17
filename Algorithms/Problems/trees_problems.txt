@@ -1,0 +1,51 @@
+--------------------------------------------------------------
+P1 Given BST and value X; find 2 nodes in tree whose sum is X
+
+Solution 1:
+* transform BST in sorted array:
+	DFS inorder:
+		if(node)
+			inorder(node->left)
+			processNode(node)
+			inorder(node->right)
+* apply Arrays:P2
+
+
+Solution 2:
+* P1 = smallest node in tree:
+	Smallest:
+		if (!node->left)
+			return node->val;
+		Smallest(node->left)
+* P2 = biggest elem in tree:
+	Biggest
+		if (!node->right):
+			return node->val
+		Biggest(node->right)
+* if *p1 + *p2 == val --> return true
+* if sum < val --> get previous small node
+* if sum > val --> get previous great node
+
+use stacks to hold previous small nodes
+
+
+--------------------------------------------------------------
+P2 find closest node in a BST
+
+Closest:
+	if (node == val)
+		return node;
+		
+	distance = abs(node-val)
+	if distance < min_distance:
+		min_distance = distance;
+		found = node
+		
+	if (node > val)
+	{
+		Closest(node->left)
+	}
+	else
+	{
+		Closest(node->right)
+	}

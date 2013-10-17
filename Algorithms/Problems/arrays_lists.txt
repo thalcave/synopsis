@@ -1,0 +1,49 @@
+-------------------------------------------------------------
+P1: K lists of sorted integers
+
+find the smallest range that includes at least one number from each one of the K lists
+e.g:
+[4 10 15 24 26]
+[0 9 12 20]
+[5 18 22 30]
+result: [20 24]
+
+Solution:
+* start with K pointers, one for each list
+* find min, max from these K elements
+* compute range: max-min
+* if current range < smallest_range
+	smalllest_range = current_range
+* move pointer corresponding to min
+
+(4,0,5) --> 0,5 = 5
+(4,9,18) --> 4,18 = 14
+10,9,18
+etc.
+
+
+-------------------------------------------------------------
+P2. check whether there are 2 numbers in a sorted array whose sum equal a given value
+
+Solution:
+* start = first element of the array, end = last element of array
+* sum = start + end
+* if (sum) == number --> return True
+* if (sum) < number --> ++start
+else	--end;
+* until start < end
+
+
+
+-------------------------------------------------------------
+P3 find median of one billion integers array
+
+Solution 1:
+* one billion integers = 16 MB
+* sort array (mergesort or counting sort, if integers are on 8|16 bits)
+* get element from middle
+
+Solution 2:
+
+
+

@@ -87,7 +87,7 @@ Chapter 6. ICMP: Internet Control Message Protocol
 -----------------------------------------------
 Chapter 7. Ping program
 
- - sends an ICMP echo request message to a host, expecting an ICMP echo replay to be returned
+ - sends an ICMP echo request message to a host, expecting an ICMP echo reply to be returned
 
 ping -R = record route: set the IP RR option in outgoing IP datagram --> every router that handles the datagram add its IP address 
 			
@@ -117,6 +117,27 @@ traceroute:
 
 -----------------------------------------------
 Chapter 9. IP Routing (static)
+
+IPv4 adress:
+* 32 bits
+0.0.0.0 = default network
+255.255.255.255 = broadcast address
+127.0.0.1 = loopback 
+
+0 - 126.255.255 : class A	8 bits network, 24 host
+128 - 191.255.255.255: class B  16 bits network, 16 host
+192 - 223.255.255.255: class C  24 bits network, 8 host
+
+Network mask: identifies which portion of address is network and which one is host
+default masks:  A = 255.0.0.0
+		B = 255.255.0.0
+		C = 255.255.255.0
+Subnetting: create multiple logical networks
+* done by extending the default mask
+204.17.0.5 with mask 255.255.255.224 --> 3 bits taken from original host portion --> 2^3 subnets = 8 subnets * (2^5 -2)hosts
+255.255.255.224 = /27 (there are 27 bits set in the mask)
+
+204.17.0.5/27 = 204.17.0.5 with mask 255.255.255.224
 
 
 routing mechanism = search the routing table and decide which interface to send a packet out
@@ -149,8 +170,25 @@ init:
 -----------------------------------------------
 Chapter 10. Dynamic Routing
 
-- occurs when routers talk to adjacent routers
+- occurs when routers talk to adjacent routers, informing each other of what networks each router is connected to
+- routers communicate using routing protocols
 - routing mechanism is the same; what is changing is the way the route table is maintained
+
+OSPF Open Shortest Path First:
+* encapsulated in IP
+
+
+Transport level:
+RIP: Routing Info Protocol
+* uses UDP
+- routing database which stores the fastest route from computer to computer
+- a router tell others which route is fastest from its point of view
+- algorithm that enables each router to update its database
+
+BGP Border Gateway Protocol
+* uses TCP
+- two systems using BGP establish TCP connection and exchange the entire BGP routing table
+- incremental updates are sent as the routing table changes
 
 
 -----------------------------------------------
@@ -360,8 +398,12 @@ Algorithm:
 
 use TCP_NODELAY to disable this algorithm
 
+TCP window:
+* amount of unacknowledged data which can be sent before receiving ACK from receiver
+
 TCP's sliding window:
-* method of controlling the flow of packets
+* method of controlling the flow of packets, to avoid sending data too fast
+* maintained by the receiver
 * it allows the sender to transmit multiple packets before it stops and waits for an ACK
 
 ||Sent bytes and acknowledged{|Sent bytes but not yet acknowledged|Not sent, recipient ready to receive|}Not sent, recipient not ready to receive||
@@ -370,6 +412,11 @@ TCP's sliding window:
 
 
 Congestion: big pipe feeding small pipe
+Congestion control:
+* slow-start: exponential growth
+- work by increasing the TCP congestion window each time an ACK is received, until either an ACK is not received or a predefined threshold is reached
+- once the threshold has been reached, TCP enters linear growth
+
 
 -----------------------------------------------
 Chapter 25. Simple Network Management Protocol

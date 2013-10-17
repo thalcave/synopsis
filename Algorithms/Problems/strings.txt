@@ -1,0 +1,41 @@
+----------------------------------------------------
+P1. Print all permutations of a string
+
+Solution: approach with base cases
+
+str = "abc"
+
+perm(1) --> 'a'
+perm(2) --> 
+	'a'
+	'ab' 'ba'
+perm (3) -->
+	'ab', 'ba'
+	'cab', 'acb', 'abc'
+	'cba', 'bca', 'bac'
+
+str = "dasdas"
+
+vector<string>
+perm(size)
+{
+	if (!size)
+		return empty_vector
+	if (size == 1)
+		return vector(1, str[0]);
+	
+	current_vector = perm(size - 1);
+	ch = str[size];
+	
+	//for every string of current_vector
+	//	put ch in all possible positions
+	
+	result = vector_empty
+	for vect_it in vector:
+		for i = 0 to size(*vect_it)
+			new_str = merge(vect_it, i, ch);
+			result.push_back(new_str)
+	return result
+}
+
+

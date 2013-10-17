@@ -29,3 +29,4 @@ Distributed Systems
 
 * Service-oriented (SOA)
 - pieces of software providing application functionality as services to other applications. This is known as Service-orientation
+
