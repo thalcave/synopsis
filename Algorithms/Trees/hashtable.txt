@@ -1,3 +1,18 @@
+Differences hash table/map:
+1. map is sorted:
+- suitable to find min, max an a certain element
+2. keys in hash table are hashed via a hash function
+- because a hash function creates collisions, a hash table must deal with them
+3. Map is implemented as a red-black tree (because rebalancing operation is fast), hash table as an array
+- access in map is O(log n), in hash is O(1)
+- for small number of records, map is fast enough
+
+Hash function example:
+djb2(str):
+	hash
+	for each ch in str:
+		hash = hash * 33 + ch;
+
 Collision:
 1. Chaining
 Key --> List

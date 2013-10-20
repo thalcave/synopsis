@@ -19,6 +19,23 @@ two main ideas to improve runtime:
 
 - useful for sorting data on disk that is too large to fit entirely into primary memory
 
+mergeSort()
+{
+	if (array.size() <= 1)
+		return array
+		
+	middle = array.size()/2
+	left = mergeSort(left_array)
+	right = mergeSort(rightArray)
+	
+	return merge2Sorted(left, right)
+}
+
+
+Best case: O(n logn)
+Avg  case: O(n logn)
+Worst case:O(n logn)
+
 
 2) Quicksort
 Best case: O(n logn)
@@ -48,3 +65,37 @@ space: O(n+k)
  
  time:  O(kN)
  space: O(k+N) 
+ 
+ 
+5) Bucket (bin) sort: partition an array in a number of buckets, sort them and merge them
+Steps:
+1. set up array of initially empty buckets
+2. scatter: go over initial array, putting each object in its bucket
+3. sort each non-empty bucket
+4. gather: visit the buckets in order and put all elements back into the original array
+
+The most common variant of bucket sort operates on a list of n numeric inputs between zero and some maximum value M and divides the value range into n buckets each of size M/n.
+
+
+
+
+ 
+---------------------------------------------------------------------------------
+Selection algorithm
+* suitable for finding the kth smallest number in an array/list (e.g min, max, median)
+
+a. sort the array (O(nlogn)) and select desired element
+- efficient when many selections are needed
+- lower time when using counting/radix sort
+
+b. Partial selection sort:
+* sort only the first k elements (using selection sort): find the minimum value and move it to the beginning, repeating on the remaining list until we have accumulated k elements, and then return the kth element
+* complexity: O(kn) --> efficient if k is small
+
+c. Quickselect:
+Solution: uses the same overall approach as quicksort, choosing one element as a pivot and partitioning the data in two based on the pivot, accordingly as less than or greater than the pivot. 
+ * However, instead of recursing into both sides, as in quicksort, quickselect only recurses into one side – the side with the element it is searching for. 
+ * This reduces the average complexity from O(n log n) (in quicksort) to O(n) (in quickselect)
+ 
+
+

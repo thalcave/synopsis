@@ -55,7 +55,7 @@ Usage:
 
 
 ----------------------------------------------------------------------
-Heap Trees (or just Heaps) is a binary tree:
+Binary Heap is a binary tree with 2 additional constraints:
 * complete (all levels of the tree, except possible the last one, are fully filled)
 * all nodes are greater than (maxheap)|less than (minheap) each of its children
 
@@ -64,6 +64,12 @@ Space		O(n)		O(n)
 Search		n		n
 Insert		O(log n)	O(log n)
 Delete		O(log n)	O(log n)
+
+commonly implemented with an array:
+* for each a[i]:
+	- children are at a[2*i+1], a[2*i+2]
+	- its parent is floor(a[(i-1/2)])
+
 
 
 ----------------------------------------------------------------------
