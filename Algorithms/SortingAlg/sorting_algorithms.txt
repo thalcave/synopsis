@@ -97,5 +97,13 @@ Solution: uses the same overall approach as quicksort, choosing one element as a
  * However, instead of recursing into both sides, as in quicksort, quickselect only recurses into one side – the side with the element it is searching for. 
  * This reduces the average complexity from O(n log n) (in quicksort) to O(n) (in quickselect)
  
-
+Finding min and max:
+- common solution takes 2 * N comparisons
+- pair solution:
+	iterate on pairs
+	compare it1 with it2
+		min will be compared with min_so_far
+		max will be compared with max_so_far
+ complexity: 3 comparisons per pair --> 3 * (N/2) comparisons -> 1.5 comparisons
+ 
 
