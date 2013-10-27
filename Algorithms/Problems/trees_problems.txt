@@ -49,3 +49,129 @@ Closest:
 	{
 		Closest(node->right)
 	}
+--------------------------------------------------------------
+P3 Check if a tree is balanced: no two leaf nodes differ in distance from the root by more than one
+Solution 1: 
+BFS traversal, search first leaf and save the level
+go until level+1 is reached:
+
+node_queue.enqueue(root)
+while (!node_queue.empty)
+	no = node_queue.size()
+	for (i from 0 to n)
+		Node cnode = node_queue.dequeue()
+		if (cnode.has_no_children())
+			if clevel - first_level > 1
+				return false	//not balanced
+		//process Node
+		node_queue.enqueue(node_queue.children())
+Solution 2 (for binary tree)
+- search recursive the max and min depth:
+
+maxDepth:
+	if !root
+		return 0
+	return 1 + max(root.left, root.right)
+	
+minDepth:
+	if !root
+		return 0
+	return 1 + min(root.left, root.right)
+
+--------------------------------------------------------------
+P4 Given a sorted array, create a binary tree with minimal height:
+
+Solution:
+- recursion into array:	middle becomes root
+
+TreeNode*
+create(Array a, l, r)
+	middle = (r -l)/2 + l;
+	cnode = new Node(a[middle])
+	cnode->addLeft(create(a, l, middle-1));
+	cnode->addRight(create(a, middle+1, r));
+	return cnode;
+
+
+--------------------------------------------------------------
+P5. Find the first common ancestor of 2 nodes in a binary tree, without storing additional nodes in a data structure
+
+Solution 1:
+- go BFS and find first node
+- if second node is on the same level --> ancestor is the previous node
+- search second node in first_node-> left and right (DFS); if found --> common ancestor is the first_node
+- for each node from same level with first_node, search second node in their children ; if found --> common ancestor is the previous node
+
+commonAncestor()
+{
+	if (root == first)
+		search(second, root);
+		if found
+			return root;
+	node_queue.push(root);
+	previous = root;
+	while (node_queue)
+	{
+		csize = node_queue.size();
+		for i = 0 to csize
+			cnode = node_queue.dequeue();
+			if cnode == first
+				search(second, cnode);
+				if found
+					return first
+				for j = i to csize 
+					node = node_queue.dequeue()
+					if node == second || found(second, node)
+						return previous
+			else
+				node_queue.enqueue(cnode.left)
+				node_queue.enqueue(cnode.right)
+				
+	}
+}
+
+--------------------------------------------------------------
+P6. Two very large binary trees: 
+T1, with millions of nodes
+T2, with hundreds of nodes
+Create an algo to decide if T2 is subtree of T1
+
+Solution:
+1. transform T1 in array a1: O(n)
+		T2 in array a2
+check if a2 is subarray of a1:
+	head = a2[0]
+	search head in a1	//O(n)
+	if !found
+		return false
+	for i = 1 to 100
+		if a1[found+i] != a2[i]
+			return false
+	
+	return true
+	
+2. take root from T2
+	search root in T1 etc.
+O(n*m)
+
+--------------------------------------------------------------
+P7. Binary tree; print all paths which sum to a given value
+
+Solution:
+- start from root and branch left and right, compute current sum; if csum == val, print values
+
+findSum(node, val, previous_values)
+	if !node
+		return
+	
+	previous_values.push_back(val);
+	csum = sum(previous_values)
+	if csum = val
+		print previous_values
+	
+	findSum(node->left, val, copy(previous_values))
+	findSum(node->right, val, copy(previous_values))
+	
+	
+--------------------------------------------------------------
+P8. . 

@@ -44,6 +44,29 @@ Solution 1:
 * get element from middle
 
 Solution 2:
+* selection sort (kth first element)
+selection sort: O(kn); k is big --> O(n^2)
+quickselect (partial quicksort) --> O(n)
 
+
+-------------------------------------------------------------
+P4 Implement a queue using 2 stacks
+
+- push on first stack
+- pop from second stack: if empty, take all elements from S1 and put them in S2
+
+push on S1
+pop:
+	if S2.empty
+		while !S1.empty:
+			S2.push(S1.pop)
+		S2.pop
+-------------------------------------------------------------
+P5. Sort a stack S using just another stack T with pop(), push() and peek()
+
+- pop from S in tmp
+- if R.top() > tmp:
+	put all elements from R in S
+  push tmp in R
 
 
