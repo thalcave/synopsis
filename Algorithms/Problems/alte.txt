@@ -1,0 +1,39 @@
+P1. Swap 2 values in place
+
+a = b - a
+b = b - a
+a = a + b
+
+-------------------------------------------
+P2. design an algorithm to compute the number of trailing zeros in n factorial
+n! = 1 * 2 * ...(n-1) * n
+fact(5) --> 1
+fact(10) --> 2
+fact(15) --> 3
+fact(20) --> 4
+
+trailing zeros are contributed by pair (2, 5)
+count the number of multiples of 5
+for (i = 5; num/i > 0; i*= 5)
+	count += num/i
+
+-------------------------------------------
+P3. find max of 2 numbers without if-else
+
+a.
+if (a-b) < 0 --> return b
+else return a
+
+b.
+if (a-b) < 0
+	k = 1
+else
+	k = 0
+return a - k *(a -b)
+
+c.
+c = a - b
+k = most significant bit of c
+return a - k * c
+
+most significant bit = (c >> 31) & 0x1

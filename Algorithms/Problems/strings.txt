@@ -39,3 +39,14 @@ perm(size)
 }
 
 
+----------------------------------------------------
+P2. find the longest word composed of other words in a list
+
+Solution:
+
+- sort the list by size of words, descending order
+
+- take a string
+- decompose in all possible ways
+- if a tuple making a decomposition is found in list, return this word
+
