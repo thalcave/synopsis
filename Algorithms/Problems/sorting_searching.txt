@@ -1,0 +1,64 @@
+-------------------------------------------------------------------------
+P1 2 sorted arrays, A and B; A has enough space at the end to hold B
+merge B in A in sorted order
+
+- merge A and B from the back
+
+void merge(vector A, vector B)
+{
+	cpos = A.size() - 1;	
+	idxA = index of last element from A
+	idxB = B.size() - 1;
+	
+	while (idxA>=0 && idxB>=0)
+	{
+		if (A[idxA] > B[idxB])
+		{
+			A[cpos] = B[idxB];
+			--idxB;
+		}
+		else
+		{
+			A[cpos] = A[idxA];
+			--idxA;
+		}
+		--cpos;
+	}
+	
+	while (idxB >=0)
+	{
+		A[cpos] = B[idxB];
+		--cpos;
+		--idxB;
+	}
+}
+
+-------------------------------------------------------------------------
+P2 sort an array of strings so that all anagrams are next to each other
+
+Solution:
+implement a comparator which sorts the strings and then compares them
+
+struct CompareStrings
+{
+	bool operator()(std::string const& s1, std::string const& s2)
+	{
+		return std::sort(s1.begin(), s1.end()) < std::sort(s2.begin(), s2.end());
+	}
+}
+
+-------------------------------------------------------------------------
+P3 sorted array of strings interspersed with empty strings; find a given strings
+
+Solution: do binary search, if empty string is found, move to next one, until a valid string is found
+
+-------------------------------------------------------------------------
+P4 matrix, each row/column is sorted, find an elemen in it
+
+
+-------------------------------------------------------------------------
+P5 2GB file, one string per line; which algorithm would you use to sort it?
+
+Solution:
+- merge sort takes O(n logn) and O(n) space complexity, so it's not useful
+Use external sorting

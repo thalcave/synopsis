@@ -107,3 +107,41 @@ Finding min and max:
  complexity: 3 comparisons per pair --> 3 * (N/2) comparisons -> 1.5 comparisons
  
 
+---------------------------------------------------------------------------------
+External sorting
+- massive amounts of data which do not fit in memory
+
+External merge sort: sorting 900MB with only 100MB available
+Sort:
+* read data in chunks of 100MB and sort it
+* write sorted data on disk
+* repeat until all data is sorted
+Merge:
+* read the first 10 MB of each sorted chunk and allocate a 10 MB output buffer (9*10 + 10 = 100MB)
+* merge them, using a 9-way merge, store result in output; when output is full, write it on disk; whenever an input buffer is empty, fill it with the next 10MB  etc.
+
+K-way merging: merge K sorted arrays into a single one
+a. merge first 2 arrays, then merge result and the 3rd, result and the 4th...
+b. keep K indexes (one for each array) and find the min, move the index of min etc
+c. Use min-heap:
+- take first element from each list and create a min-heap
+- while the min-heap has elements:
+	remove the data from the root and insert into output node
+	get the listIndex for removed node (root)
+	from the listIndex list get next element and insert it into minheap
+
+min_heap = create_min_heap(lists)	//create min-heap with first element of each list
+while (not min_heap.empty)		//while this min-heap is not empty
+	celem = min_heap.root()		//take the root element = min element
+	clist = celem.list_index	//take index of list
+	
+	result.add(celem)		//put current elem (min) in result
+	min_heap.remove(root)		//delete root(min) from min-heap
+	if lists[list_index].not_empty()//if list that contains current element is not empty, add the next elem in min-heap
+		min_heap.insert(lists[list_index].front)
+		lists[list_index].pop_front
+	//if list is empty, go to next iteration
+
+
+
+
