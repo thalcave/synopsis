@@ -1,5 +1,16 @@
 graph data structure = a finite (and possibly mutable) set of ordered pairs (called edges or arcs) of certain entities called nodes or vertices.
 
+adjacency matrix (can be directed/weighted etc.):
+	A	B 	C
+A	0	1	0
+B	1	0	1
+C	0	1	0
+
+adjacency list:
+A: B
+B: A, C
+C: B
+
 
 ----------------------------------------------------------------------
 binary search tree (BST) is a node-based binary tree data structure which has the following properties:

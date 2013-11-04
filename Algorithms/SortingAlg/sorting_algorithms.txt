@@ -76,6 +76,8 @@ Steps:
 
 The most common variant of bucket sort operates on a list of n numeric inputs between zero and some maximum value M and divides the value range into n buckets each of size M/n.
 
+Avg  case: O(n+k)
+Worst case:O(n^2)
 
 
 
@@ -118,7 +120,9 @@ Sort:
 * repeat until all data is sorted
 Merge:
 * read the first 10 MB of each sorted chunk and allocate a 10 MB output buffer (9*10 + 10 = 100MB)
-* merge them, using a 9-way merge, store result in output; when output is full, write it on disk; whenever an input buffer is empty, fill it with the next 10MB  etc.
+* merge them, using a 9-way merge, store result in output; 
+	when output is full, write it on disk; 
+	whenever an input buffer is empty, FILL IT with the next 10MB of its associated chunk!!!
 
 K-way merging: merge K sorted arrays into a single one
 a. merge first 2 arrays, then merge result and the 3rd, result and the 4th...

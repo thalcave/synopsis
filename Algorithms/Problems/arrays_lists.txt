@@ -48,6 +48,9 @@ Solution 2:
 selection sort: O(kn); k is big --> O(n^2)
 quickselect (partial quicksort) --> O(n)
 
+Solution 3:
+* median of median
+
 
 -------------------------------------------------------------
 P4 Implement a queue using 2 stacks

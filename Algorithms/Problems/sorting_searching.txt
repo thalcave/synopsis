@@ -61,4 +61,7 @@ P5 2GB file, one string per line; which algorithm would you use to sort it?
 
 Solution:
 - merge sort takes O(n logn) and O(n) space complexity, so it's not useful
-Use external sorting
+Use external sorting:
+* divide file in 10 regions
+* sort each region in memory, write it
+* merge regions:
