@@ -84,4 +84,30 @@ commonly implemented with an array:
 
 
 ----------------------------------------------------------------------
-Trie
+Trie:
+- each node holds a char
+- a word is completed when reaching a leaf
+
+For k-length word:
+Insertion: O(k)
+Searching: O(k)
+
+struct Node
+{
+	char c;
+	bool is_leaf;
+	vector<Node*> children;
+}
+
+
+Suffix arrays:
+- efficient searching of large text
+* array containing all the pointers to the text suffixes sorted in lexicographical (alphabetical) order. 
+* each suffix is a string starting at a certain poinsition in the text and ending at the end of the text
+Searching a text can be performed by binary search using the suffix array.
+
+
+
+
+
+----------------------------------------------------------------------

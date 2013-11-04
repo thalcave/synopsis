@@ -37,3 +37,18 @@ k = most significant bit of c
 return a - k * c
 
 most significant bit = (c >> 31) & 0x1
+
+-----------------------------------------------------
+P4. given a number, find the next bigger number which has the same digits
+e.g: 38276 --> 38627
+
+Solution:
+step 1: start from end, find ascending substring and separate the number
+	382 76
+step 2: swap last digit from left with smallest digit from the right that is bigger than it
+	38(2) 7(6) --> 386 72
+step 3: sort right part
+	386 27
+
+-----------------------------------------------------
+P5. 
