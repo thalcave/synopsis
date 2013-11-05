@@ -65,3 +65,25 @@ Use external sorting:
 * divide file in 10 regions
 * sort each region in memory, write it
 * merge regions:
+
+-------------------------------------------------------------------------
+P6 Find and maintain the median value as new values are generated
+
+Solution: use 2 heaps: a Max and a Min one, with following restraints:
+
+1. numbers from Max-heap are smaller than numbers from Min-heaps
+2. size(Max-heap) is equal to or 1 more than size(Min-heap):
+	if N is even --> size(Max-heap) = size(Min-heap) = N/2
+	if N is odd --> size(Max-heap) = N/2 + 1 size(Min-heap) = N/2
+
+2 methods: insert(elem)	and getMedian()
+insert():
+- insert to Max-heap
+- if total_no is even before insertion --> OK
+- if total_no is odd before insertion --> Max-heap has N+2 elems and Min-heap has N elem --> Restraint 2 is violated:
+	pop elem from Max-heap
+	insert popped elem in Min-Heap
+- if inserted elem is less than MinHeap->root --> OK
+- if inserted elem is bigger than MinHeap->root:
+	exchange these elements: pop root of min-heap, insert it into max-heap
+				 pop root of max-heap, insert it into min-heap
