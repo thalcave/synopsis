@@ -98,6 +98,7 @@ c. Quickselect:
 Solution: uses the same overall approach as quicksort, choosing one element as a pivot and partitioning the data in two based on the pivot, accordingly as less than or greater than the pivot. 
  * However, instead of recursing into both sides, as in quicksort, quickselect only recurses into one side – the side with the element it is searching for. 
  * This reduces the average complexity from O(n log n) (in quicksort) to O(n) (in quickselect)
+ * it also partially sorts the data
  
 Finding min and max:
 - common solution takes 2 * N comparisons
@@ -130,7 +131,7 @@ b. keep K indexes (one for each array) and find the min, move the index of min e
 c. Use min-heap:
 - take first element from each list and create a min-heap
 - while the min-heap has elements:
-	remove the data from the root and insert into output node
+	remove the data from the root and insert into output buffer
 	get the listIndex for removed node (root)
 	from the listIndex list get next element and insert it into minheap
 

@@ -50,3 +50,22 @@ Solution:
 - decompose in all possible ways
 - if a tuple making a decomposition is found in list, return this word
 
+----------------------------------------------------
+P3. Eliminate duplicates in string
+
+Solution: go with a tail indicating the place where unique characters end
+
+i = 1
+tail = 1
+for i = 1 to n
+	for j = 0 to tail
+		if str[i] == str[j]	//duplicate
+			break
+	if (tail == j)
+	{
+		str[tail] = str[i]
+		++tail
+	}
+	
+	
+	

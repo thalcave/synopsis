@@ -82,7 +82,7 @@ minDepth:
 P4 Given a sorted array, create a binary tree with minimal height:
 
 Solution:
-- recursion into array:	middle becomes root
+- recursion into array:	middle becomes root (but check for duplicates as well)
 
 TreeNode*
 create(Array a, l, r)
