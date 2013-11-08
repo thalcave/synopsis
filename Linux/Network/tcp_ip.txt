@@ -49,6 +49,7 @@ A datagram delivery service which is:
 Datagram: max size = 65536 bytes (64 kB)
 
 IP Header:
+* version (IPv4, IPv6)
 * length (header, total)
 * TTL (upper limit on number of routers)
 * checksum (for IP Header)
