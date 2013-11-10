@@ -12,6 +12,50 @@ B: A, C
 C: B
 
 
+Matrix: 
+- fast to test path(x,y)
+- less memory on graphs with big no. of edges (NxN matrix used, even if very few edges)
+- fast edge insertion/deletion
+Adjacency list:
+- less memory on graphs with small no. of edges
+- faster to traverse graphs (O(n+m))
+- better for most problems
+
+struct EdgeNode
+{
+	int value;
+	int weight;
+	EdgeNode* next;
+}
+
+struct Graph
+{
+	EdgeNode* nodes[MAX_NO_EDGES];
+	int degree[MAX_NO_EDGES];
+	bool directed;
+	int no_vertices	//no of nodes
+	int no_edges	//no of edges
+}
+
+
+BFS(Graph G, Node v)
+{
+	Queue Q
+	Set Visited
+	Q.enqueue(v)
+	Visited.add(v)
+	
+	while Q not empty
+		cnode = Q.dequeue()
+		for node in cnode.nodes
+			if node not in Visited
+				visit(node)
+				Visited.add(v)
+				Q.enqueue(v)
+}
+
+
+
 ----------------------------------------------------------------------
 Binary Search Tree (BST) = a node-based binary tree data structure which has the following properties:
 * The left subtree of a node contains only nodes with keys less than the node's key.

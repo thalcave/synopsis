@@ -123,3 +123,10 @@ for i = 3 to n
 	x, y = remove_min(x, y, ai)
 
 (n- 3) * 2 + 2 comparisons = 2n -4 comparisons
+
+
+-------------------------------------------------------------------------
+P9 Sort 1Mio array of integers
+
+quicksort --> O(n * logn)
+radix sort --> O( k * logn), with k = 10 (number of digits)
