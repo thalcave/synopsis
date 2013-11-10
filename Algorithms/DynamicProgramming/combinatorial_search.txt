@@ -1,0 +1,21 @@
+-------------------------------------------------------------------------
+Backtracking: all possible arrangements of objects
+* at each step, we try to extend a given partial solution a = (a1, ...an) by adding another element at the end
+* after extending it, check if we have a solution
+
+constructs a tree of partial solutions
+like a DFS search 
+
+Backtrack_DFS(A, k)
+	if A = (a1, ...ak) is solution		//test if first k elements are a solution
+		process solution(A, k)
+	else
+		++k
+		compute_candidates(candidates_list)	//complete set of possible candidates
+		for c in candidates_list
+			a[k] = c
+			make_move(A, k, input)
+			Backtrack_DFS(A, k)
+			unmake_move(A, k, input)
+			if finished
+				return

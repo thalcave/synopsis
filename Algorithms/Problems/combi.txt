@@ -7,6 +7,7 @@ S = {a b c d}
 s = {y n y y} --> s = {a c d}
 instead y/n, use 0/1 --> problem is to generate all possible combinations of bits = all possible integers
 
+limit = (1 << S.size()) - 1	//limit is the max number with S.size() bits = 2 ^S.size()
 for i = 0  to S.size()
 	current_set = {}
 	cnum = i
@@ -21,7 +22,7 @@ for i = 0  to S.size()
 	}
 	
 Solution 2:
-
+backtracking
 
 
 -------------------------------------------------------------
