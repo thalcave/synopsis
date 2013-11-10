@@ -13,11 +13,17 @@ C: B
 
 
 ----------------------------------------------------------------------
-binary search tree (BST) is a node-based binary tree data structure which has the following properties:
+Binary Search Tree (BST) = a node-based binary tree data structure which has the following properties:
 * The left subtree of a node contains only nodes with keys less than the node's key.
 * The right subtree of a node contains only nodes with keys greater than the node's key.
 * The left and right subtree must each also be a binary search tree.
 * There must be no duplicate nodes.
+
+
+- if the tree is created via insertions, it may be unbalanced (e.g if we add numbers already sorted: 1 2 3 4 5)
+create a perfectly-balanced tree:
+* sort input values
+* start from middle (like binary_search), do recursions etc.
 
 		Avg		W
 Space		O(n)		O(n)
@@ -70,6 +76,13 @@ Binary Heap is a binary tree with 2 additional constraints:
 * complete (all levels of the tree, except possible the last one, are fully filled)
 * all nodes are greater than (maxheap)|less than (minheap) each of its children
 
+Creation:
+a. successive  insertions --> n * O(logn) = O(n * logn)
+b. using a binary tree --> O(n)
+put elements in a binary tree
+start from lowest level
+heapify
+
 		Avg		W
 Space		O(n)		O(n)
 Search		n		n
@@ -81,7 +94,16 @@ commonly implemented with an array:
 	- children are at a[2*i+1], a[2*i+2]
 	- its parent is floor(a[(i-1/2)])
 
+Operations:
+a. insert (heapify-up):	O(logn)
+1 add element at bottom level
+2 compare added elem with parent; if correct order, stop
+3 swap element with parent and go to #2
 
+b. delete (heapify-down): O(logn)
+1 replace root with last element
+2 compare new root with its children; if correct order, stop
+3 swap root with on of its children (smaller for min-heap, greater for max-heap) and go to #2
 
 ----------------------------------------------------------------------
 Trie:

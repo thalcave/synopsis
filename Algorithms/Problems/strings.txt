@@ -69,3 +69,26 @@ for i = 1 to n
 	
 	
 	
+----------------------------------------------------
+P4. Search pattern P in string T
+
+len(P) = m
+len(T) = n
+
+Solution 1:
+* traverse string T, check if T[i] == P[0]
+	yes --> match the rest of the pattern --> O(n*m)
+Solution 2:
+* suffix arrays --> O(m + logn) for searching
+
+Solution 3:
+* using hashes
+- hash(P) --> O(m)
+- for i from 0 to n-m:
+	hash(T[i], T[i+m]) --> O(m)
+n-m+2 * hash_computations = O(mn-m*m+2m) --> O(n*m)
+
+----------------------------------------------------
+P5. No. of occurences of a character in a sorted string:
+
+binary search; if char is found, go left and right

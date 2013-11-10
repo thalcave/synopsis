@@ -51,4 +51,10 @@ step 3: sort right part
 	386 27
 
 -----------------------------------------------------
-P5. 
+P5. Find square root of a number
+r^2 = n; find r
+
+start with l = 1, r = n
+take middle: m = (l+r)/2
+if m^2 > n --> r = m
+else	--> l = m

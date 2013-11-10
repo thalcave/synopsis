@@ -1,0 +1,37 @@
+------------------------------------------------------
+1. Stack: last-in, first-out
+
+size(), empty()
+top()
+pop(), push()
+
+2. Queue: first-in, first-out
+
+size(), empty()
+front(), back()
+pop(), push()
+
+3. Priority queue: a regular queue or stack data structure, but where additionally each element has a "priority" associated with it
+* an element with high priority is served before an element with low priority. 
+* if two elements have the same priority, they are served according to their order in the queue.
+
+implemented using a standard container classes (vector and deque fulfill these requirements)
+default = the standard container vector is used.
+
+insert_with_priority(): add an element to the queue with an associated priority
+pull_highest_priority_element(): remove the element from the queue that has the highest priority, and return it
+peek() (in this context often called find-max or find-min): returns the highest-priority element but does not modify the queue
+- is very frequently implemented, and nearly always executes in O(1) time
+
+Implementation:
+1. with single-linked list: 
+pull_highest_priority_element() --> search through all elements for the highest priority
+2. using a heap
+
+
+
+------------------------------------------------------
+Dictionary:
+
+key --> value
+

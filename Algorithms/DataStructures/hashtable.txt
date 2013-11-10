@@ -1,3 +1,27 @@
+Hash function example:
+djb2(str):
+	hash = 5381
+	for each ch in str:
+		hash = hash * 33 + ch;
+
+Collision:
+1. Chaining
+Key --> List
+Key --> Tree
+
+N elements, M buckets --> for a uniform distribution, each list will contain N/M elements
+
+2. Coalescence:
+* find the first free slot to insert Key,Value
+
+
+Efficiency:
+Search: O(n/m)
+Insert: O(1)
+Delete: O(1)
+Min: O(n+m)
+
+-------------------------------------------------
 Differences hash table/map:
 1. map is sorted:
 - suitable to find min, max an a certain element
@@ -7,16 +31,12 @@ Differences hash table/map:
 - access in map is O(log n), in hash is O(1)
 - for small number of records, map is fast enough
 
-Hash function example:
-djb2(str):
-	hash
-	for each ch in str:
-		hash = hash * 33 + ch;
 
-Collision:
-1. Chaining
-Key --> List
-Key --> Tree
+--------------------------------------------
+is a given document D different from all the rest in a large corpus? (e.g webpages)
+- hash D to an integer
+- compare it to the rest of the hashes
+- only when a collision could be a duplicate
 
-2. Coalescence:
-* find the first free slot to insert Key,Value
+is part of this document plagiarized?
+

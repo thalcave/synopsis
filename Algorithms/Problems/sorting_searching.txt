@@ -87,3 +87,39 @@ insert():
 - if inserted elem is bigger than MinHeap->root:
 	exchange these elements: pop root of min-heap, insert it into max-heap
 				 pop root of max-heap, insert it into min-heap
+
+				 
+-------------------------------------------------------------------------
+P7 Search if 2 sets are disjointed
+
+size(S1) = N
+size(S2) = M
+
+N > M
+
+a. sort S1 --> O(n logn)
+for each s in S2		--> O(m)
+	binary_search(S1, s)	--> O(logn)
+O(n logn) + m * O(logn) = O((m+n) * logn)
+
+b. Sort S2 --> O(m log m)
+for each s in S1
+	binary_search(S2, s)
+O(m logn) + n * O(log m) = O( (m+n) * log m)
+
+
+
+-------------------------------------------------------------------------
+P8 Give an efficient algorithm to find the second-largest key among n keys. You can do better than 2n − 3 comparisons. 
+
+compare first 3 elements, get rid of min
+Repeat this ( n - 2 ) times until we are done with all elements. Since it only takes at most 2 comparison to find the smallest element out of three, the total would be 2(n-2) = 2n-4 < 2n-3
+
+compare a0, a1, a2, remove min --> (x, y)
+compare x, y, a3
+
+x, y = remove_min(a0, a1, a2)	--> 2 comparisons
+for i = 3 to n
+	x, y = remove_min(x, y, ai)
+
+(n- 3) * 2 + 2 comparisons = 2n -4 comparisons

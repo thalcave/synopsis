@@ -1,3 +1,10 @@
+Randomization is a powerful tool to improve algorithms with bad worst-case but good average-case complexity
+	e.g randomly selecting a hash function
+	
+quicksort is typically 2-3 times faster than mergesort (operations in innermost loops are simpler)
+
+
+-------------------------------------------------------------------------
 stable sorting algorithms = maintain the relative order of records with equal keys (i.e., values)
 	e.g if we are sorting pairs (i,j) only after (i), ...
 
@@ -68,6 +75,8 @@ space: O(n+k)
  
  
 5) Bucket (bin) sort: partition an array in a number of buckets, sort them and merge them
+very effective when we are confident that the distribution of data will be roughly uniform
+
 Steps:
 1. set up array of initially empty buckets
 2. scatter: go over initial array, putting each object in its bucket
@@ -75,9 +84,19 @@ Steps:
 4. gather: visit the buckets in order and put all elements back into the original array
 
 The most common variant of bucket sort operates on a list of n numeric inputs between zero and some maximum value M and divides the value range into n buckets each of size M/n.
+Sorting names in a phone book --> 26 buckets
 
 Avg  case: O(n+k)
 Worst case:O(n^2)
+
+
+6) Heap sort
+step1: a heap is built out of the data
+step2: a sorted array is created by repeatedly removing the largest element from the heap, and inserting it into the array. The heap is reconstructed after each removal. 
+
+Best case: O(n logn)
+Avg  case: O(n logn)
+Worst case:O(n logn)
 
 
 
