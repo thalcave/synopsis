@@ -43,6 +43,8 @@ Best case: O(n logn)
 Avg  case: O(n logn)
 Worst case:O(n logn)
 
+Space: O(n) --> merging is not done in place
+
 
 2) Quicksort
 Best case: O(n logn)

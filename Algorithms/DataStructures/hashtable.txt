@@ -36,7 +36,7 @@ Differences hash table/map:
 is a given document D different from all the rest in a large corpus? (e.g webpages)
 - hash D to an integer
 - compare it to the rest of the hashes
-- only when a collision could be a duplicate
+- only when a collision appears, it could be a duplicate
 
 is part of this document plagiarized?
 

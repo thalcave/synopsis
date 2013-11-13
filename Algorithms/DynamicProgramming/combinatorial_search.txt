@@ -19,3 +19,17 @@ Backtrack_DFS(A, k)
 			unmake_move(A, k, input)
 			if finished
 				return
+
+Backtrack(current_set)
+
+	if current_set is solution
+		process_solution(current_set)
+	else
+		candidates = compute_candidates(current_set)
+		for c in candidates:
+			current_set.add(c)
+			Backtrack(current_set)
+			current_set.rmeove(c)
+			
+			
+pruning = technique of cutting off the search the instant we have established that a partial solution cannot be extended to a full solution

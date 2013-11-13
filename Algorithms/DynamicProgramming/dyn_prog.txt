@@ -30,3 +30,12 @@ Approaches:
 			but it is sometimes not intuitive to figure out all the subproblems needed for solving the given problem)
 			
 			
+Memoization:
+
+function(n)
+{
+	if computed_values[n] == UNKNOWN
+		computed_values[n] = function(n-1);
+
+	return computed_values[n];
+}

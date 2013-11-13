@@ -166,6 +166,7 @@ struct Node
 }
 
 
+----------------------------------------------------------------------
 Suffix arrays:
 - efficient searching of large text
 * array containing all the pointers to the text suffixes sorted in lexicographical (alphabetical) order. 
@@ -176,4 +177,3 @@ Searching a text can be performed by binary search using the suffix array.
 
 
 
-----------------------------------------------------------------------

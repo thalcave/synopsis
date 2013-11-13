@@ -82,11 +82,12 @@ Solution 2:
 * suffix arrays --> O(m + logn) for searching
 
 Solution 3:
-* using hashes
+* using hashes (Rabin-Karp algorithm)
 - hash(P) --> O(m)
 - for i from 0 to n-m:
 	hash(T[i], T[i+m]) --> O(m)
-n-m+2 * hash_computations = O(mn-m*m+2m) --> O(n*m)
+(n-m+2) * hash_computations = O(mn-m*m+2m) --> O(n*m)
+if using a rolling hash (use previous value) --> hash_computation takes O(1) --> O(n+m)
 
 ----------------------------------------------------
 P5. No. of occurences of a character in a sorted string:
