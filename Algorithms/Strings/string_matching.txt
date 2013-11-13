@@ -1,0 +1,211 @@
+***************************************************************************************
+
+String matching: see if pattern P is found in string T
+
+naive:
+* O(n*m) in worst cases
+* good for random characters
+
+Rabin-Karp:
+* O(n+m)
+* good for multiple patterns search
+
+KMP:
+* O(n+m)
+*
+
+Index methods (suffix array)
+
+-----------------------------------------------------------
+1. naive brute-force
+- scan T, search for first character in P
+
+* no preprocessing,
+* takes O((n-m+1)*m) = O(n*m) in worst cases
+* good for random characters: probability of 2 first letters to match is 1 in 26^2 = 1 in 676
+O(n+m) in average
+
+
+-----------------------------------------------------------
+
+2. Rabin-Karp algorithm
+speed up the testing part using hashes
+
+RabinKarp(string s, string sub)
+	hsub = hash(sub)	//compute hash of substring
+	hs = hash(s[0..m])	//hash first m chars of string
+	for i from 0 to n-m	//scan string
+		if hsub == hs	//if hashes match
+			//do the actual comparation because collisions could occur
+			compare (sub, s[i,i+m])
+		hs = hash(s[i..i+m])	//compute next hash
+		
+Complexity:
+compute hash(str) = O(m)
+(n-m) * compute_hash = O(n-m) * O(m) = O(nm) --> not better than naive implementation
+
+Solution: modify hash function (use a rolling hash)
+- 2 consecutive substrings differ only by 2 characters (first and last), so we could use the previous computed hash
+e.g
+hash_function(str): add each char in str
+next hash: hash(s[i+1..i+m]) = hash(s[i..i+m-1]) - s[i] + s[i+m]
+problem is that will usher collisions
+
+
+A better hash function:
+* treat every substring as a number
+hash("hi") --> 104 * 10 + 105
+hash("is") --> 105 * 10 + 115
+* apply modulo prime_number on result	
+
+hash(sub) = 10 * (prev_hash - 10^(m-1) * prev_str.first_char) + sub.last_char
+	  = 10 * (104 * 10 + 105 - 10 * 104) + 115
+	  = 10 * 105 + 115
+Complexity:
+compute hash(str) = O(m)
+2* O(m) + (n-m) * O(1) = O(2m) + O(n-m) = O(n+m)
+
+
+Rabin–Karp is an algorithm of choice for multiple pattern search (same length)
+
+
+
+-----------------------------------------------------------
+
+3. Knuth-Morris-Pratt KMP
+* searches for occurrences of a "word" W within a main "text string" S by employing the observation:
+ when a mismatch occurs, the word itself embodies sufficient information to determine where the next match could begin, thus bypassing re-examination of previously matched characters.
+ 
+e.g
+S = "ABC ABCDAB ABCDABCDABDE"
+W = "ABCDABD"
+	compare W with S, starting with m = 0
+	stop at m = 3
+	restart not from m = 1, but from m = 4 
+	(because in first 4 characters, there is only one A which could start a match)
+
+Algorithm:
+* m = position in S which is the beginning of a prospective match for W
+* i = index in W denoting char currently under consideration
+* T = partial match table: indicates where we need to look for the start of a new match in the event that the current one ends in a mismatch
+- if we have a match starting at S[m] that fails when comparing S[m + i] to W[i], then the next possible match will start at index m + i - T[i] in S 
+(that is, T[i] is the amount of "backtracking" we need to do after a mismatch). 
+	T[0] = -1, which indicates that if W[0] is a mismatch, we cannot backtrack and must simply check the next character
+	although the next possible match will begin at index m + i - T[i], as in the example above, we need not actually check any of the T[i] characters after that, so that we continue searching from W[T[i]]. 
+
+algorithm kmp_search:
+    input:
+        an array of characters, S (the text to be searched)
+        an array of characters, W (the word sought)
+    output:
+        an integer (the zero-based position in S at which W is found)
+
+    define variables:
+        an integer, m ← 0 (the beginning of the current match in S)
+        an integer, i ← 0 (the position of the current character in W) == length of partial match
+        an array of integers, T (the table, computed elsewhere)	--> O(n)
+
+    while m + i < length(S) do		O(m)
+        if W[i] = S[m + i] then		//characters match
+            if i = length(W) - 1 then	//we have a match
+                return m
+            let i ← i + 1		//move to next char (incrementing the length of the partial match)
+        else
+            let m ← m + i - T[i]	//mismatch, get next possible match; skip (i-T[i]) characters = len(partial_match) -table[len(partial_match)]
+            if T[i] > -1 then
+                let i ← T[i]
+            else			//we have to start from 0
+                let i ← 0
+            
+    (if we reach here, we have searched all of S unsuccessfully)
+    return the length of S
+
+Efficiency: O(n+m)
+    
+
+"Partial match" table T
+* The goal of the table is to allow the algorithm not to match any character of S more than once
+* if a partial match of length 'partial_match_length' is found and table[partial_match_length] > 1, we may skip ahead partial_match_length - table[partial_match_length - 1] characters.
+
+T = array[len[W]]
+The length of the longest proper prefix in the (sub)pattern that matches a proper suffix in the same (sub)pattern.
+T[x] --> I'm interested in first x characters from W
+
+
+'aba' -> P = {a, ab}
+			---> T[3] = 1 (a)
+	 S = {ba, a}
+
+'ababa' -> P = {abab, aba, ab, a}
+				--> T[5] = 3 (aba)
+	   S = {baba, aba, ba, a}
+
+
+	   
+***************************************************************************************
+Approximate string matching
+
+1. Transforming a word in another word (same length), changing only one letter; all intermediate words must be in a provided dictionary
+
+Hamming distance: minimum number of substitutions required to change a string in another (having the same length)
+hamming_distance(w1, w2)
+{
+	if len(w1) != len(w2)
+		error
+	dist = 0;
+	for i from 0 to len(w1)
+		if w1[i] != w2[i]
+			++dist
+	return dist
+}
+
+Algorithm:
+* create graph from dictionary:
+	nodes = words
+	edge = only if the words differ by one character (hamming_distance is 1)
+* find path (BFS) between searched words
+
+create graph:
+for every w1 in Dict:
+	for every w2 in Dict
+		hamming_distance = hamming_distance(w1, w2)
+		if hamming_distance == 1
+			add_edge(w1, w2)
+
+
+2. Finding similar words (spell checking)
+Levenshtein_distance: the minimum number of edits needed to transform one string into the other.
+	LevenshteinDistance(what, water) -> 3
+
+Having the set of words [cook, book, books, what, water], which word the misspelling 'wat' is closest?
+Do a full scan and find the word with lowest distance:
+LevenshteinDistance(wat, cook) -> 4
+LevenshteinDistance(wat, book) -> 4
+LevenshteinDistance(wat, books) -> 5
+LevenshteinDistance(wat, what) -> 1		!!!
+LevenshteinDistance(wat, water) -> 2
+
+Complexity: n * levenshtein_complexity --> O(n km)
+
+Algorithm:
+* build BK-tree
+* search word
+
+BK-tree:
+* add first word as root
+* attach subsequent words with a branch of length d(root_word, new_word)
+	d = distance between two words
+* if the branch is “taken” (i.e. there is already another word connected along a branch of same length) the insert operation is done on this word instead
+			Book
+	     1:Books		4:Cake
+	2:Boo		       1:Cape	3:Cart
+	
+	
+Search 'caqe' with tolerance 1:
+	start from root -> d = 4
+	d > 1 --> no match
+	search edges (d-1, d+1)	--> edges 3,5
+	
+	d(cake, caqe) = 1	--> match!
+	search edges (0, 2)	--> 1
+	d(caqe, cape) = 1	--> match!
