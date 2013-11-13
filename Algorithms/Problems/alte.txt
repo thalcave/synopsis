@@ -58,3 +58,16 @@ start with l = 1, r = n
 take middle: m = (l+r)/2
 if m^2 > n --> r = m
 else	--> l = m
+
+
+-----------------------------------------------------
+P6. function to return a big amount (one million --> one billion) of unique random numbers, having only getRandom() which returns 0 <= n <=1
+
+Solution: implement Durstenfeld solution:
+* initialize array with n elements
+* max = n
+* while max:
+    generate number between 0,max = getRandom() * max
+    swap a[number], a[max]
+    --max
+"""
