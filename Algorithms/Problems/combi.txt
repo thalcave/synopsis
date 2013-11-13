@@ -8,7 +8,7 @@ s = {y n y y} --> s = {a c d}
 instead y/n, use 0/1 --> problem is to generate all possible combinations of bits = all possible integers
 
 limit = (1 << S.size()) - 1	//limit is the max number with S.size() bits = 2 ^S.size()
-for i = 0  to S.size()
+for i = 0  to limit
 	current_set = {}
 	cnum = i
 	//iterate on bit level
@@ -23,6 +23,19 @@ for i = 0  to S.size()
 	
 Solution 2:
 backtracking
+
+GenSubSet(array)
+{
+	if solution(array)
+		processSolution(array)
+	else
+		Candidates = getCandidates()	//0 or 1
+		for c in Candidates:
+			array.add(c)
+			GenSubSet(array)
+			array.del(c)
+		
+}
 
 
 -------------------------------------------------------------
@@ -46,3 +59,49 @@ perm(int l, int r, str[], count)
 		if (r > l)
 			str[count] = ')'
 			perm(l, r-1, count+1,str)
+
+			
+-------------------------------------------------------------
+P3 Problem: Given a set of coin denominators, find the minimum number of coins to make a certain amount of change.
+
+Solution 1: Greedy - search always for biggest coin smaller than current sum
+while current_sum
+	get max coin smaller than current sum
+	solution.add (current_sum/max_coin)
+	current_sum = current_sum % max_coin
+not working in all cases
+
+Solution2: Backtracking --> generate all possible combinations --> keep the smallest one
+	not working for bigger numbers
+	
+Solution 3: dynamic programming
+
+s[n] = how many coins do we need to compute n
+
+s[i] = 	coin[x], if coin[x] == i
+	getPreviousMin(s, i)
+	
+getPreviousMin(s, i)
+	//we have to compute min number of coins for i, knowing solution for 0..i-1
+	//subtract each coin from i (x = i - coin(j)) and get minimum from s[x]
+
+
+-------------------------------------------------------------
+P4 By starting at the top of the triangle below and moving to adjacent numbers on the row below, the maximum total from top to bottom is 23.
+3
+7 4
+2 4 6
+8 5 9 3
+
+That is, 3 + 7 + 4 + 9 = 23.
+
+Find the maximum total from top to bottom of the triangle below:
+
+Solution: Start from the bottom:
+a[x-1, y] += max{a[x,y], a[x, y+1]}
+
+1:23
+2:20 19
+3:10 13 15
+4:8 5 9 3
+

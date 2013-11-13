@@ -174,4 +174,23 @@ findSum(node, val, previous_values)
 	
 	
 --------------------------------------------------------------
-P8. . 
+P8. Print all possible paths from root to leaves
+
+void
+Traverse(Node* node, prev_values)
+{
+	if (!node)
+		return;
+	
+	prev_values.add(node->val);
+	
+	if (!node->left && !node->right)	//leaf
+		print prev_values;
+	
+	Traverse(node->left, prev_values);
+	Traverse(node->right, prev_values);
+}
+
+
+--------------------------------------------------------------
+P9.

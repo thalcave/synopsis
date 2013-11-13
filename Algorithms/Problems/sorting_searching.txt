@@ -130,3 +130,43 @@ P9 Sort 1Mio array of integers
 
 quicksort --> O(n * logn)
 radix sort --> O( k * logn), with k = 10 (number of digits)
+
+
+-------------------------------------------------------------------------
+P10 Sort an array of 0 and 1, most efficient way
+
+last = n -1	//index where 1's start
+idx = 0
+
+while idx < last
+	if a[idx] == 1
+		swap(a[idx], a[last])
+		--last
+	else
+		++idx
+		
+		
+-------------------------------------------------------------------------
+P10 Sort an array of 0, 1 and 2 most efficient way
+Solution: keep indexes
+		where 0 ends
+		where 2 starts
+		
+idx_0 = -1
+idx_2 = n
+idx = 0
+
+while idx < idx2
+
+	if a[idx] == 1	//do nothing
+		++idx
+		continue
+
+	if a[idx] == 2
+		swap(a[idx], a[idx2])
+		--idx2
+	else
+		++idx_0
+		swap(a[idx], a[idx_0])
+		++idx
+

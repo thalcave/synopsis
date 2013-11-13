@@ -73,3 +73,40 @@ P5. Sort a stack S using just another stack T with pop(), push() and peek()
   push tmp in R
 
 
+-------------------------------------------------------------
+P6. Find longest increasing run (consecutive elements)
+
+max_run = 1;
+cmax = 1;
+for i = 0 to n - 1
+	if a[i] < a[i+1]
+		++cmax
+	else
+		if cmax > max_run
+			max_run = cmax
+		cmax = 1
+	++i
+	
+	
+-------------------------------------------------------------
+P7. Find longest increasing sequence (non-consecutive elements)
+keep a table l: longest sequence ending at element
+Solution: keep a table of intermediate results
+ * 	l[i] = longest sequence ending with a[i]
+ * 	l[i] = max(l[0], ...l[j]) + 1, where a[j] < a[i]
+ * keep also a predecessor table:
+
+for (unsigned i = 0; i < vect_int.size(); ++i)
+{
+	//find max from l
+	l.at(i) = 1 + getMaxLength(l, vect_int, i, pred);
+}
+
+
+-------------------------------------------------------------
+P8. Remove duplicates from a linked list
+Solution:
+* scan list with a pointer p1
+* look in list(head, p1) for duplicates and delete them
+
+
