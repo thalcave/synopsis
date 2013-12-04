@@ -71,12 +71,12 @@ Solution 2 (for binary tree)
 maxDepth:
 	if !root
 		return 0
-	return 1 + max(root.left, root.right)
+	return 1 + max(maxDepth(root.left), maxDepth(root.right))
 	
 minDepth:
 	if !root
 		return 0
-	return 1 + min(root.left, root.right)
+	return 1 + min(minDepth(root.left), minDepth(root.right))
 
 --------------------------------------------------------------
 P4 Given a sorted array, create a binary tree with minimal height:

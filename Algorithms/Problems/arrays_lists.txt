@@ -105,8 +105,11 @@ for (unsigned i = 0; i < vect_int.size(); ++i)
 
 -------------------------------------------------------------
 P8. Remove duplicates from a linked list
-Solution:
+Solution 1:
 * scan list with a pointer p1
 * look in list(head, p1) for duplicates and delete them
-
+Solution 2:
+* scan list with a pointer p, keeping previous
+* put p->val in hash
+* if p->val is found in hash, delete p
 

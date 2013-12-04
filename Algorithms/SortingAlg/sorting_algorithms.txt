@@ -112,11 +112,11 @@ Insertion/Selection sort:
 
 Heap sort: 
    *Advantages: don't need recursion. Suitable for large data.
-   *Disadvantages: usually slower than merge sort and quick sort.
+   *Disadvantages: usually slower than merge sort and quick sort; unstable
 
 Quick sort: 
    *Advantages: practical fastest.
-   *Disadvantages: recursive, worst case too slow.
+   *Disadvantages: recursive, worst case too slow; unstable;
 
 
  

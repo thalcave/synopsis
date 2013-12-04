@@ -1,0 +1,200 @@
+****************************************************************************************************************
+
+distributed system = an application that executes a collection of protocols to coordinate the actions of multiple processes on a network, 
+			such that all components cooperate together to perform a single or small set of related tasks.
+			
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Characteristics			
+1. Fault-Tolerant: 
+	It can recover from component failures without performing incorrect actions. 
+2. Highly Available: 
+	It can restore operations, permitting it to resume providing services even when some components have failed. 
+3. Recoverable: 
+	Failed components can restart themselves and rejoin the system, after the cause of failure has been repaired. 
+4. Consistent: 
+	The system can coordinate actions by multiple components often in the presence of concurrency and failure. This underlies the ability of a distributed system to act like a non-distributed system. 
+5. Scalable: 
+	It can operate correctly even as some aspect of the system is scaled to a larger size. For example, we might increase the size of the network on which the system is running. 
+	This increases the frequency of network outages and could degrade a "non-scalable" system. Similarly, we might increase the number of users or servers, or overall load on the system. 
+	In a scalable system, this should not have a significant effect. 
+6. Predictable Performance: 
+	The ability to provide desired responsiveness in a timely manner. 
+7. Secure: 
+	The system authenticates access to data and services
+	
+	
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Design for failure: failure happens all the time
+
+Failures:
+* hardware
+- dominant concern until the late 80's (heat/power consumption etc)
+- nowadays, most often: network failures, drive failures 
+
+* software 
+- 25-35% of unplanned downtime is accounted by bugs
+- Residual bugs in mature systems:
+	Heisenbug = disappears or alters its characteristics when it is observed or researched
+	Bohrbug = does not disappear or alter its characteristics when it is researched
+
+Halting failures: 
+	A component simply stops. There is no way to detect the failure except by timeout: it either stops sending "I'm alive" (heartbeat) messages or fails to respond to requests. 
+	Your computer freezing is a halting failure. 
+Fail-stop: 
+	A halting failure with some kind of notification to other components. A network file server telling its clients it is about to go down is a fail-stop. 
+Omission failures: 
+	Failure to send/receive messages primarily due to lack of buffering space, which causes a message to be discarded with no notification to either the sender or receiver.
+	This can happen when routers become overloaded. 
+Network failures: 
+	A network link breaks. 
+Network partition failure: 
+	A network fragments into two or more disjoint sub-networks within which messages can be sent, but between which messages are lost. 
+	This can occur due to a network failure. 
+Timing failures: 
+	A temporal property of the system is violated. For example, clocks on different computers which are used to coordinate processes are not synchronized; 
+	when a message is delayed longer than a threshold period, etc. 
+Byzantine failures: 
+	This captures several types of faulty behaviors including data corruption or loss, failures caused by malicious programs, etc.
+	
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The "8 Fallacies": eight assumptions made about the reliability of the components of a system
+1. The network is reliable. 
+2. Latency is zero. 
+3. Bandwidth is infinite. 
+4. The network is secure. 
+5. Topology doesn't change. 
+6. There is one administrator. 
+7. Transport cost is zero. 
+8. The network is homogeneous.
+
+Latency: the time between initiating a request for data and the beginning of the actual data transfer.
+Bandwidth: A measure of the capacity of a communications channel. The higher a channel's bandwidth, the more information it can carry.
+Topology: The different configurations that can be adopted in building networks, such as a ring, bus, star or meshed.
+Homogeneous network: A network running a single network protocol.
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+file servers = manage disk storage units on which file systems reside. 
+database servers = house databases and make them available to clients. 
+network name servers = implement a mapping between a symbolic name or a service description and a value such as an IP address and port number for a process that provides the service.
+
+
+service = denote a set of servers of a particular type. 
+binding = occurs when a process that needs to access a service becomes associated with a particular server which provides the service
+	There are many binding policies that define how a particular server is chosen. For example, the policy could be based on locality (a Unix NIS client starts by looking first for a server on its own machine); 
+	or it could be based on load balance (a CICS client is bound in such a way that uniform responsiveness for all clients is attempted).
+
+data replication = a service maintains multiple copies of data to permit local access at multiple locations, or to increase availability when a server process may have crashed. 
+caching = we say a process has cached data if it maintains a copy of the data locally, for quick access if it is needed again. 
+cache hit = when a request is satisfied from cached data, rather than from the primary service. 
+	For example, browsers use document caching to speed up access to frequently used documents. 
+	Caching is similar to replication, but cached data can become stale. 
+	Thus, there may need to be a policy for validating a cached data item before using it. If a cache is actively refreshed by the primary service, caching is identical to replication
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Remote Procedure Calls
+
+distributed systems are built on:
+* TCP/IP
+* remote procedure calls: called procedure may not exist in the same address space as the calling procedure
+
+RPC-specific errors:
+* version mismatch
+* binding error: server is not running when the client has started
+* timeout: server crash, network problem
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Distributed Design Principles
+
+1. Design for failure
+- avoid making assumptions that any component in the system is in a particular state. A classic error scenario is for a process to send data to a process running on a second machine. 
+The process on the first machine receives some data back and processes it, and then sends the results back to the second machine assuming it is ready to receive. 
+Any number of things could have failed in the interim and the sending process must anticipate these possible failures.
+
+2. Explicitly define failure scenarios and identify how likely each one might occur. Make sure your code is thoroughly covered for the most likely ones.
+
+3. Both clients and servers must be able to deal with unresponsive senders/receivers. 
+
+4. Think carefully about how much data you send over the network. Minimize traffic as much as possible.
+
+5. Acks are expensive and tend to be avoided in distributed systems wherever possible. 
+
+6. Retransmission is costly. It's important to experiment so you can tune the delay that prompts a retransmission to be optimal.
+
+
+Other:
+* Latency is the time between initiating a request for data and the beginning of the actual data transfer. Minimizing latency sometimes comes down to a question of whether you should make many little calls/data transfers or one big call/data transfer. The way to make this decision is to experiment. Do small tests to identify the best compromise. 
+
+* Don't assume that data sent across a network (or even sent from disk to disk in a rack) is the same data when it arrives. If you must be sure, do checksums or validity checks on data to verify that the data has not changed. 
+
+* Caches and replication strategies are methods for dealing with state across components. We try to minimize stateful components in distributed systems, but it's challenging. State is something held in one place on behalf of a process that is in another place, something that cannot be reconstructed by any other component. If it can be reconstructed it's a cache. Caches can be helpful in mitigating the risks of maintaining state across components. But cached data can become stale, so there may need to be a policy for validating a cached data item before using it. 
+
+* If a process stores information that can't be reconstructed, then problems arise. One possible question is, "Are you now a single point of failure?" I have to talk to you now - I can't talk to anyone else. So what happens if you go down? To deal with this issue, you could be replicated. Replication strategies are also useful in mitigating the risks of maintaining state. But there are challenges here too: What if I talk to one replicant and modify some data, then I talk to another? Is that modification guaranteed to have already arrived at the other? What happens if the network gets partitioned and the replicants can't talk to each other? Can anybody proceed? 
+
+* There are a set of tradeoffs in deciding how and where to maintain state, and when to use caches and replication. It's more difficult to run small tests in these scenarios because of the overhead in setting up the different mechanisms. 
+
+* Be sensitive to speed and performance. Take time to determine which parts of your system can have a significant impact on performance: Where are the bottlenecks and why? Devise small tests you can do to evaluate alternatives. Profile and measure to learn more. Talk to your colleagues about these alternatives and your results, and decide on the best solution. 
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Two Generals' Problem:
+* is a thought experiment meant to illustrate the pitfalls and design challenges of attempting to coordinate an action by communicating over an unreliable link
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+scale-out (horizontally) = add more nodes to a system
+scale-up (vertically) = add resources (CPU, RAM) to a single node
+Tradeoffs:
+* larger numbers of computers means increased management complexity, as well as a more complex programming model and issues such as throughput and latency between nodes; 
+* In the past, the price difference between the two models has favored "scale up" computing for those applications that fit its paradigm, but recent advances in virtualization technology have blurred that advantage, since deploying a new virtual system over a hypervisor (where possible) is almost always less expensive than actually buying and installing a real one
+
+
+
+****************************************************************************************************************
+Ebay architectural lessons
+
+1. scale-out not scale-up
+- horizontal scaling at every tier
+2. virtualize components
+- reduce physical dependencies, improve development flexibility
+3. Design for failure
+
+Scalability best practices:
+1. Partition by function
+* code level
+
+* application tier: separate application pools
+- selling is served by one set of application servers
+- search by another set
+16.000 application servers = 220 pools
+
+* database tier: no single monolithic database
+- set of databases for user/item/purchase data etc
+- 1000 logical databases on 400 physical hosts
+
+2. Split horizontally
+* application tier: use a load-balancer to distribute the load
+
+* database tier: shard data horizontally
+- user data is divided over 20 hosts
+
+3. Avoid distributed transactions
+
+CAP - Consistency Availability Partition
+high traffic web --> Partition
+24/7 --> Availability
+
+4. Decouple functions asynchronously
+- if A calls B synchronously, A and B are tightly coupled: to scale A, you have to scale B, too; if B is down, A is also down
+- asynchronous integration: queue, multicast messaging, batch process --> A and B can be scaled independently
+
+5. Move processing to asynchronous flows
+
+6. Virtualize at all levels
+* we virtualize the database. Applications interact with a logical representation of a database, which is then mapped onto a particular physical machine and instance through configuration.
+

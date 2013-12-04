@@ -1,0 +1,19 @@
+Intuitive but incorrect asumption: 
+	Intelligence is defined by behavior: we are intelligent because the way we are doing things
+	Input --> BlackBox --> Output
+
+Intelligence is defined by prediction
+	we experience the world through a sequence of patterns
+				we store them
+				we recall them
+				we match them up against reality, making predictions
+
+
+
+Sophisticated senses --> Non-mammalian brain (sensory brain)--> Complex behavior
+
+mammals have developed neocortex: 
+* new layer on top of old brain (which is responsible for emotions) 
+* memory system
+
+

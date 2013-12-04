@@ -129,7 +129,7 @@ for i = 3 to n
 P9 Sort 1Mio array of integers
 
 quicksort --> O(n * logn)
-radix sort --> O( k * logn), with k = 10 (number of digits)
+radix sort --> O( k * n), with k = 10 (number of digits)
 
 
 -------------------------------------------------------------------------
