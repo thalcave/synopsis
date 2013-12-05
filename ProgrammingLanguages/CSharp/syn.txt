@@ -1,0 +1,510 @@
+****************************************************************************************************
+.NET framework:
+* software framework: BCL + CLR
+BCL: Base Class Library = large library for multiple programming languages
+CLR: Common Language Runtime = software environment where programs are running
+
+
+CLI: Common Language Infrastructure:  provides a language-neutral platform for application development and execution
+
+C#		VB.NET		J#
+code		code		code
+  |		  |		  |	
+Compiler	Compiler	Compiler
+  |		  |		  |
+  |		  |		  |
+	Common Intermediate Language
+		  |
+		  |
+	Common Language Runtime
+		  |
+		  |
+	machine readable code
+	
+  
+C#:
+* strong-typing
+* automatic garbage-collection
+* designed for Common Language Infrastructure
+
+
+Assembly = chunk of (precompiled) code that can be executed by the .NET runtime environment. 
+A .NET program consists of one or more assemblies.
+
+
+Project = holds source files and any other files (such as images) that are needed to create an assembly that is to be run by the .NET Common Language Runtime. 
+* all of the source files in a project are compiled together to create a single assembly
+* the assembly may be an executable (.exe) or a dynamic link library (.dll)
+
+Solution = can hold one or more projects, but often contains just a single project (if this is the case, then there is really no difference between a solution and a project)
+* a solution that contains more than one project is suitable for large applications that are developed by more than one person
+* this allows individuals or small groups of developers to independently work on the projects that make up the solution
+
+Command-line arguments
+- C# doesn't include the executable application name in the args list - only the first parameter after the executable application.
+
+
+
+****************************************************************************************************
+Lesson 2: Operators, Types, and Variables
+
+var a = expression; //let the compiler infer the type
+
+
+Fundamental points:
+- types can derive from other types (base types); all types (including built-in numeric such as System.Int32) derive from a single base type: System.Object = Common Type System
+- each type in CTS is either a value or a reference type
+value: all structs, including built-in numeric types
+reference: all BCL classes, including String and Array
+
+Value types: derive from System.ValueType
+* struct (built-in numeric types are struct) or enum
+* sealed : you cannot derive a type from them
+* you use the struct keyword to create your own custom value types. 
+	typically, a struct is used as a container for a small set of related variables
+* a single space in memory is allocated to store the value
+
+Reference types:
+* class, delegate, array or interface
+* variable contains null until:
+	you explicitly create an instance of the object by using the new operator
+	you assign it an object that has been created elsewhere by using new
+* an object is created in memory, and then handled through a separate reference—rather like a pointer
+
+
+Parameters are (by default) passed by value, meaning that they are implicitly copied when passed to the method:
+* for value-type parameters, this means physically copying the instance
+* for reference-types it means copying a reference
+Passing by reference:
+	static void SquareIt(ref int x)	//a reference to int is passed
+	
+Four different kinds of parameters, any of them can be applied to value/reference-type:
+1. value parameters (default)
+2. reference parameters (ref)
+3. output parameters (out)
+- Output parameters are very similar to reference parameters: The parameter is considered initially unassigned (in other words, you must assign it a value before you can "read" it in the function member).
+4. parameter arrays (params int[])
+- allow a variable number of arguments to be passed into a function member
+
+
+
+Stack:
+* The reference portion of reference-typed local variables and parameters
+* Value-typed local variables and method parameters (structs, as well as integers, bools, chars, DateTimes, etc.)
+
+Heap:
+* The content of reference-type objects.
+* Anything structured inside a reference-type object.
+
+----------------------------------------------------------------------------------------------------------
+
+Type conversions:
+* implicit: from smaller to larger integers, from derived to base
+* explicit: info might be lost
+* user-defined: 
+* with helper classes.
+
+a. Implicit
+	int num = 2147483647;
+	long bigNum = num;
+	
+b. Explicit (cast)
+
+	double x = 1234.7;
+        int a;
+        // Cast double to int.
+        a = (int)x;
+        
+c. Helper classes: 
+using methods in Convert class
+	Convert.ToUInt32(string)
+	Convert.ToDouble(string)
+
+using Parse/TryParse in Int32
+	Parse : throws an exception
+		int numVal = Int32.Parse("32");
+	TryParse: returns false
+		bool result = Int32.TryParse("100", out numVal);
+
+	
+----------------------------------------------------------------------------------------------------------
+Boxing and Unboxing
+boxing = convert a value type to object
+	int i = 10
+	object o = i;
+unboxing = extracts the value type from the object
+	o = 123;
+	int i = (int)o;
+
+* useful to store objects in a list
+* computationally expensive processes
+
+----------------------------------------------------------------------------------------------------------
+Using Type dynamic
+
+* static type, but an object of type dynamic bypasses static type checking
+In most cases, it functions like it has type object. At compile time, an element that is typed as dynamic is assumed to support any operation. 
+However, if the code is not valid, errors are caught at run time.
+
+	dynamic dynamic_ec = new ExampleClass();
+	// The following line is not identified as an error by the 
+	// compiler, but it causes a run-time exception.
+	dynamic_ec.exampleNonexistentMethod1(10, 4);
+
+----------------------------------------------------------------------------------------------------------
+Strings
+
+* string = object of type String whose value is text. 
+Internally, the text is stored as a sequential read-only collection of Char objects
+the string keyword is an alias for String. Therefore, String and string are equivalent
+
+String objects are immutable:
+	string s1 = " first string"
+	string s2 = " second string"
+	s1 += s2	//creates a new string object and stores it in s1, releasing the reference to original object
+	
+	
+	string s1 = "Hello"
+	string s2 = s1
+	s1 += "World"	//reference will continue to point to the original object
+	
+format string = string whose contents can be determined dynamically at runtime
+	s = System.String.Format("{0} times {1} = {2}", i, j, (i * j));
+	
+Null string:
+- any attempt to call a method on a null string causes a NullReferenceException. 
+- you can use null strings in concatenation and comparison operations with other strings
+
+StringBuilder:
+- creates a string buffer that offers better performance if your program performs many string manipulations
+- enables you to reassign individual characters
+
+When a program declares two or more identical string variables, the compiler stores them all in the same location. 
+By calling the ReferenceEquals method, you can see that the two strings actually refer to the same object in memory. 
+	string s1 = "abc";
+	string s2 = "abc";
+	Console.WriteLine("String.ReferenceEqual(s1,s2) ? {0}", String.ReferenceEquals(s1,s2));	//True - same location in memory
+
+	
+
+Guidelines:
+* initialize a string with the Empty constant value to create a new String object whose string is of zero length
+* use the static IsNullOrEmpty(String) method to verify the value of a string before you try to access it.
+* when performance is important, you should always use the StringBuilder class to concatenate strings
+
+* use Interfaces to abstract
+* do not use empty destructors (loss of performance)
+	
+----------------------------------------------------------------------------------------------------------
+	
+Array type:
+* arrays are actually objects, and not just addressable regions of contiguous memory as in C and C++
+* Array is the abstract base type of all array types.
+
+1. Single-dimensional arrays:
+ 	int[] array = new int[5];
+The new operator is used to create the array and initialize the array elements to their default values. 
+In this example, all the array elements are initialized to zero.
+
+	int[] array1 = new int[] { 1, 3, 5, 7, 9 };
+	string[] weekDays = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+	
+2. Multi-dimensional arrays:
+
+	int[,] array = new int[4, 2];
+	int[, ,] array1 = new int[4, 2, 3];	//an array of three dimensions, 4, 2, and 3
+	array[2, 1] = 25;
+	
+3. Jagged arrays:
+* an array whose elements are arrays (The elements of a jagged array can be of different dimensions and sizes.)
+
+	int[][] jaggedArray = new int[3][];
+	jaggedArray[0] = new int[5];
+	jaggedArray[1] = new int[4];
+	jaggedArray[2] = new int[2];
+	jaggedArray[0][1] = 77;
+
+
+---------------------------------------------------------------------------------------------------------
+
+****************************************************************************************************
+Classes and structs
+
+class = reference type
+struct = value type
+
+To determine whether two class instances refer to the same location in memory (which means that they have the same identity), use the static Equals method
+To determine whether the instance fields in two struct instances have the same values, use the ValueType.Equals method
+
+---------------------------------------------------------------------------------------------------------
+
+Access modifiers:
+* public
+
+* protected
+	The type or member can be accessed only by code in the same class or struct, or in a class that is derived from that class.
+
+* private
+
+* internal
+	The type or member can be accessed by any code in the same assembly, but not from another assembly.
+	A common use of internal access is in component-based development because it enables a group of components to cooperate in a private manner without being exposed to the rest of the application code. 
+	For example, a framework for building graphical user interfaces could provide Control and Form classes that cooperate by using members with internal access. 
+	Since these members are internal, they are not exposed to code that is using the framework.
+
+* protected internal 
+	The type or member can be accessed by any code in the assembly in which it is declared, or from within a derived class in another assembly. 
+	
+---------------------------------------------------------------------------------------------------------
+
+Members of class:
+* fields
+- variable of any type
+- instance or static fields
+- should be private/protected
+- Fields are initialized immediately before the constructor for the object instance is called. 
+	If the constructor assigns the value of a field, it will overwrite any value given during field declaration. 
+- a field can be declared readonly: assigned a value only during initialization or in constructor
+	 readonly int _year;
+
+* constants
+- immutable values which are known at compile time and do not change for the life of the program
+- only built-in types can be const
+
+const vs readonly:
+	A const field can only be initialized at the declaration of the field. 
+	A readonly field can be initialized either at the declaration or in a constructor. 
+	Therefore, readonly fields can have different values depending on the constructor used. 
+	Also, while a const field is a compile-time constant, the readonly field can be used for runtime constants as in the following example:
+		public static readonly uint timeStamp = (uint)DateTime.Now.Ticks;
+
+
+* properties
+- member that provides a flexible mechanism to read, write, or compute the value of a private field (backing field/store)
+
+* methods
+
+* events
+
+
+* operators
+* Constructors
+* Destructors
+
+---------------------------------------------------------------------------------------------------------
+Constructors and Destructors
+
+Constructors
+* default ctor = constructor that takes no parameters
+- classes without constructors are given a public default constructor by the C# compiler 
+- structs cannot contain an explicit default constructor because one is provided automatically by the compiler
+- default ctor is invoked only if instantiated with new
+
+* Constructors that take parameters must be called through a new statement or a base statement
+* A constructor can use the 'base' keyword to call the constructor of a base class:
+	 public Manager(int annualSalary)
+        : base(annualSalary)
+	{
+		//Add further instructions here.
+	}
+- In a derived class, if a base-class constructor is not called explicitly by using the base keyword, the default constructor, if there is one, is called implicitly
+
+* private constructor = generally used in classes that contain static members only
+- used to prevent creating instances of a class when there are no instance fields or methods, such as the Math class, 
+	or 
+	when a method is called to obtain an instance of a class
+
+* static constructor = used to initialize any static data (or to perform a particular action that needs to be performed once only) before the first instance of the class is created
+- It is called automatically before the first instance is created or any static members are referenced.
+- does not have parameters
+- cannot be called directly
+- no control on when it will be executed
+
+Destructors = used to destruct instances of classes
+
+Destructors cannot be defined in structs. They are only used with classes.
+- The destructor implicitly calls Finalize on the base class of the object
+* A class can only have one destructor.
+* Destructors cannot be inherited or overloaded.
+* Destructors cannot be called. They are invoked automatically.
+* A destructor does not take modifiers or have parameters.
+
+	
+	
+---------------------------------------------------------------------------------------------------------
+Structs
+* unlike classes, structs can be instantiated without using a new operator:
+	there is no constructor call, which makes the allocation more efficient. However, the fields will remain unassigned and the object cannot be used until all of the fields are initialized.
+* a struct cannot inherit from another struct or class, and it cannot be the base of a class. 
+
+
+---------------------------------------------------------------------------------------------------------
+Inheritance
+* when a base class declares a method as virtual, a derived class can override the method with its own implementation
+* if a base class declares a member as abstract, that method must be overridden in any non-abstract class that directly inherits from that class
+* if a derived class is itself abstract, it inherits abstract members without implementing them
+
+* a derived class has access to the public, protected, internal, and protected internal members of a base class. 
+	even though a derived class inherits the private members of a base class, it cannot access those members
+	
+---------------------------------------------------------------------------------------------------------
+Polymorphism
+
+Virtual members:
+* a derived class can override a base class member only if the base class member is declared as virtual or abstract
+	the derived member must use the override keyword to explicitly indicate that the method is intended to participate in virtual invocation
+	public override void Draw()
+	
+* a derived class can hide a base class member, by using 'new' keyword
+	public new void DoWork()
+
+* a derived class can stop virtual inheritance by declaring an override as sealed. This requires putting the sealed keyword before the override keyword in the class member declaration
+	public sealed override void DoWork() { }
+	
+* A derived class that has replaced or overridden a method or property can still access the method or property on the base class using the base keyword
+	public override void DoWork()
+	{
+		//Perform Derived's work here 
+		//... 
+		// Call DoWork on base class 
+		base.DoWork();
+	}
+
+- the 'override' modifier extends the base class method, and the 'new' modifier hides it.
+- when you create a custom class or struct, you should override the ToString method in order to provide information about your type to client code.
+	public override string ToString()
+
+---------------------------------------------------------------------------------------------------------
+Abstract and Sealed Classes 
+
+* The 'abstract' keyword enables you to create classes and class members that are incomplete and must be implemented in a derived class.
+	public abstract class A {}
+	
+	public abstract class A
+	{
+		public abstract void DoWork(int i);
+	}
+
+- an abstract class can force derived classes to provide new method implementations for virtual methods.
+	public class D
+	{
+		public virtual void DoWork(int i)
+		{
+			// Original implementation.
+		}
+	}
+
+	public abstract class E : D
+	{
+		public abstract override void DoWork(int i);
+	}
+
+	public class F : E
+	{
+		public override void DoWork(int i)
+		{
+			// New implementation.
+		}
+	}
+	
+	
+	
+* The 'sealed' keyword enables you to prevent the inheritance of a class or certain class members that were previously marked virtual.
+	public sealed class D		//D cannot be used as base class
+	{
+		// Class members here.
+	}
+	
+	public class D : C
+	{
+		public sealed override void DoWork() { }	//DoWork is not virtual anymore
+	}
+	
+	
+---------------------------------------------------------------------------------------------------------
+Interfaces = define a contract
+
+* An interface is like an abstract base class. Any class or struct that implements the interface must implement all its members.
+* An interface can't be instantiated directly. Its members are implemented by any class or struct that implements the interface.
+* Interfaces can contain events, indexers, methods, and properties but no fields
+* Interfaces contain no implementation of methods.
+* Interface members are automatically public, and they can't include any access modifiers. Members also can't be static.
+
+
+A class or struct can implement multiple interfaces. A class can inherit a base class and also implement one or more interfaces.
+
+* similar to an abstract class in which all the methods are abstract
+	a class or struct can implement multiple interfaces, but a class can inherit only a single class, abstract or not. 
+	Therefore, by using interfaces, you can include behavior from multiple sources in a class.
+* Interfaces can contain methods, properties, events, indexers, or any combination of those four member types	
+
+
+---------------------------------------------------------------------------------------------------------
+Properties
+
+* member that provides a flexible mechanism to read, write, or compute the value of a private field (backing field/store)
+
+* The get and set portions of a property or indexer are called accessors. 
+	By default these accessors have the same visibility, or access level: that of the property or indexer to which they belong.
+	
+* the code block for the get accessor is executed when the property is read; the code block for the set accessor is executed when the property is assigned a new value
+		
+		public class Employee
+		{
+			public static int NumberOfEmployees;
+			private static int counter;
+			private string name;		//backing store
+
+			// A read-write instance property: 
+			public string Name
+			{
+				get { return name; }
+				set { name = value; }
+			}
+
+			// A read-only static property: 
+			public static int Counter
+			{
+				get { return counter; }
+			}
+
+			// A Constructor: 
+			public Employee()
+			{
+				// Calculate the employee's number:
+				counter = ++counter + NumberOfEmployees;
+			}
+		}
+
+* properties can be declared on an interface
+	public interface ISampleInterface
+	{
+		// Property declaration: 
+		string Name
+		{
+			get;
+			set;
+		}
+	}
+
+Auto-implemented properties: no additional logic is required in the property accessors (backing-field is created anonymously by the compiler)
+	class Customer
+	{
+		public string Name { get; set; }
+	}
+	customer.Name
+	
+	
+Abstract properties:  indicate what property accessors are available, but do not implement them
+	public abstract double Area
+	{
+		get;
+	}
+
+****************************************************************************************************
+Events
+- enable a class or object to notify other classes or objects when something of interest occurs
+
+The class that sends (or raises) the event is called the publisher and 
+the classes that receive (or handle) the event are called subscribers.
+
