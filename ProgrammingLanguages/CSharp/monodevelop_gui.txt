@@ -1,0 +1,11 @@
+partial class = split the definition of a class or a struct, an interface or a method over two or more source files
+
+Window types:
+* Toplevel = A regular window, such as a dialog
+* Popup	= A special window such as a tooltip. 
+
+Container:
+* Every widget in the Gtk library needs to be within some type of container. 
+* The containers control the layout of the widgets on the parent window. In fact, a window itself is a type of container.
+
+some widgets have default sizes. Menu Bars are supposed to be confined to the top of the window, so that's what they do
