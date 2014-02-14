@@ -1,0 +1,693 @@
+---------------------------------------------------------------------------------
+Simple (and simple to implement) features with noticeable help for programmers
+
+1) auto -- deduction of a type from an initializer
+	auto x = 7; --> x is int
+	auto x = expression --> x has the evaluated type
+
+most useful when that type is either:
+   hard to write:
+	template<class T> void printall(const vector<T>& v)
+	{
+		for (auto p = v.begin(); p!=v.end(); ++p) cout << *p << "\n";
+		//instead of for (typename vector<T>::const_iterator p = v.begin(); p!=v.end(); ++p) cout << *p << "\n";
+	}
+  or hard to know exactly:
+ 	template<class T, class U> void (const vector<T>& vt, const vector<U>& vu)
+	{
+		// ...
+		auto tmp = vt[i]*vu[i];
+		// ...
+	}
+
+- it was suggested in 1984, but was taken out because of C compatibility	
+- C++98 removed "implicit int" --> auto is easy to implement
+- the old meaning of auto("this is a local variable") is redundant and unused
+
+gcc 4.4
+
+
+2) Range for statement
+- allows you to iterate through a "range" (iterate through like an STL-sequence defined by a begin() and end())
+const vector<double> v
+for (auto x : v) cout << x << '\n';
+for (auto& x : v) ++x;
+for (const auto x : { 1,2,3,5,8,13,21,34 }) cout << x << '\n';
+
+not implemented
+
+
+
+3) enum class -- scoped and strongly typed enums
+conventional enums implicitly convert to int, causing errors when someone does not want an enumeration to act as an integer.
+conventional enums export their enumerators to the surrounding scope, causing name clashes.
+the underlying type of an enum cannot be specified, causing confusion, compatibility problems, and makes forward declaration impossible.
+
+traditional enum:
+	enum Alert { green, yellow, election, red }; // traditional enum
+enum classs ("strong enums") are strongly typed and scoped:
+	enum class Color { red, blue };
+	
+Alert a = 7;              // error (as ever in C++)
+Color c = 7;              // error: no int->Color conversion
+
+int a2 = red;             // ok: Alert->int conversion
+int a3 = Alert::red;      // error in C++98; ok in C++0x
+int a4 = blue;            // error: blue not in scope
+int a5 = Color::blue;     // error: not Color->int conversion
+Color a6 = Color::blue;   // ok
+
+traditional enums work as usual, but you can now optionally qualify with the enum name.
+
+gcc 4.4
+
+forward declaration of enums:
+not implemented
+
+
+4) nullptr -- a null pointer literal
+nullptr is a literal denoting the null pointer; it is not an integer:
+	char* p = nullptr;
+	char* p2 = 0;           // 0 still works and p==p2
+
+	void f(int);
+	f(0);         // call f(int)
+	f(nullptr);   // call f(char*)
+	
+0 was both an integer and a pointer constant
+
+not implemented
+
+
+5) right-angle brackets
+	list<vector<string>> lvs;
+
+why was this a problem?
+maximal munch (longest match) principle: as much of the input as possible should be processed
+--> ">>" was interpreted an right-shift operator
+
+under some circumstances a >> token is treated as two right angle brackets instead of a right shift operator
+
+gcc 4.3
+
+
+6) static (compile-time) assertions -- static_assert
+	static_assert(expression,string);
+The compiler evaluates the expression and writes the string as an error message if the expression is false
+
+like BOOST_STATIC_ASSERT
+//invalid application of 'sizeof' to incomplete type 'boost::STATIC_ASSERTION_FAILURE<false>'
+//because only BOOST_STATIC_ASSERT<true> is specialized --> BOOST_STATIC_ASSERT<false> triggers an error
+
+gcc 4.3
+
+
+7) long long 
+- a longer integer
+- An integer that's at least 64 bits long
+- already supported by compilers, time to standardize it
+
+---------------------------------------------------------------------------------
+Language features that upgrades/improves standard libraries
+
+1) constexpr -- generalized and guaranteed constant expressions
+- provides more general constant expressions
+- allows constant expressions involving user-defined types
+- provides a way to guarantee that an initialization is done at compile time (able to require expressions to be evaluated at compile time)
+
+require expressions to be evaluated at compile time:
+	constexpr int x1 = bad|eof;	// ok
+
+	Flags f3
+	constexpr int x2 = bad|f3;	// error: can't evaluate at compile time
+	int x3 = bad|f3;	//ok
+
+not implemented
+
+
+2) Initializer lists
+- replacement for boost::assign
+        std::vector<int> v;
+        v += 1,2,3,4,5,6,7,8,9;	//boost
+
+arrays, maps:
+	vector<double> v = { 1, 2, 3.456, 99.99 };
+	
+
+	void f(initializer_list<int>);
+	f({23,345,4567,56789});
+	f{1,2};	// error: function call ( ) missing
+
+the function can access the initializer_list as an immutable sequence. For example:
+
+	void f(initializer_list<int> args)
+	{
+		for (auto p=args.begin(); p!=args.end(); ++p) cout << *p << "\n";
+	}
+
+
+A constructor that takes a single argument of type std::initializer_list is called an initializer-list constructor.
+template<class E> class vector
+{
+	vector (std::initializer_list<E> s) {}
+}
+
+vector<double> v1(7); //ok
+v1 = 9; //error
+vector<double> v2 = 9;//error
+vector<double> v1{7};	//ok
+v1 = {9}; //ok
+vector<double> v2 = {9}; //ok
+
+vector<int> vint(1,2) --> one element, value 2
+vector<int> vint({1,2}) --> 2 elements, 1 and 2
+
+
+standard library containers, string, and regex have initializer-list constructors, assignment, etc.
+
+gcc 4.4
+
+
+3) Preventing narrowing
+C and C++ implicitly truncates:
+	int x = 7.3;		// Ouch!
+However, in C++0x, {} initialization doesn't narrow:
+	int x1 = {7.3};	// error: narrowing
+	int x1 = 7.3; 	//ok
+	vector<int> vi = { 1, 2.3, 4, 5.6 };	// error: double to int narrowing
+it relies on explicit use of {}.	
+	
+
+
+4) Rvalue references = allow programmers to avoid logically unnecessary copying and to provide perfect forwarding functions
+lvalue = has an address
+rvalue = non lvalue
+
+
+C++03
+an lvalue reference
+	int& ref_b = b;
+non-const references can bind to lvalues
+	void incr(int& a)
+	incr(i);
+const references can bind to lvalues or rvalues
+	const int& f = func();
+nothing that can bind to a non-const rvalue : to protect people from changing the values of temporaries that are destroyed before their new value can be used
+	int& ref_func = func();	//error
+
+Ancient burdens:	
+	template<class T> swap(T& a, T& b)		// "old style swap"
+	{
+		T tmp(a);	// now we have two copies of a
+		a = b;		// now we have two copies of b
+		b = tmp;	// now we have two copies of tmp (aka a)
+	} 
+We didn't want any copies at all. We just wanted to move the values of a, b, and tmp around a bit.
+
+
+
+
+In C++0x, we can define "move constructors" and "move assignments" to move rather than copy their argument:
+	vector(const vector&);			//copy ctor
+	vector(vector&&);			//move ctor
+	vector& operator=(const vector&);	//copy assignment
+	vector& operator=(vector&&);		//move assignment
+move constructor and move assignment takes non-const &&
+
+	
+The && indicates an "rvalue reference". An rvalue reference can bind to an rvalue (but not to an lvalue):
+	X a;
+	X f();
+	X& r1 = a;		// bind r1 to a (an lvalue)
+	X& r2 = f();		// error: f() is an rvalue; can't bind
+
+	X&& rr1 = f();	// fine: bind rr1 to temporary
+	X&& rr2 = a;	// error: bind a is an lvalue
+
+How do we know whether it's ok to simply move from a source? We tell the compiler: 
+	template<class T> 
+	void swap(T& a, T& b)	// "perfect swap" (almost)
+	{
+		T tmp = move(a);	// could invalidate a
+		a = move(b);		// could invalidate b
+		b = move(tmp);		// could invalidate tmp
+	}
+move(x) means "you can treat x as an rvalue"
+
+
+In the C++0x standard library, all containers are provided with move constructors and move assignment and operations that insert new elements,
+such as insert() and push_back() have versions that take rvalue references.
+The net result is that the standard containers and algorithms quietly - without user intervention - improve in performance because they copy less.
+
+gcc 4.3
+
+5) Variadic Templates
+How to construct a class with 1, 2, 3, 4, 5, 6, 7, 8, 9, or ... initializers?
+How to avoid constructing an object out of parts and then copying the result?
+
+variadic - its arity is not fixed
+Variadic Templates = templates that are parametrized on a variable (not fixed) number of parameters.
+
+using tuple = ordered list of elements
+
+C++:
+	//can only accept exactly one type parameter
+	template<typename T> struct S { S(T t) { } };
+
+C++0x
+template<class ... Types> 
+void f(Types ... args);	// variadic template function
+
+f();	 	// OK: args contains no arguments
+f(1);	 	// OK: args contains one argument: int
+f(2, 1.0); 	// OK: args contains two arguments: int and double
+
+
+	//can accept zero or more type parameters
+	template<typename ... T> struct S { S(T...t) { } };
+	// S<int> still generates approximately: struct S { S(int t) { } };
+	// S<> generates approximately : struct S { S() { } };
+	// S<int, char> generates approximately : struct S { S(int t1, char t2) { } };
+
+
+
+4) defaulted and deleted functions -- control of defaults
+"prohibiting copying":
+	X& operator=(const X&) = delete;	// Disallow copying
+	X(const X&) = delete;
+similar with boost::noncopyable (eliminate inheritance) or private copy ctor & assignment op:
+- delaying diagnosis of attempts to copy instances in class scope until link time
+- explicit class qualification allows immediate compile-time diagnosis
+- more explicit
+
+"explicitly default copy behavior" (somewhat redundant because compiler already does it)
+	Y& operator=(const Y&) = default;
+	Y(const Y&) = default;
+	
+	
+eliminate an undesired conversion like this
+	Z(long long);     // can initialize with an long long
+	Z(long) = delete; // but not anything less
+
+
+
+gcc 4.4
+
+
+
+
+7) decltype -- the type of an expression
+- decltype(E) is the type ("declared type") of the name or expression E and can be used in declarations
+
+	void f(const vector<int>& a, vector<float>& b)
+	{
+		typedef decltype(a[0]*b[0]) Tmp;
+		for (int i=0; i<b.size(); ++i) {
+			Tmp* p = new Tmp(a[i]*b[i]);
+			// ...
+		}
+		// ...
+	}
+- auto is often a simpler choice
+- you really need decltype if you need a type for something that is not a variable, such as a return type
+
+gcc 4.3
+
+
+
+
+
+
+
+10) Delegating constructors
+- In C++98, if you want two constructors to do the same thing, repeat yourself or call "an init() function."
+	class X {
+		int a;
+		validate(int x) { if (0<x && x<=max) a=x; else throw bad_X(x); }
+	public:
+		X(int x) { validate(x); }
+		X() { validate(42); }
+		X(string s) { int x = lexical_cast<int>(s); validate(x); }
+		
+		//novice attempt to use "delegate" constructor
+		X(string s) { X((int)s); }
+		// ...
+	};
+
+
+
+- In C++0x, we can define one constructor in terms of another:
+	class X {
+		int a;
+	public:
+		X(int x) { if (0<x && x<=max) a=x; else throw bad_X(x); }
+		X() :X{42} { }
+		X(string s) :X{lexical_cast<int>(s)} { }
+		// ...
+	};
+- undefined behaviour for recursive cycle (C1 delegates to C2, C2 to C1)
+- lifetime: if ANY ctor is successfully completed, lifetime begins --> if delegating ctor throws from body (after delegated ctor has terminated), dtor will be invoked
+
+class ex
+{
+	//ctor 1
+	ex(int jp, double dp, float fp, std::string sp)
+	: j(jp), d(dp), f(fp), s(sp)
+	{
+		std::string message("full ctor");
+		std::cout << message <<'\';
+	}
+
+	//ctor 2
+	ex(int jp, double dp, std::string sp)
+	: ex(jp, dp, 1.0, sp)
+	{
+		std::string message("float defaulted ctor");
+		std::cout << message << '\';
+	}
+
+	//ctor 3	
+	ex(int jp, std::string sp)
+	: ex(jp, 0.0, sp)
+	{
+		std::string message("float & double defaulted ctor");
+		std::cout << message << '\n';
+	}
+	
+In the above example, the last constructor executes as if the following had been written:
+	ex::ex(int jp, std::string sp)
+	: j(jp), d(0.0), f(1.0), s(sp)
+	{
+		{//if throws from here, no dtor will be called
+			std::string message("full ctor");
+			std::cout << message <<'\';
+		}
+		try 
+		{
+			std::string message("float defaulted ctor");
+			std::cout << message << '\';
+		}
+		catch(...)
+		{
+			~ex(); 
+			throw;
+		}
+		
+		try
+		{
+			std::string message("float & double defaulted ctor");
+			std::cout << message << '\n';
+		} catch(...)
+		{
+			~ex();
+			throw;
+		}
+	}//end ctor
+};
+
+
+
+not implemented
+
+
+11) In-class member initializers
+In C++98, only static const members of integral types can be initialized in-class, and the initializer has to be a constant expression
+	static const int m1 = 7;
+
+C++0x allows a non-static data member to be initialized where it is declared (in its class):
+	class A {
+	public:
+		int a = 7;
+	};
+benefits come in classes with multiple constructors: if the same value was used, it's easier to put it directly in class definition
+If a member is initialized by both an in-class initializer and a constructor, only the constructor's initialization is done (it "overrides" the default)
+
+not implemented
+
+
+12) Inherited constructors
+
+
+
+
+
+15) Suffix return type syntax
+
+Consider:
+	template<class T, class U>
+	??? mul(T x, U y)
+	{
+		return x*y;
+	}
+- cannot use decltype (x*y) because x and y are not in scope
+
+The solution is put the return type where it belongs, after the arguments:
+	template<class T, class U>
+	[] mul(T x, U y) -> decltype(x*y)
+	{
+		return x*y;
+	}
+We use the notation [] that we use to introduce lambdas to mean "return type to be deduced or specified later."
+
+when function body consists of just a return statement, we can eliminate the decltype and reduce the function definition to
+	template<class T, class U>
+	[] mul(T x, U y) { return x*y; }
+
+
+16) template alias (formerly known as "template typedef")
+
+
+
+
+
+
+
+18) Uniform initialization syntax and semantics
+C++ offers several ways of initializing an object depending on its type and the initialization context
+	int a = 2;              // "assignment style"
+	int[] aa = { 2, 3 };    // assignment style with list
+	complex z(1,2);         // "functional style" initialization
+	x = Ptr(y);             // "functional style" for conversion/cast/construction
+and
+
+	int a(1);	// variable definition
+	int b();	// function declaration
+	int b(foo);	// variable definition or function declaration
+
+the rules are hard to remember
+The C++0x solution is to allow {}-initializer lists for all initialization:
+
+
+
+
+
+20) unions (generalized)
+In C++98  a member with a user-defined constructor, destructor, or assignment cannot be a member of a union:
+
+In C++0x, union member types are restricted:
+	No virtual functions (as ever)
+	No references (as ever)
+	No bases (as ever)
+	If a union has a member with a user-defined constructor, copy, or destructor then that special function is deleted;
+	that is, it cannot be used for an object of the union type. This is new.
+
+not implemented
+
+21) PODs (generalized)
+POD ("Plain Old Data") = something that can be manipulated like a C struct, e.g. copies with memcpy(), initializes with memset()
+C++98:
+	if a struct has constructor, struct is not POD
+C++0x:
+	If all your members and bases are PODs, you're a POD
+As usual:
+	No virtual functions
+	No virtual bases
+	No references
+	No multiple access specifiers
+The most important aspect of C++0x PODs are that adding or subtracting constructors do not affect layout or performance.
+
+
+
+22) Raw string literals
+- string literal where a backslash is just a backslash
+C++98: string s = "\\w\\\\w";	// I hope I got that right
+C++0x: string s = R"[\w\\w]";
+
+gcc 4.5
+
+23) User-defined literals
+C++ provides literals for a variety of built-in types (123, "aaa", 1.4f etc.)
+
+there are no literals for user-defined types
+
+C++0x supports ``user-defined literals'' through the notion of literal operators that map literals with a given suffix into a desired type
+	std::string operator""s (const char* p, size_t n)	// std::string literal
+	{
+		return string(p,n);	// requires free store allocation
+	}	// constexpr to enable compile-time evaluation
+
+	f("Hello");	// pass pointer to char
+	f("Hello"s);	// pass (5-character) string object
+
+not implemented
+
+24) Attributes
+in order not to invade namespaces, compilers have implemented __attribute__ (gcc)
+: allows a developer to attach characteristics to function declarations to allow the compiler to perform more error checking
+ noreturn - function won't ever return (e.g exit, abort functions) --> suppress errors about code paths never reached
+ const - for optimization of math functions --> call the function just once and cache the return value
+Problems:
+- syntax is ugly and long
+- not mangled --> possible type collision --> problems when used in templates
+
+C++0x:
+a new standard syntax
+applicable essentially everywhere in code 
+always relating to the immediately preceding syntactic entity
+
+placed within double square brackets: [[ ... ]]
+
+
+Examples:
+noreturn
+	void f [[ noreturn ]] ()	// f() will never return (maybe throw, abort etc)
+align
+	unsigned char c [[ align(double) ]] [sizeof(double)];  // array of characters, suitably aligned for a double
+final
+	virtual void f [[ final ]] ();	// do not try to override
+a class with final attribute will not be allowed to be a base class for another one
+a virtual function with final attribute will not be overriden in a subclass
+depends on implementation: If an implementation does not emit a diagnostic, it is encouraged to execute the program as if final were absent
+	
+carries_dependency
+ - the compiler should not truncate the dependency tree
+	struct foo* f [[carries_dependency]] (int i);	// hint to optimizer
+
+recommendation:
+- use attributes to only control things that do not affect the meaning of a program but might help detect errors 
+	(e.g. [[final]]) or help optimizers (e.g. [[carries_dependency]]).
+	
+not implemented
+
+
+
+noexcept implies no stack unwinding
+Destructors noexcept by default
+It was reaffirmed that if you violate a noexcept specification, your program will call std::terminate and not continue execution in what would be a corrupt state.
+
+25) Lambdas
+lambda expression = mechanism for specifying an anonymous function object.
+primary use = specify a simple action to be performed by some function
+
+closure = An anonymous function object that is created automatically by the compiler as the result of
+evaluating a lambda expression
+- consists of code of the body of the lambda function AND the environment in which lambda function is defined
+
+Ex:
+std::sort(v.begin(), v.end(), [](int a, int b) { return abs(a)<abs(b); });
+lambda expression: takes 2 int, returns ...
+
+//access local variables
+count = 0;
+fill(vector.begin(),vector.end(),[&count](){ return ++count; });
+lambda expression: takes a reference to int, increments it
+
+lambda-capture:
+- lambda-expr can refer to identifiers declared outside
+- if it's a local variable or reference, it must be "captured"
+- lambda-capture specifies whether identifiers are captured by reference or by copy
+[]		: capture nothing
+[&x, y, ...]	: identifiers prefixed by & are captured by reference; other identifiers are captured by copy
+[&]		: capture all by reference: an up-level reference implicitly captures the variable by reference
+[=]		: capture all by value: an up-level reference implicitly captures the variable by copy
+[=, &x, &y, ...]: Capture by copy with exceptions: listed variables are captured by reference only
+
+
+gcc 4.5
+
+26) Local types as template arguments
+In C++98, local and unnamed types could not be used as template arguments.
+
+	struct Less {
+			bool operator<(const X& a, const X& b) { return a.v<b.v; }
+		};
+	sort(v.begin(), v.end(), Less());	// C++98: error: Less is local
+						// C++0x: ok
+In C++0x, we also have the alternative of using a lambda expression: 
+	void f(vector<X>& v)
+	{
+	 	sort(v.begin(), v.end(), 
+		      [] (const X& a, const X& b) { return a.v<b.v; }); // C++0x 
+	}						
+
+gcc 4.5
+
+
+27) extern templates
+A template specialization can be explicitly declared as a way to suppress multiple instantiations. For example:
+ 	#include "MyVector.h"
+	extern template class MyVector<int>; // Suppresses implicit instantiation below --
+					// MyVector<int> will be explicitly instantiated elsewhere
+	void foo(MyVector<int>& v)
+	{
+		// use the vector in here
+	}
+	
+avoiding significant redundant work by the compiler and linker.
+
+yes
+
+
+28) Inline namespace
+support a form of versioning
+
+// file V99.h:
+	inline namespace V99 {
+		void f(int);	// does something better than the V98 version
+		void f(double);	// new feature
+		// ...
+	}
+
+	// file V98.h:
+	namespace V98 {
+		void f(int);	// does something
+		// ...
+	}
+
+	// file Mine.h:
+	namespace Mine {
+	#include "V99.h"
+	#include "V98.h"
+	}
+We here have a namespace Mine with both the latest release (V99) and the previous one (V98). If you want to be specific, you can:
+
+	#include "Mine.h"
+	using namespace Mine;
+	// ...
+	V98::f(1);	// old version
+	V99::f(1);	// new version
+	f(1);		// default version
+inline specifier makes the declarations from the nested namespace appear exactly as if they had been declared in the enclosing namespace
+
+
+
+29) explicit conversion operators
+Conversion operator
+	a user-defined typecasting operator; it converts its object to a different type in contexts that require that specific type.
+Ex:
+	class Mystring
+	{
+	public:
+		Mystring();
+		//convert Mystring to a C-string
+		operator const char * () {return m_str; } //...
+	};
+a CO:
+- has no return value
+- takes no argument
+- can convert their objects to any given type
+
+
+C++0x allows conversion operators to be explicit
+
+gcc 4.5

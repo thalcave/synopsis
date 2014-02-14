@@ -1,0 +1,11 @@
+exception safety = reasonable behaviour when an exception is thrown during its execution
+
+
+The basic guarantee: 
+	that the invariants of the component are preserved, and no resources are leaked.
+The strong guarantee: 
+	that the operation has either completed successfully or thrown an exception, leaving the program state exactly as it was before the operation started.
+The no-throw guarantee: 
+	that the operation will not throw an exception.
+	
+	

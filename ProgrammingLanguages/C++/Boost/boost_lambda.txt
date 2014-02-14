@@ -1,0 +1,412 @@
+Lambda calculus
+	- every expression is a unary function that returns a single result
+	- every argument and every result, being expressions, are also unary functions
+
+lambda x1 ... xn.e
+	where
+x1....xn = parameters of this function
+e 	 = expression which computes the value of the function in terms of the parameters x1 ... xn
+	
+
+f(x) = x+2 : lbd x.x+2
+f(3) : (lbd x.x+2)(3)
+
+currying = technique of transforming a function that takes multiple arguments into a function that takes a single argument
+f(x, y) = x - y : lbd x. lbd y. x-y
+
+
+lambda x y.x+y
+(lambda x y.x+y) 2 3 = 2 + 3 = 5 
+
+##########################################################################################################
+Boost Lambda (BLL)
+
+lambda abstraction = unnamed function
+
+BLL = C++ template library which implements form of lambda abstractions
+- the essence of BLL is letting you define small unnamed function objects directly on the call site of an STL algorithm. 
+
+std::for_each(c.begin(), c.end(), std::cout << _1 << std::endl);
+	std::cout<<_1 = unary function object
+	_1 = parameter of function, placeholder for the actual argument
+
+
+---------------------------------------------------
+1. Introduction
+
+STL = generic container and algorithm library; algorithms operate on container via functor
+
+binder template = creates unary functor from an adaptable binary functor by fixing one of the arguments to a const value
+bind1st(plus<int>(), 1));
+"transform(a.begin(), a.end(), ostream_iterator<int>(cout), bind1st(plus<int>(), 1));"
+no binders for 3-ary or 4-ary functions
+
+"transform(a.begin(), a.end(), ostream_iterator<int>(cout), 1+_1)"
+		or
+"for_each(a.begin(), a.end(), cout<< (1+_1))"
+
+
+
+lambda x y.x+y
+(lambda x y.x+y) 2 3 = 2 + 3 = 5 
+
+There are three predefined formal parameters, called placeholders: _1, _2 and _3. 
+	they refer to the first, second and third argument of the function defined by the lambda expression. 
+
+lambda x y.x+y 
+C++: _1 + _2
+
+lambda x y.foo(x,y)
+C++: bind(foo, _1, _2) (bind expressions)
+
+
+A lambda expression defines a C++ function object, hence function application syntax is like calling any other function object, for instance: (_1 + _2)(i, j).
+
+
+Examples:
+{
+	for_each(v.begin(), v.end(), _1 = 1);	 	//expression _1 = 1 creates a lambda functor which assigns the value 1 to every element in v
+
+	transform(v.begin(), v.end(), vp.begin(), &_1); // &_1 creates a function object for getting the address of each element in v. 
+						 //the addresses get assigned to the corresponding elements in vp.
+
+	int foo(int);
+	for_each(v.begin(), v.end(), _1 = bind(foo, _1));	//change the values in vector
+
+
+	sort(vp.begin(), vp.end(), *_1 > *_2);		//sort the elements of a vector of pointers
+}
+
+
+
+Parameter and return types of lambda functors
+ - expression _1 + _2 creates a binary lambda functor which can be called with 2 objects of any types A and B for which operator +(A,B) is defined
+ - BLL includes a complex type deduction system
+
+
+
+ - BLL defines default return types for operators (not for string:  return type cannot be deduced for (_1 + _2)(str1, str2) )
+
+C operator+(A, B);
+A a; B b; (_1 + _2)(a, b); --> fails
+
+two solutions:
+
+a) Extending return type deduction system to cover user defined operators
+
+ - the user defined operator are either unary or binary
+ - for each arity, there are 2 trait templates that define the return types:
+ 	plain_return_type_1<Action, A>		return_type_1<Action, A> 
+	plain_return_type_2<Action, A, B>	return_type_2<Action, A, B>
+
+Action = action class that specifies the operator
+action group = operator with similar return type rules are placed together in it
+Ex:
+	+ arithmetic_action<plus_action>
+	+ unary_arithmetic_action<plus_action>
+	
+plain_return_type_n  : parameter types are non-reference types, no const or volatile
+return_type_n 	     : the parameter types preserve cv-qualifiers and are non-reference types as well
+
+Ex: 
+	Z operator+(const X&, const Y&);
+	Z operator-(const X&, const Y&);	 
+ 
+	// specialization stating:  if the left hand argument is of type X, 
+	//			       the right hand one of type Y
+	//			       the return type of all such binary arithmetic operators is Z
+	template<class Act> 
+	struct plain_return_type_2<arithmetic_action<Act>, X, Y> {
+		typedef Z type;
+	};
+//using A*B, A/B --> returned type is Z
+
+	//for X*Y, returned type is X
+	template<> 
+	struct plain_return_type_2<arithmetic_action<multiply_action>, X, Y> {
+		typedef X type;
+	};
+	
+
+
+	template<class Act>
+	struct plain_return_type_2<arithmetic_action<Act>, std::string, std::string> {
+		typedef std::string type;
+	}
+
+
+b) Use a special lambda expression (ret) which defines the return type in place
+
+- to state that the return type of the lambda functor defined by the lambda expression e is T, you can write
+	ret<T>(e);
+	A a; B b; ret<C>(_1 + _2)(a, b); 
+ 
+- return type deduction is not performed for the lambda expression e at all, but instead, T is used as the return type (the result must be convertible to T)
+- extend return type deduction system if you often use ret with same types
+Nullary lambda functors and ret:
+	- compiler is always forced to perform return type deduction for zero-argument lambda functors
+ 
+ 
+the actual arguments cannot be non-const rvalues:
+(_1 + _2)(i, j); // ok
+(_1 + _2)(1, 2); // error (!)
+
+
+
+Storing bound arguments in lambda functions
+- temporary const copies of the bound arguments are stored in the lambda functor:
+		int i = 1;
+		(_1 = 2, _1 + i)(i);		--> 3
+Exceptions:
+	- the programmer can control the storing mechanism with ref and cref wrappers:
+		i = 1;
+		(_1 = 2, _1 + ref(i))(i);	--> 4
+	- array types cannot be copied, they are thus stored as const reference by default
+	- for some expressions it makes more sense to store the arguments as references:
+		- the left argument of compound assignment operators (+=, *=, etc.) are stored as references to non-const
+		- if the left argument of << or >> operator is derived from an instantiation of basic_ostream or respectively from basic_istream, 
+			the argument is stored as a reference to non-const
+
+
+##########################################################################################################
+2. Lambda expressions in details
+
+Placeholders
+- BLL defines 3 types of placeholders: placeholder1_type, placeholder2_type and placeholder3_type. with 3 predefined placeholder variable: _1, _2, _3
+- easy to define placeholders with alternative names:
+	boost::lambda::placeholder1_type X;
+	
+int i, j, k; 
+_1(i, j, k)        // returns i, discards j and k
+(_2 + _2)(i, j, k) // returns j+j, discards i and k	
+
+
+When an actual argument is supplied for a placeholder, the parameter passing mode is always by reference. 
+	this means that any side-effects to the placeholder are reflected to the actual argument
+int i = 1; 
+(_1 += 2)(i);         // i is now 3
+(++_1, cout << _1)(i) // i is now 4, outputs 4	
+
+
+
+---------------------------------------------------
+Operator expressions
+ - any C++ operator invocation with a lambda expression is a lambda expression
+ cannot be overloaded: ::, ., .*, new, delete etc.
+ 
+- the left operand must be a lambda expression
+comma operator:  is the "statement separator" in lambda expressions: for_each(a.begin(), a.end(), (++_1, cout << _1));
+
+
+
+---------------------------------------------------
+Bind expressions
+
+- can have two forms:
+	bind(target-function, bind-argument-list)
+	bind(target-member-function, object-argument, bind-argument-list)	
+	
+- return type of the lambda functor created by the bind expression can be given as an explicitly specified template parameter, as in the following example:
+	bind<RET>(target-function, bind-argument-list)
+(only necessary when the return type cannot be deduced)
+
+Function pointers or references as targets:
+	- target function can be a pointer or a reference to a function and it can be either bound or unbound
+		bind(foo, _1, _2, c)(a, b);
+		bind(&foo, _1, _2, c)(a, b);
+		bind(_1, a, b, c)(foo);
+	- overloaded functions cannot be used in bind expressions directly
+
+Member functions as targets:
+	A a;
+	find_if(ints.begin(), ints.end(), bind(&A::foo, a, _1)); 	//a will not be modified because we've used a reference
+	find_if(ints.begin(), ints.end(), bind(&A::foo, &a, _1));	//a will be modified because we've used a pointer
+
+
+	bool A::foo(int); 
+	list<A> refs; 
+	list<A*> pointers; 
+	  ...
+	find_if(refs.begin(), refs.end(), bind(&A::foo, _1, 1)); 
+	find_if(pointers.begin(), pointers.end(), bind(&A::foo, _1, 1));
+- to prevent the copying from taking place, one can use the ref or cref wrappers
+
+
+Member data as targets:
+	struct A { int data; };
+	A a;		
+	bind(&A::data, _1)(a) = 1;     // a.data == 1
+
+Function objects as targets:
+	- function objects, that is, class objects which have the function call operator defined, can be used as target functions
+	- in general, BLL cannot deduce the return type of an arbitrary function object
+		However, there are two methods for giving BLL this capability for a certain function object class:
+a) The result_type typedef
+	struct A {
+		typedef B result_type;
+		B operator()(X, Y, Z); 
+	};
+
+b) The sig template
+- another mechanism that make BLL aware of the return type(s) of a function object is defining member template struct sig<Args> 
+	with a typedef type that specifies the return type:
+	struct A {
+		template <class Args> struct sig { typedef B type; }
+		B operator()(X, Y, Z); 
+	};
+
+the template argument Args is a tuple (or more precisely a const list) type, where the first element is the function object type itself, 
+and the remaining elements are the types of the arguments, with which the function object is being called. 
+
+There are two significant restrictions with using just a simple typedef to express the return type: 
+	1. if the function object defines several function call operators, there is no way to specify different result types for them. 
+	2. if the function call operator is a template, the result type may depend on the template parameters. 
+		Hence, the typedef ought to be a template too, which the C++ language does not support.
+		
+		
+
+---------------------------------------------------
+Overriding the deduced return type
+
+- a special lambda expression is used to indicate return type and overriding the deduction system:
+	ret<T>(e)
+- result of lambda functor must be convertible to T
+- for bind expressions, there is a short-hand notation: bind<Z>(x, _1)(i)
+
+
+
+---------------------------------------------------
+Delaying constants and variables
+
+	for_each(a.begin(), a.end(), cout << _1 << ' ');	
+	for_each(a.begin(), a.end(), cout << ' ' << _1);	//' ' appears only once because it's not a lambda expression
+	
+
+unary functions that turn their argument into a lambda functor:
+	constant, constant_ref  - for constants
+	var 			- for variables
+	for_each(a.begin(), a.end(), cout << constant(' ') << _1);
+
+to delay the evaluation of a variable use var(): 
+	creates a nullary lambda functor, which stores a reference to the variable x. When the lambda functor is invoked, a reference to x is returned.
+
+
+Naming delayed constants and variables
+ - possible to predefine and name a delayed variable or constant
+
+
+
+----------------------------------------------------
+Lambda expressions for control structures
+
+	if_then(condition, then_part)
+	if_then_else(condition, then_part, else_part)
+	if_then_else_return(condition, then_part, else_part)
+	while_loop(condition, body)
+	while_loop(condition) // no body case
+	do_while_loop(condition, body)
+	do_while_loop(condition) // no body case 
+	for_loop(init, condition, increment, body)
+	for_loop(init, condition, increment) // no body case
+	switch_statement(...)
+- the return types of all control construct lambda functor is void, except for if_then_else_return, which wraps a call to the conditional operator
+
+	int a[5][10]; int i;
+	for_each(a, a+5, 
+	  for_loop(var(i)=0, var(i)<10, ++var(i), 
+        	   _1[var(i)] += 1));  
+
+for_each(a.begin(), a.end(), 
+         if_(_1 % 2 == 0)[ cout << _1 ])
+	 
+for_each(a.begin(), a.end(), 
+         if_then(_1 % 2 == 0, cout << _1)); 	 
+
+
+std::for_each(v.begin(), v.end(),
+  ( 
+    switch_statement(
+      _1,
+      case_statement<0>(std::cout << constant("zero")),
+      case_statement<1>(std::cout << constant("one")),
+      default_statement(cout << constant("other: ") << _1)
+    ), 
+    cout << constant("\n") 
+  )
+);
+
+
+
+----------------------------------------------------
+Exceptions
+
+BLL provides lambda functors that throw and catch exceptions
+
+try_catch(
+  lambda expression,
+  catch_exception<type>(lambda expression),
+  catch_exception<type>(lambda expression),
+  ...
+  catch_all(lambda expression)
+)
+
+exception placeholder _e:
+ - special placeholder, which refers to the caught exception object within the handler body. 
+ - string explanation can be queried with the zero-argument member function what. 
+ 	bind(&std::exception::what, _e) creates the lambda function for making that call
+	
+for_each(
+  a.begin(), a.end(),
+  try_catch(
+    bind(foo, _1),                 // foo may throw
+    catch_exception<foo_exception>(
+      cout << constant("Caught foo_exception: ") 
+           << "foo was called with argument = " << _1
+    ),
+    catch_exception<std::exception>(
+      cout << constant("Caught std::exception: ") 
+           << bind(&std::exception::what, _e),
+      throw_exception(bind(constructor<bar_exception>(), _1)))
+    ),      
+    catch_all(
+      (cout << constant("Unknown"), rethrow())
+    )
+  )
+);
+
+
+
+---------------------------------------------------------
+Construction and Destruction
+
+ BLL defines wrapper classes for new and delete calls, as well as for constructors and destructors
+	int* a[10];
+	for_each(a, a+10, _1 = bind(new_ptr<int>())); 
+	for_each(a, a+10, bind(delete_ptr(), _1));
+
+new_ptr<T>(arg_list) 		<--> 		new T(arg_list)
+constructor<T>()(arg_list)	<-->		T(arg_list)
+
+
+
+---------------------------------------------------------
+Special Lambda expressions
+
+Preventing argument substitution
+
+	int add(int a, int b) { return a+b; }
+	int mul(int a, int b) { return a*b; }
+
+	int(*)(int, int)  add_or_mul(bool x) { 
+		return x ? add : mul; 
+	}
+
+	bool condition; int i; int j;
+	...
+	bind(bind(&add_or_mul, _1), _2, _3)(condition, i, j);
+
+bind(&add_or_mul, _1) --> returns something that can be used as a target function
+
+Unlambda
+ - a lambda functor wrapped inside unlambda is not a lambda functor anymore, and does not take part into the argument substitution process
+ bind(unlambda(f), _1)(x);

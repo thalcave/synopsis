@@ -1,0 +1,36 @@
+******************************************************************************
+Chapter 4. Synchronization patterns
+
+a)Scoped locking
+
+- ensures that a lock is: acquired when control enters a scope
+	     		  released automatically when control leaves the scope(regardless the return path)
+Aliases: Synchronized block, RAII, Guard,Execute Around Object
+
+Context: 
+	a concurrent application containing shared resources that are manipulated by multiple threads concurrently
+Problem:
+	code must be protected by some type of lock
+	ensure that locks are released on all returning paths( even when an exception is thrown)
+Solution:
+	define a Guard class whose constructor automatically acquires a lock
+	and destructor release lock	
+
+potential for deadlock when used recursively with a non-recursive mutex
+
+b)Strategized locking
+- parameterizes sync mechanism that protect a component;s critical sections from concurrent access
+
+Context:
+	an app or system where components must run efficiently in a variety of different concurrency architectures
+
+
+
+
+
+
+c)Thread-safe interface
+- minimizes locking overhead and ensures that method calls do not incur 'self-deadlocking' by trying
+to reacquire a lock already held
+
+

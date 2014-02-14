@@ -1,0 +1,479 @@
+					FAQ_LITE
+
+ADT = Abstract Data Type
+POD = Plain Old Data
+
+					
+					
+********************************************************************************
+8. References
+
+reference = alternate name for a variable 
+What happens if you return a reference?
+	The function call can appear on the left hand side of an assignment operator.
+	f() = 7;
+
+[8.4] What does object.method1().method2() mean?
+	It chains these method calls, which is why this is called method chaining.
+	cout << x << y works because cout << x is a function that returns cout
+
+[8.6] When should I use references, and when should I use pointers?
+	Use references when you can, and pointers when you have to.
+
+
+********************************************************************************
+[9]. Inline functions
+
+
+[9.1] What's the deal with inline functions?
+	the function's code gets inserted into the caller's code stream; this can improve performance
+
+
+[9.9] With inline member functions that are defined outside the class, 
+is it best to put the inline keyword next to the declaration within the class body, next to the definition outside the class body, or both?
+	Best practice: only in the definition outside the class body.
+
+
+
+
+********************************************************************************
+[10] Constructors
+"ctor" is a typical abbreviation for constructor.
+
+[10.2] Is there any difference between List x; and List x();?
+	A big difference!
+	List x ->declares an object of type List;
+	List x() -> declares a function x() returning a List;
+
+[10.3] Can one constructor of a class call another constructor of the same class to initialize the this object?
+	No. Inside a ctor you cannot call for a different ctor of the same class
+
+[10.6] Should my constructors use "initialization lists" or "assignment"?
+	Initialization lists. In fact, constructors should initialize as a rule all member objects in the initialization list. 
+
+
+[10.8] What is the "Named Constructor Idiom"?
+	A technique that provides more intuitive and/or safer construction operations for users of your class.
+
+	constructors always have the name of the class; we differentiate ctors only by parameters
+	Named Constructor Idiom:
+		declare all constructors private or protected
+		provide public static functions that return an object(Named Constructors)
+
+	-as fast as directly calling constructors
+	-make sure your objects are always created via new
+
+	
+[10.9] Does return-by-value mean extra copies and extra overhead?
+	Not necessarily.
+
+
+	Foo rbv()
+	{
+		return Foo(42, 73); <-- suppose Foo has a ctor Foo::Foo(int a, int b)
+	}
+	Foo x = rbv();
+
+	will rbv() create a temp Foo object that gets copy-constructed in x? No, the return statement will directly construct x itself.
+	when rbv() is called, the compiler secretly passes a pointer to the location where rbv() is supposed to construct the "returned" object:
+	the compiler (usually) transforms return-by-value into pass-by-pointer; compilers typically implement constructors using a similar technique
+	So yourCode() passes &x to rbv(), and rbv() in turn passes &x to the constructor (as the this pointer). That means constructor directly constructs x.
+
+	if we changed code from Foo x = rbv(); to Foo x; x = rbv(), compiler is requested to use asignment operator
+
+[10.12] What's the "static initialization order fiasco"?
+	suppose we have 2 static objects, x and y which exist in 2 separate source files, x.cpp and y.cpp;
+	if y initialization depends on x, it may crash: if y compilation unit is initialized first, then....
+	
+[10.13] How do I prevent the "static initialization order fiasco"?
+	Use the "construct on first use" idiom, which simply means to wrap your static object inside a function.
+
+	x.goBowling()	//error, x may not be initialized
+	
+	Fred& x()
+	{
+		static Fred* ans = new Fred();
+		return *ans;
+	}
+	x().goBowling()		//correct; the object is constructed only once(because it;s tatic), when fct is called for the first time
+	
+	downside = object is never destructed
+		memory is not leaking , since OS automatically reclaim all the memory in a program's heap when this exits
+		but if destructor is suppose to do something important...
+		
+		
+[10.14] Why doesn't the construct-on-first-use idiom use a static object instead of a static pointer?
+	change 	static Fred* ans = new Fred(); to static Fred ans
+	if we have 3 objects a,b and c that use ans during their destructors, 
+	the only way to avoid a static deinitialization disaster is if ans is destructed after all three.
+	
+	
+[10.15] How do I prevent the "static initialization order fiasco" for my static data members?
+	class X
+	{
+		static Fred x_;
+		method()
+		{
+			x_.someMethod()
+		};
+	}
+	problem: if method() is called before x_ is initialized
+	solution: change X::x_ into static Fred& x();
+
+[10.18] What is the "Named Parameter Idiom"?
+	It's a fairly useful way to exploit method chaining.
+	File f = OpenFile("foo.txt")..readonly() .createIfNotExist() .appendWhenWriting() etc
+	each function return an OpenFile&
+	
+[10.19] Why am I getting an error after declaring a Foo object via Foo x(Bar())?
+	When the compiler sees Foo x(Bar()), it thinks that the Bar() part is declaring a non-member function 
+	that returns a Bar object, so it thinks you are declaring the existence of a function called x that returns a Foo 
+	and that takes as a single parameter of type "non-member function that takes nothing and returns a Bar."
+
+	use  Foo x = Foo(Bar());
+
+Question: Why an empty class doesn't have zero size?
+Answer: to ensure that the addresses of two different objects will be different. For the same reason, "new" always returns pointers to distinct objects
+
+
+********************************************************************************
+11.Destructors
+Destructors are used to release any resources allocated by the object
+
+[11.13]How can I handle a destructor that fails?
+	never throw an error from a destructor
+	Ex: let's say we throw an error Foo()
+		all stack frames between throw Foo() and catch(foo) will get popped(stack unwinding)
+		--> all local objects in all those stack frames are destructed; if one of those dtors throws an exception,
+		 C++ language call terminate() --> process is killed
+
+
+********************************************************************************
+[12] Assignment operators
+
+
+[12.1] What is "self assignment"?
+	Self assignment is when someone assigns an object to itself
+	is bad because:
+		operator=(Obj& o2)
+		{
+			delete this.p1;		//practically, delete o2.p1
+			this.p1 = new P1(*o2.p1);
+		}
+
+[12.3] OK, OK, already; I'll handle self-assignment. How do I do it?
+	You should worry about self assignment every time you create a class
+
+	if (this == &f) return *this;
+
+
+********************************************************************************
+[14]. Friends
+
+[14.3] What are some advantages/disadvantages of using friend functions?
+	They provide a degree of freedom in the interface design options.
+	The major disadvantage of friend functions is that they require an extra line of code when you want dynamic binding.
+	Virtual Friend Function Idiom:
+		 the friend function should call a hidden (usually protected) virtual member function
+
+	friendship isn't inherited, transitive, or reciprocal
+	Use a member when you can, and a friend when you have to.
+	
+**********************************************************************************
+[15]IOstream
+
+[15.7] Should I end my output lines with std::endl or '\n'?
+	Using std::endl flushes the output buffer after sending a '\n', which means std::endl is more expensive in performance
+	
+[15.11] How can I provide printing for an entire hierarchy of classes?
+	Provide a friend operator<< that calls a protected virtual function:
+	
+	
+	
+**********************************************************************************
+[17] Exceptions
+
+[17.4] How should I handle resources if my constructors may throw exceptions?
+	If a constructor throws an exception, the object's destructor is not run
+	use smart_pointers
+
+
+
+
+**********************************************************************************
+Inheritance
+
+1)"inheritance is not for code reuse."; the primary purpose for inheritance is dynamic binding
+	Composition is for code reuse, inheritance is for flexibility
+2)Try especially hard to use ABCs when you use Multiple Inheritance
+3)Consider the "bridge" pattern or nested generalization as possible alternatives to multiple inheritance
+
+Virtual functions mechanism:
+	in Base Class:
+		FunctionPtr Base::vtable[5] = &Base::virt1, &Base::virt2, &Base::virt3, &Base::virt4, &Base::virt5 	//static table of functions -vtable
+		FunctionPtr* vptr;			//hidden pointer added in a class that points to vtable - vpointer
+		
+		vptr = vtable[0];
+	in Derived Class:
+		FunctionPtr Der::vtable[5] = &Base::virt1, &Der::virt2, &Der::virt3, &Der::virt4, &Base::virt5 	//static table of functions -vtable
+		vptr = vtable[0];
+		
+		
+	- objects of classes with virtual functions have only a small space-overhead compared to those that don't have virtual functions.
+	- calling a virtual function is fast - almost as fast as calling a non-virtual function.
+	- you don't get any additional per-call overhead no matter how deep the inheritance gets. 
+		You could have 10 levels of inheritance, but there is no "chaining" - it's always the same - fetch, fetch, call.
+		
+[20.7] When should my destructor be virtual?
+	When someone will delete a derived-class object via a base-class pointer.
+	 make your destructor virtual if your class has any virtual functions
+	 
+[20.8] What is a "virtual constructor"? 
+	A constructor cannot be virtual because at the time when the constructor is invoked the virtual table 
+	would not be available in the memory. Hence we cannot have a virtual constructor.
+
+	Virtual Constructor Idiom
+		a technique of creating an object whose type is only determined at run-time
+		
+	class Shape
+	{
+		virtual Shape* create() = 0;
+	}	
+
+	class Circle
+	{
+		Circle* create() { return new Circle() };
+	}
+
+	void myFunc(Shape& s)
+	{
+		Shape *s1 = s.create();
+	}
+	
+	
+Covariant return type: 
+	return type of Circle::create is intentionally different than Shape::create	
+	This feature removes the need for excessive type checking and casting.
+
+[21.1] Should I hide member functions that were public in my base class?
+	Never. Attempting to hide (eliminate, revoke, privatize) inherited public member functions is an all-too-common design error. It usually stems from muddy thinking.
+
+[21.2] Converting Derived* -> Base* works OK; why doesn't Derived** -> Base** work?
+	Because converting Derived** -> Base** would be invalid and dangerous.	
+	
+	if you could convert Car** -> Vehicle**, and if you could similarly convert NuclearSubmarine** -> Vehicle**, 
+	you could assign those two pointers and end up making a Car* point at a NuclearSubmarine
+
+[21.4] Is an array of Derived a kind-of array of Base?
+	Nope.
+	
+	Here's how to make good inheritance decisions in OO design/programming: 
+	recognize that the derived class objects must be substitutable for the base class objects.	
+	
+[22.5] How do you define a copy constructor or assignment operator for a class that contains a pointer to a (abstract) base class?	
+	use the Virtual Constructor Idiom in the (abstract) base class
+	
+	class Shape
+	{
+		virtual Shape* clone() = 0;
+	}	
+
+	class Circle
+	{
+		Circle* clone() { return new Circle(*this) };
+	}
+
+	class Square
+	{
+		Square* clone() { return new Square(*this) };
+	}
+
+
+	class Fred
+	{
+		Shape *s;
+		Fred(const Fred& f)
+		:s(f.s->clone()) {};
+		
+		Fred& operator=(const Fred& f)
+		{
+			if (this != &f)
+			{
+				Shape *p2 = f.s->clone();
+				delete s;
+				s = p2;
+			}
+			return *this;		
+		}
+
+[23.1] Is it okay for a non-virtual function of the base class to call a virtual function?
+	sometimes;
+	Ex:
+		void Shape::print()
+		{
+			....
+			this->area();	//area is pure virtual function
+		}
+	
+
+	1. an algorithm is the same for all derived classes, except a small part
+		put algorithm in a base class function that call virtual functions for the small parts
+	2. there are small parts identically for derived class, but algorithm is different
+		algorithm is put into a virtual fct, and the small parts are stashed in functions
+
+
+[23.3] Should I use protected virtuals instead of public virtuals?
+	Sometimes yes, sometimes no.
+	use public virtuals usually; use protected virtuals when these functions are to be called from other functions( ex: area() from above)
+	
+	
+[23.4] When should someone use private virtuals?
+	Almost never. (except NVI - non-virtual interface)
+	
+	
+[23.5] When my base class's constructor calls a virtual function on its this object, why doesn't my derived class's override of that virtual function get invoked?
+	When you create a Derived object, it first calls Base's constructor
+	While executing Base::Base(), the this object is not yet of type Derived; 
+		its type is still merely Base. That's why the call to virtual function virt() within Base::Base() binds to Base::virt() 
+		even though an override exists in Derived.
+	
+	C++ protects us from danger: suppose Derived::virt() is called from Base::Base(); if Derived::virt() access some members from Derived
+		that are not initialized yet --> "use before initialized" error
+		
+
+[23.6] Okay, but is there a way to simulate that behavior as if dynamic binding worked on the this object within my base class's constructor?
+	Dynamic Binding During Initialization idiom (AKA Calling Virtuals During Initialization).
+	a) separate Base::ctor into ctor and init()
+	   call base->ctor(); then base->init() { virtual_func() }
+	b)    
+	
+
+[23.8] Should a derived class redefine ("override") a member function that is non-virtual in a base class?
+	It's legal, but it ain't moral.
+	
+[23.10] What does it mean that the "virtual table" is an unresolved external?
+	If you get a link error of the form "Error: Unresolved or undefined symbols detected: virtual table for class Fred," 
+	you probably have an undefined virtual member function in class Fred.
+
+
+[23.11] How can I set up my class so it won't be inherited from?
+	1. make ctors private and use Named Constructor Idiom to create objects
+	2. exploit virtual inheritance
+	class Fred;
+
+	class FredBase {
+	private:
+		friend class Fred;
+		FredBase() { }
+	};
+
+	class Fred : private virtual FredBase {
+	public:
+	...
+	};
+
+
+[24.3] When to use private inheritance over composition?
+	when you want to build a class Fred that uses code in a class Wilma, and the code from class Wilma needs to invoke member functions from your new class, Fred
+	Fred calls non-virtuals in Wilma, and Wilma calls (usually pure virtuals) in itself, which are overridden by Fred
+
+
+[25.9] Where in a hierarchy should I use virtual inheritance?
+	To avoid the duplicated base class subobject that occurs with the "dreaded diamond"
+	class Base;
+	
+	class D1: public virtual Base;
+	class D2: public virtual Base;
+	
+	class Derived: public D1, public D2;
+
+
+**********************************************************************************
+[31] Reference and value semantics
+
+Apple a;
+Apple b; b = a;
+
+Copy(value) semantics 		= a and b are different apples that have the same colour, taste etc.
+Reference(pointer) semantics 	= a and b are two references to the same apple
+Move semantics 			= transwer ownership of a resource held by an object to another object
+
+[31.2] Virtual data
+	allows a Derived class to change the exact class of a Base' class member object
+		( Base has a pointer to Data; in Derived, pd = new DerivedData)
+
+	virtual data	: the definition (class) of the member object is overridable in derived classes provided its declaration ("type") remains the same, and 
+				this overriddenness is a static property of the derived class
+	per-object-data	: any given object of a class can instantiate a different conformal (same type) member object upon initialization 
+				(usually a "wrapper" object), and the exact class of the member object is a static property of the object that wraps it
+	dynamic-data	: the member object's exact class can change dynamically over time (have a pointer in Derived class; at a moment in timeline, it could point
+				to another class)
+				
+extra dynamic binding  - comes from having a pointer rather than an object. 
+	whenever the C++ compiler can know an object's exact class, virtual function calls can be statically bound, which allows inlining. 
+	the C++ compiler can know an object's exact class in three circumstances: local variables, global/static variables, and fully-contained member objects
+	
+[31.6] Are "inline virtual" member functions ever actually "inlined"?
+	ocassionaly, but only when the compiler knows the "exact class" of the object
+
+	if the object is referenced via a pointer or a reference, a call to virtual function cannot be inlined
+	(compiler does not know which code to call until run-time)	
+	
+	difference between inlining/non-inlining = much more significant than difference between virtual/normal function call
+
+**********************************************************************************
+[36] Serialization and Unserialization
+
+[36.1] What's this "serialization" thing all about?
+	put some objects on a disk or send them through a wire(wireless) transport mechanism and later reverse the process.
+
+
+
+**********************************************************************************
+[18] Const correctness
+	it means using keyword "const" to prevent an object mutating
+	
+[18.4] What does "const Fred* p" mean?
+	 p points to an object of class Fred, but p can't be used to change that Fred object (naturally p could also be NULL).
+	 
+[18.5] What's the difference between "const Fred* p", "Fred* const p" and "const Fred* const p"?	
+	You have to read pointer declarations right-to-left.
+	
+	const Fred* p;	//p points to a Fred object that is const( Fred cannot be changed)
+	Fred* const p'	//p is a const pointer to a Fred object( can change Fred via p, but cannot change the pointer itself)
+	const Fred* const p; //p is a const pointer to a const Fred object
+		
+[18.6] What does "const Fred& x" mean?
+	 x aliases a Fred object, but x can't be used to change that Fred object.
+	 
+[18.7] Does "Fred& const x" make any sense?
+		No, it is nonsense.
+		Thus "Fred& const x" means "x is a const reference to a Fred". But that is redundant, since references are always const:
+			you cannot reseat a reference to another object
+
+[18.8] What does "Fred const& x" mean?
+	Fred const& x is functionally equivalent to const Fred& x
+	
+[18.10] What is a "const member function"?
+	A member function that inspects (rather than mutates) its object.
+	
+[18.11] What's the relationship between a return-by-reference and a const member function?
+	if you want to return a member of your this object by reference from an inspector method, 
+	you should return it using reference-to-const, that is, const X&.
+	
+[18.12] What's the deal with "const-overloading"?
+	It's when you have an inspector method and a mutator method with the same name and the same number and type of parameters 
+	 the methods differ only in that one is const and the other is non-const.	
+
+[18.13] What do I do if I want a const member function to make an "invisible" change to a data member?
+	Use mutable (or, as a last resort, use const_cast).
+	
+	
+
+**********************************************************************************
+[34] Container classes
+	problems with arrays:
+		out-of-bound not check
+		cannot insert in middle
+		destructors etc.
+	

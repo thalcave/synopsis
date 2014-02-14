@@ -1,0 +1,173 @@
+1) Opaque pointer (Cheshire Cat),Pimpl = private implementation, handle/body idiom
+
+opaque pointer = datatype that hides its internal implementation using a pointer. 
+	This allows the implementation of the whole interface to change without the need to recompile the modules using it. 
+	This is important for providing binary compatibility through different versions of a shared library, for example.
+
+class Handle {
+private:
+    struct CheshireCat;  // Not defined here
+    CheshireCat *smile;  // Handle
+
+public:
+    Handle();            // Constructor
+    ~Handle();           // Destructor
+    // Other operations...
+};
+
+.cpp
+#include "handle.hpp"
+
+struct Handle::CheshireCat {
+    ...     // The actual implementation can be anything
+};
+
+Handle::Handle() {
+    smile = new CheshireCat;
+}
+
+Handle::~Handle() {
+    delete smile;
+}
+
+SaxParser ;)
+
+
+- use a shared_ptr (auto-generated dtor, copy ctor and assignment operator suffice)
+
+---------------------------------------------------------------------
+2)Non-throwing swap (uses handle/body idiom)
+
+class String 
+{
+	char * str;
+public:
+	void swap (String &s) throw ()
+	{
+		std::swap (this->str, s.str);
+	}
+};
+
+
+
+---------------------------------------------------------------------
+3) Non-copyable Mixin
+ - a class called non-copyable is defined which has a private copy constructor and copy assignment operator
+ use: boost::non_copyable
+
+
+
+---------------------------------------------------------------------
+4) Shrink to fit
+- minimize the capacity of a container just enough to hold existing range.
+std::vector <int> v;
+//... Lots of push_backs and then lots of remove on v.
+std::vector<int> (v).swap (v);	
+
+Clear and minimize
+- clear a container and minimize its capacity
+std::vector<int> ().swap (v);
+
+---------------------------------------------------------------------
+5)Counted pointer
+ - to relieve the burden of duplicating changes to the signature of the body class in its handle class when Handle Body idiom is in use.
+ class Handle
+{
+  public:
+    const Body * operator -> () const
+    {
+      return body_;
+    }
+    Body * operator -> ()
+    {
+      return body_;
+    }
+  private:
+    Body *body_;
+};
+
+
+---------------------------------------------------------------------
+6) Copy-and-swap
+- create an exception safe implementation of overloaded assignment operator
+
+- create a temporary and swap idiom acquires new resource before it forfits its current resource. 
+	To acquire the new resource, it uses RAII idiom. 
+	If the acquisition of the new resource is successful, it exchanges the resources using the non-throwing swap idiom. 
+	Finally, the old resource is released as a side effect of using RAII in the first step.
+
+class String
+{
+  public:
+    String & operator = (String const &s)
+    {
+      if (this != &s)
+      {
+        String temp (s); // Copy-constructor -- RAII
+        temp.swap (*this); // Non-throwing swap
+      }
+      return *this;
+    }// Old resources released.
+ 
+    void swap (String &s) throw (); /// See non-throwing swap idiom
+};
+
+
+---------------------------------------------------------------------
+7)  Non-virtual interface Idiom (NVI)
+
+// Example 2: A more modern base class, using
+// Template Method to separate interface from
+// internals.
+//
+class Widget
+{
+public:
+  // Stable, nonvirtual interface.
+  //
+  int Process( Gadget& ); // uses DoProcess...()
+  bool IsDone(); // uses DoIsDone()
+  // ...
+
+private:
+  // Customization is an implementation detail that may
+  // or may not directly correspond to the interface.
+  // Each of these functions might optionally be
+  // pure virtual, and if so might or might not have
+  // an implementation in Widget; see Item 27 in [1].
+  //
+  virtual int DoProcessPhase1( Gadget& );
+  virtual int DoProcessPhase2( Gadget& );
+  virtual bool DoIsDone();
+  // ...
+};
+
+
+---------------------------------------------------------------------
+8) Sleep with subsecond precision:
+select() with all three sets empty, nfds zero, and a non-NULL timeout as a fairly portable way to sleep with subsecond precision.
+
+nanosleep
+
+
+---------------------------------------------------------------------
+9) Safe-bool idiom
+- To provide boolean tests for a class but restricting it from taking participation in unwanted expressions.
+
+struct Testable
+{
+    operator bool() const {
+          return false;
+    }
+};
+struct AnotherTestable ...the same
+
+if (testable == another_testable) will compile fine, even it could be an error (unrelated classes, unintended test etc)
+
+Solution:
+operator() does not return a bool, but the address of an internal function
+therefore, classA::operator() returns something that cannot be compared to a bool or another variable
+
+
+
+

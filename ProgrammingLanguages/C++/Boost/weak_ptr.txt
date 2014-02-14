@@ -1,0 +1,59 @@
+The weak_ptr class template stores a "weak reference" to an object that's already managed by a shared_ptr.
+
+To access the object, a weak_ptr can be converted to a shared_ptr using the shared_ptr constructor or the member function lock:
+	a) template class shared_ptr<Ty> has a template constructor that takes a reference to a weak_ptr<Other>. 
+	this constructor is only valid if a pointer of type Other* is convertible to a pointer of type Ty*
+	The constructor throws an exception object of type bad_weak_ptr if the weak_ptr argument has expired
+	Otherwise, it constructs an object that owns the resource that the weak_ptr points to.
+
+	b)The member function weak_ptr<Ty>::lock returns a shared_ptr<Ty> object that owns the resource that the weak_ptr object points to. 
+	If the weak_ptr object has expired, it returns an empty shared_ptr
+
+
+
+
+copy constructible, assignable --> can be used in containers
+
+shared_ptr<int> p(new int(5));
+weak_ptr<int> q(p);
+
+weak ptr don't have get() because it would be dangerous
+considering:
+if(int * r = q.get())	
+{
+	//if another thread executes the statement p.reset() --> r is dangling pointer
+    // use *r
+}
+
+
+Solution: create a temporary shared_ptr
+
+if(shared_ptr<int> r = q.lock())
+{
+	//even if a thread executes p.reset(), object stays alive until r leaves scope or is reset
+    // use *r
+}
+
+
+Ctors:
+weak_ptr();
+template<class Y> weak_ptr(shared_ptr<Y> const & r);
+weak_ptr(weak_ptr const & r);
+template<class Y> weak_ptr(weak_ptr<Y> const & r);
+
+
+Dtor:
+~weak_ptr(): destroys this weak_ptr but it doesn't have any effect on object stored
+
+expired: the reference count for the resource that it points to is zero (if weak_ptr is empty or if he last shared_ptr object that owns the resource 
+											that the weak_ptr object points to has been destroyed)
+lock: Returns: expired()? shared_ptr<T>(): shared_ptr<T>(*this).
+
+************************************************************
+When to use:
+-it's dangerous to mix in ordinary pointers and shared_ptrs (there;s no way to tell if resource pointed still exists)
+	(a function could return a pointer to an object created through a shared_ptr)
+	
+Shared_ptr: owns a resource
+weak_ptr: points to a resource	
+

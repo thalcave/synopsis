@@ -1,0 +1,689 @@
+							Design Patterns Explained by
+								Allan Shallow, James Trotter
+
+
+
+KADS = Knowledge Analysis and Design Support
+OOD = Object-oriented Design
+
+----------------------------------------------------------------------------
+
+Functional decomposition
+	breaks down the problem into the functional steps that compose it	
+
+
+Inevitable three: taxes, death and changing requirements!	
+Change happens! Deal with it
+dealing with changes = using functional decomposition
+rather then writing a big function, use modular approach
+
+cohesion = how closely the operations in a routine are related
+coupling = strength of a connection between 2 routines; is a complement to cohesion
+Goal: strong cohesion, loose coupling
+
+beware of the side effects: unexpected impacts on other parts of code --> bugs
+we really do not spend much time fixing bugs, but finding bugs
+
+functional decomposition --> when requirements change, bugs may appear(changes to a set of functions
+impact other sets of functions etc)
+
+----------------------------------------------------------------------------
+Objects should be responsible for themselves
+- at the conceptual level: 	object = set of responsabilities
+- at the specification level	object = set of methods
+- at the implementation level	object = code and data
+
+object = an entity that has responsabilities
+
+public interface of an object: method callable by other objects
+
+when building software:
+	1.make a preliminary design without worrying about underlying details
+	2. implement the design achieved
+Ex:
+	design a Shape object that has responsabilities:
+		-knows where is located
+		-to be able to draw itself
+		-to be able to erase itself		
+	implement Shape object with methods: getLocation(), draw(), erase()	
+
+
+----------------------------------------------------------------------------
+
+Christopher Alexander - The timeless way of building
+-is quality objective? what makes us know that the design is good?
+Alexander postulates that we can describe beauty through an objective basis that can be measured
+-what is present in a good quality design and not present in a poor quality design?
+good constructs have thing in common with each other
+
+pattern = similiarities between designs that were high quality
+
+----------------------------------------------------------------------------
+
+Pattern = a solution to a problem in a context
+- exists at all levels: analysis, design and implementation
+- each pattern describes a problem that occurs over and over again and then describes the core
+of the solution to that problem
+
+Description of pattern
+	the name of the pattern
+	purpose of it( problem it solves)
+	how we could accomplish this
+	constraints we have to consider
+
+
+Patterns allows us to:
+	reuse solutions
+	establish common terminology
+	give a higher-level perspective on the problem
+	
+
+Focus on the context of the pattern: when and why, not on the solution: what to do.
+
+gotcha = feature of a system that works in the way is documented, but is counter-intuitive
+	easy to invoke, unreasonable in its outcome. Ex: if( a=b )
+
+***********************************************************
+1. Facade pattern
+- provides an unified interface to a set of interfaces in a sub-system
+
+- make a software library easier to use and understand, since the façade has convenient methods for common tasks;
+- make code that uses the library more readable, for the same reason;
+- reduce dependencies of outside code on the inner workings of a library, since most code uses the façade, thus allowing more flexibility in developing the system;
+- wrap a poorly designed collection of APIs with a single well-designed API.
+
+Intent   -  simplify how to use an existing system
+Problem  -  use only a subset of the system
+Solution -  the Facade presents a new interface for client
+P & C 	 -  presents a specialized interface to client
+Consequences - simplifies the use of required  subsystem
+Implementation - define a new class that have the required interface  
+	
+Ex: 
+class Facade
+{
+	System sys;
+	///methods
+	createSomething() { sys.uglyCreateSomething() };
+}
+
+When to use:
+- you do not need to use all of the functionality of a system
+- you want to encapsulate or hide the original system
+- you want to use the functionality of the original system AND add some more
+- cost of writing new class is less than cost of everybody learning how to use 
+the original system
+
+
+
+***********************************************************
+2. Adapter pattern (wrapper)
+
+'adapts' one interface for a class into one that a client expects.
+
+Intent   -  match an existing object beyond your control to a particular interface
+Problem  -  a system has the right data and behaviour but the wrong interface
+Solution -  the Adapter provides a Wrapper with the desired interface
+
+Consequences - simplifies the use of required  subsystem
+Implementation - contain the existing class in another class; have the containing class
+		match the required interface
+
+
+Object Adapter Pattern - it relies on one object (the adapting one) containing another (the adapted object)
+Ex:
+class Shape{}
+{
+	void display();
+}
+class Point, Rectangle, Line : public Shape
+
+- we can use polymorphism now
+- we already have a class XXCircle; we need to add class Circle;
+we don't want to re-write all Circle;s methods, instead use XXCircle
+	class Circle: public Shape
+	{
+		private XXCircle xxcircle;
+		void display()
+		{
+			xxcircle.Xdisplay()
+		}
+		
+	}
+- we can use polymorphism again
+
+- if I have a class that does what I need, then I know that I can always
+use the Adapter pattern to give it the correct interface
+
+Class Adapter Pattern - using multiple inheritance
+
+
+Facade and Adapter are both wrappers
+								Facade		Adapter
+Are there preexisting classes?					Yes		Yes
+Is there an interface we must design to?			No		Yes
+Does an object needs to be polymorphically?			No		Probably
+Is a simpler interface needed?					Yes		No	
+
+A Facade simplifies an interface, while an Adapter converts the interface into a preexisting interface
+
+When to use:
+- when we have a class that does what we need, but 
+does not use the interface we need
+
+
+
+******************************************************************
+3. Bridge Pattern
+
+
+- useful when we have an abstraction that has different implementations; it allows the abstraction 
+and implementations to vary independently of each other
+
+Strategy: commonality and variability analysis
+
+commonality analysis = search for common elements that helps us understand how family members are the same
+			structure that is unlikely to change over time
+			represented by abstract classes	
+			Ex: Shape, Drawing
+variability analysis = reveals how family members vary
+			structure that is likely to change	
+			implemented by concrete classes
+			Ex: Rectangle, Circle, V1Drawing, V2Drawing
+			
+			
+Strategies to handle variations:
+	find what varies and encapsulate it ( variations of Shape are encapsulated in Shape class etc)
+	favor composition over inheritance
+	
+One rule, one place:
+	have only a place where implement a rule --> code with greater number of smaller methods 	
+	eliminates duplication( if we change something in a place, we must change it in other places etc.)
+	
+The Once and Only rule:	
+	the system must communicate everything you want to communicate
+	the system must contain no duplicate code
+	
+	
+Example: have rectangles and circles with different drawing methods				
+
+
+Pattern has an abstraction part( Shape and derived classes) and an Implementation part( Drawing and derived classes)
+
+Intent   - decouple a set of implementations from the set of objects using them
+Problem  - derivations of abstract classes must use multiple implementations without causing a number of classes explosion
+Solution - define an interface for all implementations to use and have the derivations of abstract class to use that
+
+Participants &
+Collaborators - Abstraction = defines the interface for objects being implemented
+		Implementor = defines the interface for the specific implementation classes
+		classes derived from A use classes derived from I without knowing which ConcreteImplementor is in use
+Implementation - 
+	encapsulate implementations in an abstract class
+	contain a handle to it in the base class of the abstraction class being implemented		
+	
+Refactoring = modifying code to improve its structure without adding function	
+		
+
+When to use:
+- not only the class itself varies often but also what the class does. 
+the class itself can be thought of as the abstraction and what the class can do as the implementation.
+
+Car abstraction: 
+	Car 			= 	Abstraction
+	Jaguar and Mercedes 	= 	RefinedAbstraction
+	Road 			= 	Implementor
+	Highway and Interstate	=	ConcreteImplementor
+
+both Jaguar and Mercedes need to use both Roads	
+
+
+
+
+*****************************************************************************
+4. Abstract Factory
+
+
+Factory = location in the code at which objects are constructed. 
+Abstract Factory Pattern = separate the creation of objects from their usage
+
+
+Intent = provide an interface for creating families of related objects without specifying 
+	their concrete classes.
+	
+Switch indicates:
+1. need for polymorphical behaviour
+	or
+2. presence of misplaced responsabilities
+
+
+Problem: display and print shapes using low and high drivers
+Strategy
+1. find what varies and encapsule it : the choice of driver high or low --> ResFactory
+2. favor composition over inheritance: ApControl uses a ResFactory object
+3. design to interfaces, not to implementations: ApControl asks ResFactory to instantiate drivers, it does not know how it;s doing
+
+
+
+Intent  - to have families or sets of objects for particular clients
+Problem - families of related objects need to be instantiated
+Solution - coordinates the creation of families of objects
+Implementation -
+	define an abstract class that specifies which objects are to be made
+	implement one concrete class for each family
+
+
+ApControl - uses our particular objects
+ResFactory -deciding upon which particular object to use
+
+
+When to use:
+	when the problem domain has different families of objects present
+	and each family is used under different circumstances
+
+
+
+
+
+
+***************************************************************************************************
+			Thinking in patterns
+			
+			
+			
+
+design = process of synthesis, of putting things together
+common approach - look immediately for objects and classes and components and then think 
+			about how they should fit together
+			
+A better approach:
+
+1. Start out with a conceptual understanding of the whole in
+order to understand what needs to be accomplished.
+
+2. Identify the patterns that are present in the whole.
+
+3. Start with those patterns that create the context for the others.
+
+4. Apply these patterns.
+
+5. Repeat with the remaining patterns, as well as with any new
+patterns that were discovered along the way.
+
+6. Finally, refine the design and implement within the context
+created by applying these patterns one at a time
+
+start with the big picture and add details
+
+Context = the interrelated conditions in which something exists or occurs - an environment, a setting.
+
+Rule - consider what you need to have in system before concerning how you'll create it
+
+Open-closed principle
+	the modules, methods and classes should be open for extension, while closed for modification
+	we must design our software so that we can extend the capabilities of our software without changing it
+	ex: in Bridge pattern, it's possible to add  new implementations without changing any of the existing classes.
+Principle of designing from context
+
+- disaster often comes in the long run from suboptimal decisions in the short run
+
+-program to an interface, not an implementation
+-favor object composition over class inheritance
+-consider what should be variable in your design		
+
+
+***************************************************************************************************************
+5. Strategy Pattern.
+
+- define a family of algorithms, encapsulate each one and make'em interchangeable
+
+Intent - allows you to use different business rules or algorithms depending upon the context in which they occur
+Solution - separates the selection of algorithm from the implementation
+Implementation - 
+	class that uses algorithm - Context contains a reference to an abstract class( Strategy)
+	each derived class from Strategy implements the algorithm as needed
+
+- is a way to define a family of algorithms; all these do the same thing, but have different implementations
+While the Strategy pattern is meant for behavior, the Bridge pattern is meant for structure.
+
+
+***************************************************************************************************************
+6. Decorator Pattern.
+
+- attach additional responsabilities to an object dynamically 
+
+works by allowing to create a chain of objects that starts with the decorator objects
+(responsible for new functions) and ends with the original object.
+
+
+***************************************************************************************************************
+7. Singleton and the Double-Checked locking Patterns
+
+- both are use to ensure that only one object of a particular class is instantiated
+- Singleton is used in single-threaded apps
+DCLocking -in multithreaded apps
+
+Singleton
+	ensures that a class only has one instance and provide a global access point to it
+	has a special method that checks to see if the object has already been instantiated
+	defined constructor of class to be private or protected
+Implementation:
+	- add a private static member that refers to desired object(initially NULL)
+	- add a public static method that instantiates this class if member is NULL
+		or returns a reference to object if it's not null
+	- constructor is private	
+
+Double-checked Locking pattern
+	- unnecessary locking is avoided by wrapping the call to new with another conditional test
+	- support for multithreaded env
+	
+	
+	
+***************************************************************************************************************
+8. Observer Pattern.
+
+- define a one-to-many dependency between objects so that when one object changes state, 
+all its dependents are notified and updated automatically
+
+Approach:
+	look for what's varying, encapsulate the variation
+	
+Step1: make the observers behave in the same manner	
+   : different kind of objects --> different interfaces
+	use an abstract class, inheritance and sometime Adapter pattern	
+	
+Step2: have the observers register themselves
+	static methods of Subject( attach, detach) that are called by the Observer when is instatiated
+
+Step3: notify the Observers when an event occurs
+	for each Observer, Subjects calls Observer.update()
+	
+Step4: Get information from Subject
+	when its update function was called, the Observer may ask for information from Subject
+
+This approach allows us to add new kind of Observers without affecting existing classes( using Adapter if needed)
+ --> flexibility and keeps things decoupled
+ 
+Notes:
+- use it when the list of Observers changes, not every time there is a dependency between objects
+
+The typical usages of the Observer pattern:
+	listening for an external event (such as a user action)
+	listening for changes of the value of a property of an object
+	in a mailing list, where everytime an event happens (a new product, a gathering, etc.) a message is sent to the people subscribed to the list
+
+The observer pattern is implemented in numerous programming libraries and systems, including almost all GUI toolkits.
+Some of the most notable implementations of this pattern:
+	The Java Swing library makes extensive use of the observer pattern for event management
+	Boost.Signals, an extension of the C++ STL providing a signal/slot model
+	The Qt C++ framework's signal/slot model
+	libsigc++ - the C++ signalling template library.
+	sigslot - C++ Signal/Slot Library
+	XLObject - Template-based C++ signal/slot model patterned after Qt.
+	GLib - an implementation of objects and signals/callbacks in C. (This library has many bindings to other programming languages.)
+	Exploring the Observer Design Pattern - the C Sharp (C#) and Visual Basic .NET implementation, using delegates and the Event pattern
+	Using the Observer Pattern, a discussion and implementation in REALbasic
+	flash.events, a package in ActionScript 3.0, (following from the mx.events package in ActionScript 2.0).
+	
+MVC = Model/View/Controller
+	Model = data implementation
+	View = user interface
+	Controller = communication between them
+
+When Model is changed, Views must change(& viceversa)			
+
+
+***************************************************************************************************************
+9. The Template Method Pattern
+
+- define the skeleton of an algorithm in an operation, deferring some steps to subclasses
+
+Problem - there is a procedure that is consistent at one level of detail, but individual steps may have different implementations
+	at a lower level of detail
+Implementations
+	create an abstract class that implements a procedure using abstract methods
+	these abstract methods must be implemented in subclasses to perform each step of the procedure
+	if the steps vary independently, each one may be implemented with a Strategy pattern
+	
+	
+	
+******************************************************************************************************************
+10. The Factory Method Pattern
+	
+- define an interface for creating an object, but let subclasses decide which class to instantiate
+
+Problem: a class needs to instantiate a derivation of another class, but doesn't know which one
+Solution: a derived class makes decision on which class to instantiate and how to do it
+Implementation:
+	use a method in the abstract class that is pure virtual 
+	the abstract class` code refers to this pure virtual method when it needs to instantiate a contained object
+		but doesn;t know which particular object it needs
+
+
+******************************************************************************************************************
+11. The Analysis Matrix
+
+
+
+
+
+
+#############################################################################################
+#############################################################################################
+#############################################################################################
+#############################################################################################
+
+
+
+
+DESIGN PATTERNS - elements of reusable object-oriented software
+Gang of four: Gamma, Helm, Johnson, Vlisidess
+
+
+-reuse solutions that have worked in past
+- an object performs an operation when a request is sent by a client
+
+interface = set of all methods of an object
+
+type = name to denote a particular interface
+an object may have many types
+
+Animal = type
+Cow = subtype
+
+dynamic binding = run-time association of a request to an object
+polymorphism = substitute objects that have identical interfaces for each other at runtime
+mixin class = intented to provide an optional interface or functionality to other classes;
+		similar to abstract classes; require multiple inheritance
+		
+Class versus Interface inheritance(subtyping):
+	- class defines object's internal state and the implementation of its operations
+	- type only refers to its interface
+
+(pure) Interface inheritance = inheriting publicly from a class that has (pure) virtual member functions
+implementation inheritance = --"-- privately 
+
+
+Programming to an Interface, not an Implementation
+	- all class derived from an abstract class will share its interface
+	- client is not concerned about the specific objects it uses etc.
+don';t declare variables to be instances of particular concrete classes; commit only to an interface defined by 
+an abstract class
+use creational patterns to instantiate concrete classes	
+		
+		
+		REUSE MECHANISMS
+		
+
+**************************************************
+Inheritance vs Composition
+	white-box re-use = re-use by subclassing; with inheritance, the internals of parent classes are visible to subclasses
+	black-box re-use = re-use by composition; no internal details of objects are visible
+
+Inheritance
+pros:
+	defined statically at compile-time, straightforward to use
+	easier to modify the implementation being reused
+cons:
+	can't change implementations inherited from parent at run-time
+	inheritance breaks encapsulation
+	any change in parent determine a change in subclass	
+inherit only from abstract classes
+
+
+Composition
+pros:
+	defined dynamically at run-time
+	requires objects to respect each others' interfaces
+	don't break encapsulation, classes remain small
+cons:
+	more objects(if fewer classes)
+	
+Favor object composition over inheritance
+
+**************************************************
+Delegation
+- a way of making composition as strong as inheritance
+in inheritance = subclass deffers request to parent class
+
+in composition: 2 objects are involved in handling a request: a Receiving objects delegate operations to its Delegate
+Recceiver passes itself to the Delegate to let the delegated operation refer to the Receiver
+
+Ex: instead of inheriting Window from Rectangle, Window has a Rectangle
+	window->area = return rectangle->computeArea.
+State, Strategy, Visitor patterns use Delegation
+Mediator, Chain of Responsabilities,Bridge
+
+
+**************************************************
+Inheritance vs Parameterized Types
+
+- a List class can be parameterized by the type elements it contains
+can't change at runtime
+
+Association = the ability of one instance to send a message to another instance
+Aggregation = is the typical whole/part relationship
+		Vehicle/Horn
+		has-a
+		
+Composition = a stronger aggregation
+		Vehicle/Metal
+		part-of
+		
+		
+**************************************************
+Designing for Change
+
+anticipate new requirements & consider how the system might need to change over its lifetime
+
+Causes of redesign
+	- creating an object by specifying a class explicitly
+		instead, create objects indirectly: Abstract Factory, Factory Method, Prototype
+	- dependence on specific operations
+		avoid hard-coded requests, using Chain of responsabilities, Command
+	- dependence on hardware and software
+		Abstract Factory, Bridge
+	- dependence on object implementation
+		Clients that know how an object is represented etc; hide this info from Clients using Abstract Factory, Bridge, Proxy
+	- algoritm dependencies
+		use Builder, Iterator, Strategy
+	- tight coupling = classes that depend on each others ==> changing or removing a class require to change many others classes
+		loose coupling by: Abstract Factory, Bridge, Chain of responsabilities, Command, Facade,Observer
+		
+toolkit = collection of classes that provides useful functionalities
+framework = a set of cooperating classes that makes up 	a reusable design for a specific class of software
+
+1. DPs are more abstract that frameworks
+	a framework can be embodied in code, but only examples of patterns can be embodied in code
+2. DPs are smaller architectural elements than frameworks
+	a framework contains several design patterns
+3. DPs are less specialized than frameworks
+
+
+
+
+*********************************************************************************
+How to Select a Design Pattern
+
+1. consider how design patterns solve design problems
+2. scan intent section
+3. study how pattern interrelate
+4. study patterns of like purpose
+5. examine a cause for redesign
+6. considere what should be variable in your design
+	encapsulate the concept that varies
+	
+	
+	
+**************************************************
+Creational Patterns
+
+- asbtract the instantiation process, help make a system independent of how objects are created, composed and represented	
+7. 		
+			
+					
+**************************************************
+Command pattern( action, transaction)
+
+objects are used to represent actions. A command object encapsulates an action and its parameters.
+
+
+
+**************************************************
+Visitor Pattern
+
+- represent an operation to be made on the elementes of an object structure; a way of separating an algorithm from an object structure
+
+You are mostly likely to change the algorithm applied over an object structure 		--> use Visitor
+	or 
+the classes of the object that make up the structure?					--> define operations in classes
+
+- add new operations to existing object structures without modifying those structures.
+- keep related operations together by defining them in one class
+- use when the classes defining object structure rarely change(requires redefining the interface to all visitors), 
+but you often want to define new operations over the structure
+
+Structure:
+	Client
+	
+	Visitor{ VisitConcreteElemA(), VisitConcreteElemB()}:
+		VisitorConcrete1{ VisitConcreteElemA(), VisitConcreteElemB()}
+		VisitorConcrete2{ VisitConcreteElemA(), VisitConcreteElemB()}		
+	
+	Element{ Accept(Visitor) }:
+		ElementConcreteA{ Accept(Visitor) - visitor.VisitConcreteElemeA(this) }
+		ElementConcreteB{ Accept(Visitor) - visitor.VisitConcreteElemeB(this) }
+
+Benefits:
+	- adding new operations is easy
+	- a visitor gathers related operations
+	- adding new ConcreteElements is hard 
+	- accumulating state: a Visitor can accumulate a stat as it visits each element on object structure
+
+
+Single-dispatch
+	- the operation that gets executed depends
+		name of request
+		type of receiver
+			Rectangle::Move()
+	
+Double-dispatch
+	- the operation that gets executed depends
+		type of request
+		types of two receivers	
+	ElementeConcreteA::Accept(Visitor)
+		depends on Visitor's type and on Element's type
+		
+		
+Who is responsible for traversing the object structure?
+	a) object structure
+	b) visitor
+	c) a separate iterator object		
+
+
+
+
+
+
+
+*******************************************************

@@ -1,0 +1,22 @@
+
+****************************************************
+Numerics
+
+
+numeric_limits template = set of constants and inline functions
+each implementation of STL provides a specialization of numeric_limits for each fundamental type
+
+macros - CHAR_BIT, INT_MAX
+
+valarray -vector optimized for numeric computation
+	vallaray& operator*=(const T& arg) 	//computes v[i]*=arg for each element
+	T sum() const;				//sum of all elements
+	
+
+Complex arithmetic
+- a complex template
+
+accumulate() = accumulate results of operation on a sequence
+inner_product() = accumulate results of operation on two sequences
+partial_sum() = generate sequence by operation on a sequence
+adjacent_difference() = generate sequence by operation on a sequence

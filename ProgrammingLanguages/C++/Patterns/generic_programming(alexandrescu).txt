@@ -1,0 +1,340 @@
+
+**************************************************
+Chapter 1. Policy-based class design
+
+
+- using templates, you can tell a class whence it should derive:
+			template <typename Base>
+			class Derived : public Base
+
+	or what is the name of derived class: (CRTP)
+			template <typename Derived>
+			class Base
+
+class policies:
+	- have n policies with its corresponding variants:
+		policy for printing (to stdout, to a file, to a printer)
+		policy for language (german, english)	
+		policy for formatting (left to right, right to left)
+	- have a template host class to which we'll TELL WHERE TO DERIVE FROM
+		template <typename Print, typename Lang, typename Format>
+		class Host: public Print, Lang, Format
+
+
+1.5 template template parameters
+- when the host class already knows the template argument of policy classes:
+	template <template <typename T> class Policy>
+	class WidgetManager : public Policy<Widget>
+- default template arguments:
+	template <template <typename T> class Policy = SpecificPolicy>
+	class WidgetManager : public Policy<Widget>	
+	
+	
+1.6 Enriched policies:
+	- have 3 policies for creation: NewCreate, MallocCreate, PrototypeCreate
+	- PrototypeCreate has two more functions
+	- host class will inherit the 2 functions
+WidgetManager<PrototypeCreate> wmgr; wmgr.AdditionalFunction();	//good
+WidgetManager<NewCreate> wmgr;	     wmgr.AdditionalFunction(); //compile time error 			
+
+
+
+
+1.7 Destructors of Policy Classes
+- because Host is derived from a Policy, user could convert a Host class object to a Policy object and call its destructor --> undefined behaviour
+Solutions:
+	- Policy class has a virtual dtor --> Host dtor will be called
+		but defining a virtual dtor for a Policy class works against its static nature
+				and hurts performance (many policies don't have any data members, but rather are purely behavioral by nature)
+	- Host class should use protected or private inheritance when deriving from Policy --> cannot convert Host* to Policy*
+		but this will disable Enriched policies					
+	
+	- Policy should have a protected destructor
+	  Host should inherit public
+			--> only derived classes could destroy Policy objects -->delete ptrPolicy invalid
+			
+			
+	
+	
+1.8 Optional Functionality through incomplete instantiation:
+	- if a member function of a template class is not use, it is not even instantiated
+Ex:	HostFunc()
+	{
+		policy.AdditionalFunction();
+	}	
+a) if HostClass is instantiated with a Policy that has AdditionalFunction(), it could use HostFunc()
+b) if HostClass is instantiated with a Policy that doesn't have AdditionalFunction() and try to use HostFunc() --> compile-time error
+c) if HostClass is instantiated with a Policy that don't support AdditionalFunction() and does NOT try to use HostFunc(), program is valid
+
+
+
+
+1.9 Combining Policy Classes
+	typedef SmartPtr< Widget, NoChecking, SingleThreaded> WidgetPtr;
+	typedef SmartPtr< Widget, EnforceNotNull, SingleThreaded> SafeWidgetPtr;
+
+
+
+1.10 Customizing Structure with Policy Classes
+ - how to support nonpointer representations for SmartPtr (get rid of hardcoded T* in SmartPtr class) ? by using policies
+ 
+ template <class T>
+ class DefaultSmartPtrStorage
+ {	typedef T* PointerType;
+ 	typedef T& ReferenceType;
+	....
+ }
+ template
+ <
+  class T,
+  template <class> class CheckingPolicy,
+  template <class> class ThreadingModel,
+  template <class> class SmartPtrStorage = DefaultSmartPtrStorage
+  > class SmartPtr;
+  
+  
+1.11 Compatible and incompatible Policies
+2 instantiations of SmartPtr: FastWidgetPtr and SafeWidgetPtr
+	- is it possible to convert from FastWidgetPtr to SafeWidgetPtr and vice versa? (the other way around, conversely)
+the best way to convert between policies is to initialise and copy objects policy by policy
+
+SmartPtr(const SmartPtr<T1, CP1>& other)
+: pointee(other.pointee), CheckingPolicy<T>(other)
+
+Ex:	
+a)
+ExtendedWidget: public Widget;
+SmartPtr<Widget, NoChecking> = SmartPtr<ExtendedWidget, NoChecking>;
+  compiler initializes : Widget* from ExtendedWidget* //correct
+  			 NoChecking from  SmartPtr<ExtendedWidget, NoChecking> : correct because SmartPtr derives from its policy 
+	
+b) 	
+ExtendedWidget: public Widget;
+SmartPtr<Widget, EnforceNotNull> = SmartPtr<ExtendedWidget, NoChecking>;
+  compiler initializes : Widget* from ExtendedWidget* //correct
+  compiler tries to match SmartPtr<ExtendedWidget, NoChecking> to EnforceNotNull's constructors:
+  	if EnforceNotNUll implements a constructor that accepts NoChecking as argument, the compiler matches that ctor
+	if NoChecking implements a conversion to EnforceNotNUll, it will be used
+	otherwise, compile will fail
+	
+/*VIP: Sutter describes a nifty technique that allows you to implement assignment operator in terms of copy constructor
+	basically, use a function both in CopyCtor and in operator= */
+
+conversions that change the ownership policy should not be allowed implicitly and should be treated with maximum care
+
+
+1.11 Decomposing a class into Policies
+ROT (rule of thumb):	identify and name the design decisions that take part in a class' behaviour
+			anything that can be done in more than one way should be identified and migrated from the class to a policy
+	
+Example: a WidgetManager
+a)if WidgetManager creates new Widget objects internally -----> creation should be deferred to creation policy
+b)if WidgetManager stores a collection of Widget objects -----> collection should be a storage policy	
+	
+At an extreme, a Host Class is completely depleted of any intrinsic policy --> it's a shell over a collection of policies
+typedef's are essential (understand and maintain code) (if we change a typedef, it will be changed all around)
+
+when decomposing a class into policies, it's essential to find an orthogonal decomposition (policies completely independent of each other)
+when various policies need to know about each other, it's a problem
+
+
+
+
+**************************************************
+Chapter 2. Techniques
+
+
+Boost Static Assert
+	BOOST_STATIC_ASSERT(x), which generates a compile time error message if the integral-constant-expression x is not true
+	namespace boost{
+		template <bool> struct STATIC_ASSERTION_FAILURE;	
+		template <> struct STATIC_ASSERTION_FAILURE<true>{};		//only "true" is specialized --> using "false" will trigger compile-time error
+	}	
+
+
+2. Partial Template Specialization
+ - allows you to specify a class template for subsets of that template's possible instantiation set
+ template <typename Window, typename Controller>
+ class Widget
+
+//total specialization
+ template <>
+ class Widget<ModalDialog, MyController>
+ 
+//partial specialization
+ template <typename Controller>
+ class Widget<ModalDialog, Controller> 
+
+- cannot partially specialize member functions
+- cannot partially specialize non-members template functions
+
+
+3. Local Classes
+- cannot define static variables, cannot access nonstatic local variables
+- can be used in templates, using their arguments
+//VIP generic adapter
+
+
+4. Mapping Integral Constants to Types
+
+template <int v>
+struct Int2Type
+{
+	enum { value = v }
+};
+
+- generates distinct types for each different integral value passed to it
+Use it:
+	when you need to call one of several different functions, depending on a compile-time constant
+	you need to do this dispatch at compile time
+	
+Example:
+	- have a container that can hold 2 types (derived from Base): Derived1 and Derived2
+	- Derived1 has a method, Der1Method(), Derived2 has another method, AnotherMeth()
+	- in Container::func() we want something like this: if(condition) obj->Der1Method()
+								else obj->AnotherMeth()
+	- this will be compile-time error
+Solution:
+	- overload func() in Container:
+		public:
+			func(bool isDerived1)
+			{
+				func(Int2Type<isDerived1>)();								
+			}	
+		protected:
+			func(Int2Type<true>) { obj->Der1Method(); }
+			func(Int2Type<false>) { obj->AnotherMeth(); }				
+	- it works because the compiler does not compile template functions that are never used	
+
+
+//VIP: if a member function of a template class is not used, it is not even instantiated
+//VIP: if a template member function is not used, it's not instantiated
+
+
+5. Type to Type Mapping
+
+template <typename T>
+struct Type2Type
+{
+	typedef T OriginalType;
+}	
+- a light vehicle for transporting type information
+- a type' representative, a light identifier that can be passed to overloaded functions
+
+Example: - have a template function Create that creates an object; for Widget, we want a different version but no partial specialization is possible for functions
+	- use Type2Type and overloading (no overhead)
+	
+template<class T, class U>									template<class T, class U>
+T* Create(const U& arg, Type2Type<T>)								T* Create(const U& arg, T /*dummy */ )
+{												{
+	return new T(arg);										return new T(arg);
+}							instead of 				}
+					(will not introduce overhead by using a dummy object)
+template <class U>										template <class U>
+T* Create(const U& arg, Type2Type<Widget>)							T* Create(const U& arg, Widget /* dummy */)
+{												{
+	return new Widget(arg, -1);									return new Widget(arg, -1);
+}												}
+
+
+
+6. Type Selection
+
+- some generic code need to select one type or another, depending on a Boolean
+
+template<bool flag, typename T, typename U>
+struct Select
+{
+	typedef T Result;
+}
+template<typename T, typename U>
+struct Select<false, T, U>
+{
+	typedef U Result;
+}
+
+template <typename T, bool isPolymorphic>
+class NiftyContainer
+{
+	typedef typename Select<isPolymorphic, T*, T>::Result ValueType;		//select either T, either T* to be stored
+}
+
+
+
+7 . Detecting Convertibility and Inheritance at compile time
+
+- how can you detect if an arbitrary type T is convertible to an arbitrary type U? 
+	- with sizeof
+		VIP: when applying sizeof to an expr, the size of expr is returned without expression being evaluated at run-time
+			( --> could use functions not even implemented)
+   - have 2 overloads of a function: one that takes U (type to convert to), and the other one that takes everything (elliptic)
+	   if 1st func is called --> types are convertible
+	   if 2nd func is called --> types are not convertible
+	problem: which function was called? 
+	answer: make the functions return types with different size
+
+
+8. Wrapper around type_info
+
+
+9. NullType, EmptyType
+-simple types used in calculations to mark certain borders
+	class NullType; 	//used as end of typelist
+	struct EmptyType {}	//could be used as default type for a template 
+
+
+10. Type Traits
+
+
+
+
+*******************************************************************************
+Chapter 3. Typelists
+
+
+- collection of types; not meant to be instantiated, although there's no harm in doing this
+- every typelist must end with a NullType
+
+template <typename T, typename U>
+struct TypeList
+{
+	typedef T Head;
+	typedef U Tail;
+}
+
+- typelists are static constructs, therefore all calculation related to typelists should be performed at compile-time
+
+
+
+
+
+
+
+*******************************************************************************
+Chapter 5. Generalized Functors
+
+- useful when requests are needed to be store in objects
+
+
+Command Pattern
+	- encapsulate a request in an object
+	
+a) create a Command, store it and pass it to Invoker
+b) at some point, execute the command:
+	Invoker --> Command.execute() --> Receiver.action()
+
+- Interface Separation (invoker is separated from the receiver)
+	command object ensures an important separation between Invoker and Receiver
+- Timing Separation (Command stores a ready-to-go request that's to be started later)
+	you need to perform processing later, but hold the request first
+
+two kinds of Command: forwarding (delegates the work to Receiver) and active
+generalized functor = forwarding command (act like pointer to functions or functors)
+
+Requirement: 	define a template Functor class that encapsulates any object, any member function of that object and any arguments
+		obtain a function call from Functor
+
+callback = pointer to a function that can be passed around and called at any time
+		executable code that is passed as argument to other code
+		
+		

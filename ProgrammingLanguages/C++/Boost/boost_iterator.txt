@@ -1,0 +1,49 @@
+###############################################
+New Iterator Concepts
+
+Random access Iterator: i[n] is convertible to T (also i[n] = t is required for mutable iterators)
+	vector<bool>::iterator should be a random access iterator, but the return type is not bool&
+	(in iterator_traits, typedef Ref reference = return type for *) --> iterator is just an input iterator
+	
+
+there are many useful iterators that do not fit into the current standard iterator categories. 
+as a result, the following bad things happen:
+	- iterators are often mis-categorized.
+	- algorithm requirements are more strict than necessary, because they cannot separate the need for random access or bidirectional traversal 
+	  from the need for a true reference return type.	
+
+
+Design:
+	One set of concepts handles the syntax and semantics of value access:
+		Readable Iterator
+		Writable Iterator
+		Swappable Iterator
+		Lvalue Iterator
+	The other set of concepts handles traversal:
+		Incrementable Iterator
+			|
+		Single Pass Iterator
+			|
+		Forward Traversal Iterator
+			|
+		Bidirectional Traversal Iterator
+			|
+		Random Access Traversal Iterator
+
+
+Proposed Text (X = iterator type, a const_iterator, T value_type):
+1. Value access concepts
+- readable: assignable, copy-constructible
+- writable: copy constructible, *a=o
+- swappable: copy constructible, iter_swap(a,b)
+- lvalue: *a returns T&
+2. Traversal concepts
+- incrementable: ++r, r++, *r++ (move iterator to next)
+- single pass: ++r returns X&, a==b, a!=b, 
+- forward traversal: ++r return X& (++r == ++s)
+- bidirectional: --r returns X&, r--
+- RAC : r+= n return X&, a+n, a[n] convertible to T, 
+
+
+###############################################
+Iterator facade

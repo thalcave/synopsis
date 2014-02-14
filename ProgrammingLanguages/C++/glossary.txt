@@ -1,0 +1,115 @@
+Functional programming
+	- programming paradigm that treats computation as the evaluation of mathematical functions and avoids state and mutable data
+	- emphasizes the application of functions
+	LISP, HASKELL	
+
+
+Imperative programming
+	- PP that treats computation as statements that change program state
+	- sequence of commands for the computer to perform
+	- procedural programming
+	
+Metaprogramming
+	- writing computer programs that 
+					write or manipulate other programs (or themselves) as their data 
+					do part of the work during compile time that is otherwise done at runtime
+
+Generic programming						
+	- computer programming where algorithms are written in an extended grammar and are made adaptable by specifying variable parts
+		that are instantiated later by the compiler
+
+- algorithm/data structure interoperability		
+- extension through function objects
+- element type parameterization		
+
+type safe = code that accesses only the memory locations it is authorized to access, and only in well-defined, allowable ways
+	no operation will be applied to a variable of a wrong type
+
+
+Template metaprogramming
+	- technique in which templates are used by compiler to generate temporary source code
+template != macro (generates inline code)
+
+
+name associated to object code
+mangled = name extended with an encoding to allow unique names even when a function is overloaded	
+
+inlining = benefit lies not only in the avoidance of executing machine code for a calling sequence but also 
+(and often more important) in making visible to an optimizer what happens to the variables passed to the function.
+
+	
+ADL = Argument Dependent Lookup
+	lookup of an unqualified function name depending on the types of the arguments given to the function call
+
+The Interface Principle
+For a class X, all functions, including free functions, that both
+   (a) "mention" X, and
+   (b) are "supplied with" X
+are logically part of X, because they form part of the interface of X.
+- therefore both member and nonmember functions can be logically "part of" a  class
+	(a member function is still more strongly related to a class than is a nonmember, however)
+
+
+no op (or no-op, for no operation) = computer instruction that takes up a small amount of space but specifies no operation
+
+variadic operator or function = one that can take a varying number of arguments; that is, its arity is not fixed.
+
+orthogonality = system design property facilitating feasibility and compactness of complex designs
+	-guarantees that modifying the technical effect produced by a component of a system neither creates nor propagates side effects to other 
+	 components of the system
+
+callback = executable code that is passed as an argument to other codes
+	 
+-----------------------------------------------
+Multitier architecture
+
+- client-server architecture in which an application is executed by more than one distinct software agent
+
+- '3-tier' is a client-server architecture in which the user interface, functional process logic ("business rules"), computer data storage and data access are developed 
+	and maintained as independent modules, most often on separate platforms
+	
+		User Interface (translate results in something that user can understand)
+			|
+		Logic Tier (makes decisions, calculations, evaluations)
+			|
+		Data Tier (info are retrieved from DB or file system)			
+
+
+-------------------------------------
+high contention = where a mutual exclusion lock reduces the throughput by hindering the concurrency of a program
+
+busy-waiting =  technique in which a process repeatedly checks to see if a condition is true
+	it is considered an anti-pattern and should be avoided, as the CPU time spent waiting could have been reassigned to another task
+
+
+
+*************************************************************************************
+
+failover = the transfer of operation from a failed component (eg, controller, disk drive) to a similar, redundant component 
+		to ensure uninterrupted data flow and operability.
+		
+split brain = two nodes are alive but network connection between them is down
+
+outage = period of time that a service, system, method or business function is expected to be unusable or inaccessible which has a high impact on the organisation		
+
+
+*************************************************************************************
+memory barrier = instructions which cause a CPU to enforce an ordering constraint on memory operations issued before and after the barrier instruction
+CPUs employ performance optimizations that can result in out-of-order execution, including memory load and store operations. 
+Memory operation reordering normally goes unnoticed within a single thread of execution, but causes unpredictable behaviour 
+in concurrent programs and device drivers unless carefully controlled
+ - when the memory is shared with multiple devices (such as other CPUs in a multiprocessor system or memory mapped peripherals), out-of-order access may 
+ 	affect program behavior
+
+
+RAD = Rapid Application Development
+
+
+hot spare =  failover mechanism 
+- the equipment is powered on (or considered "hot") but not actively functioning in (i.e. used by) the system.
+- hot spare disk = a disk or group of disks used to automatically or manually, depending upon the hot spare policy, replace a failing or failed disk in a RAID configuration
+
+-----------------------------------------------------------------------------------------
+Intentional programming
+collection of concepts which enable software source code to reflect the precise information, called intention, which programmers had in mind when conceiving their work
+<<print the numbers 1 to 10>>

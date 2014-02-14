@@ -1,0 +1,10 @@
+1) Iterators
+
+	- after find, check if iterator is not end
+	- for an algorithm using first, last, check if range is valid( first is not after last)
+Guideline:
+	never dereference an invalid iterator: 
+		*e.end() is an error
+	Is the iterator still valid when it's being used?
+	
+2)		

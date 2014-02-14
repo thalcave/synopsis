@@ -1,0 +1,51 @@
+IS-A 		only override all methods of base class
+IS-LIKE-A	add new methods to derived class
+upcasting = casting to a base type
+downcast = casting to a derived type
+
+Interpreter =  translates instructions one at a time, and then executes those instructions immediately.
+Compiler = translates source code into machine language
+
+
+Namespace
+1) include iostream.h
+
+2) include iostream
+   using namespace std;
+   
+ 3)include iostream
+   std::cout;
+
+vanilla =  Without added features.
+overhead = Use of computer resources for performing a specific feature. 
+
+const int i;
+const int *p		pointer to a const int (value from int cannot be changed)
+int * const p		const pointer to an int
+
+*************************
+Const in classes
+- to define constants for the lifetime of the object
+Constructor initializer list
+- Constructor(args): int(args){...}
+
+const object --> cannot modify data members
+		 we're only allowed to call const functions of the object( that cannot modify ...)
+mutable = a data member can be modified inside a const object
+   	
+
+
+Explicit =  declaration specifier that can only be applied to in-class constructor declarations. 
+	    An explicit constructor cannot take part in implicit conversions. 
+	    It can only be used to explicitly construct an object.
+
+class A					class A					class A
+{					{					{
+	A(int i);				explicit A(int i);			explicit A(int i);
+}					}					}
+
+A a1 = 35; //corect			A a2 = 35; 	//incorect		A a3 = A(35);	//corect
+
+in a small number of cases it makes sense to allow an implicit conversion to allow user-defined types to behave like built-in types
+Number number = 123;
+if you have two or more required constructor arguments then it does not make sense to make the constructor explicit since it cannot be used in implicit conversions anyway

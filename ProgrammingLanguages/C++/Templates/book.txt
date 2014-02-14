@@ -1,0 +1,296 @@
+C++ templates - complete guide
+
+
+volatile - to force the compiler not to store variable into register
+
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+Part I: The Basics
+
+******************************************
+Chapter 2. Function templates
+
+- overloading function templates
+	int max(int i, int j);
+
+	template<typename T>
+	T max(T i, T j);
+
+	max<1,2>	--> int function
+	max<'a','b'>	--> template function
+	max<'a', 12.5>	--> int function :automatic type conversion is not considered for template functions but is considered for normal functions
+
+
+******************************************
+Chapter 3. Class templates
+
+- code is instantiated only for member functions that are called --> saves time and space
+- static members are instantiated once for each type
+
+- you can specialize a class template for certain template arguments:
+	template<>
+	class Stack<std::string> {
+	
+- partial specialization:
+	template <typename T1, typename T2>
+	class MyClass {
+
+	template <typename T>		//both template parameters have the same type
+	class MyClass<T, T> {
+
+	template <typename T>		//partial spec: second type is int
+	class MyClass<T, int> {
+
+
+	template <typename T1, typename T2>	//partial spec: both parameters are pointer types
+	class MyClass<T1*, T2*> {
+	
+- default template arguments
+	template <typename T, typename CONTAINER = std::vector<T> > 
+	class Stack {
+	
+	Stack<int> 	//stack using vector
+	Stack<string, std::deque<string> >	//using deque
+	
+class template = class that is implemented with one or more type parameters left open.
+only those member functions that are called are instantiated.
+you can specialize class templates for certain types.
+you can partially specialize class templates for certain types.
+you can define default values for class template parameters. These may refer to previous template parameters.	
+
+
+******************************************
+Chapter 4. Nontype Template Parameters
+ - stand for constant values that can be determined at compile or link time
+
+Nontype Class Template Parameters
+	template <typename T, int MAXSIZE> 
+	class Stack 
+
+	Stack<int, 20> 20int;
+	Stack<int, 40> 40int;
+
+	20int and 40int DON'T have the same type
+
+default values can be specified: int MAXSIZE = 100
+
+Nontype Function Template Parameters
+
+	template <typename T, int VAL> 
+	T addValue(T& const x)
+
+	for_each(list.begin(), list.end(), addValue<int, 10>);
+	
+You cannot use as arguments for nontype template parameters:
+	floating-point numbers
+	class-type objects
+	objects with internal linkage (such as string literals) .
+	
+internal linkage:
+	Objects, references, or functions explicitly declared static. 
+	Objects or references declared in namespace scope with the specifier const and neither explicitly declared extern, nor previously declared to have external linkage. 
+	Data members of an anonymous union. 
+	Function templates explicitly declared static. 
+	Identifiers declared in the unnamed namespace.	
+
+
+******************************************
+Chapter 5. Tricky Basics
+
+typename = clarifies that an identifier inside a template is a type
+	T::SubType --considered to be a static member; add typename
+	
+always qualify any symbol that is declared in a base that is somehow dependent on a template parameter:
+	this->exit() or Base<T>::exit()
+	
+Member templates
+	- class members can also be template
+	- a template assignment operator doesn't replace the default assignment operator. 
+		For assignments of stacks of the same type, the default assignment operator is still called
+	- member function template specializations do not belong in a header file
+
+Template Template Parameters
+	
+	Stack<int,std::vector<int> > vStack;    // integer stack that uses a vector 
+
+
+	Stack<int,std::vector> vStack;		// integer stack that uses a vector 
+		 must specify the second template parameter as a template template parameter.
+		template <typename T, 
+        	  template <typename ELEM> class CONT = std::deque > 
+	class Stack { 
+	  private: 
+	    CONT<T> elems;         // elements  
+	}
+- template template parameters for function templates are not allowed.
+
+
+Zero Initialization
+	buil-in types like int, float or pointer there is no default ctor that initializes them with default values; they have undefined values
+	to make sure that a member of a class template, for which the type is parameterized, gets initialized, 
+	you have to define a default constructor that uses an initializer list to initialize the member:
+		MyClass(): x()	// x of type T
+	
+Using String Literals as Arguments for Function Templates	
+	inline T const& max (T const& a, T const& b) 	//references
+	::max("apple","peach");   // OK: same type 
+	
+	::max("apple","tomato");  // ERROR: different types 
+		apple has type  char const[6]
+		tomato		char const[7]
+
+To access a type name that depends on a template parameter, you have to qualify the name with a leading typename.
+Nested classes and member functions can also be templates. 
+Template versions of assignment operators don't replace default assignment operators.
+You can also use class templates as template parameters, as so-called template template parameters.
+Template template arguments must match exactly. Default template arguments of template template arguments are ignored.
+For string literals there is an array-to-pointer conversion during argument deduction if and only if the parameter is not a reference.
+
+
+******************************************
+Chapter 6. Using Templates in Practice
+
+	inclusion model: template defined in header files
+		-- build-time issue
+	explicit instantiation:
+		basic_string<char>;
+		basic_string<wchar_t>;
+	separation model:
+		using export
+		only one compiler supports export (Comeau compiler)
+		
+ function templates are not inline by default, even if they are in headers			
+
+Precompiled Headers
+	every file to-be-compiled starts with the same N lines
+	we could compile these N lines and save the complete state of compiler in a precompiled header
+files must start with the same #include directives	
+	smaller compile time
+
+
+
+********************************************
+Chapter 7. Basic Template Terminology
+
+template instantiation = process of creating a regular class, function, or member function from a template by substituting actual values for its arguments 
+specialization = This resulting entity 
+declaration = C++ construct that introduces or reintroduces a name into a C++ scope
+definition = when the details of their structure are made known
+one-definition rule
+
+
+
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+Part II: Templates in Depth
+
+
+********************************************
+Chapter 8. Fundamentals in Depth
+
+- member function templates cannot be declared virtual( virtual function call uses a fixed-size table; number of instantiation of a member function template
+is not fixed)
+- the ordinary members of class templates can be virtual because their number is fixed when a class is instantiated
+
+template parameters
+	type parameters
+	nontype parameters
+	template template parameters
+
+
+********************************************
+Chapter 9. Names in Templates
+	qualified name - the scope to which it belongs is explicitly denoted: this->count, ::count etc.
+	
+	dependent 	- if it depends in some way of a template parameter
+			std::vector<T>::iterator - dependent if T is template parameter
+						- nondependent if T is a typedef
+
+
+compiler
+	tokenization( lexing) - generate a sequence of tokens from source code
+	parsing - find known patterns in the token
+
+9.4 Derivation and Class Templates
+	there is no significant differences between ordinary inheritance
+	
+
+********************************************
+Chapter 10. Instantiation
+	
+
+
+************************************************
+Curiously recurring template pattern (CRTP)
+
+- simulated dynamic binding (obtain an effect similar to the use of virtual functions without the costs of dynamic polymorphism
+	- VTBL structures, and method lookups, multiple-inheritance VTBL machinery)
+	
+- static polymorphism	
+
+template <class Derived>
+ struct base
+ {
+     void interface()
+     {
+          // ...
+          static_cast<Derived*>(this)->implementation();
+          // ...
+     }
+ 
+     static void static_func()
+     {
+          // ...
+          Derived::static_sub_func();
+          // ...
+     }
+ };
+ 
+ struct derived : base<derived>
+ {
+      void implementation();
+      static void static_sub_func();
+ };
+
+
+
+application:
+	keep number of live objects of a class (a static variable that is incremented/decremented in ctor/dtor)
+	tedious to implement it for several classes --> write a template :
+	
+template <typename CountedType> 
+class ObjectCounter { 
+  private: 
+    static size_t count;    // number of existing objects 
+
+  protected: 
+    // default constructor 
+    ObjectCounter() { 
+        ++ObjectCounter<CountedType>::count; 
+    } 
+
+    // copy constructor 
+    ObjectCounter (ObjectCounter<CountedType> const&) { 
+        ++ObjectCounter<CountedType>::count; 
+    } 
+
+    // destructor 
+    ~ObjectCounter() { 
+        --ObjectCounter<CountedType>::count; 
+    } 
+
+  public: 
+    // return number of existing objects: 
+    static size_t live() { 
+        return ObjectCounter<CountedType>::count; 
+    } 
+}; 
+
+
+
+******************************************
+Chapter 22. Function objects and callbacks
+
+
+
+
