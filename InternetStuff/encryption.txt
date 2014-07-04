@@ -1,0 +1,45 @@
+key: in encryption specifies the particular transformation of plaintext into ciphertext, 
+     in decryption: vice versa
+
+
+Symmetric-key encryption
+* same key is provided to encrypt/decrypt messages
+* 2 computers communicating must have the same key
+DES, AES
+the encryption key has to be delivered to the recipient
+
+Asymmetric-key encryption:
+* two different keys at once:
+    private: only known on your computer
+    public: 
+sender:
+* encrypts message with a random symmetric key
+* the random symmetric key is encrypted using public asymmetric key
+
+receiver:
+* decrypt the random symmetric key using its own private asymmetric key
+* it uses the decrypted random symmetric key to decode the message
+
+
+Hashing Algorithm
+
+* input: x
+* hash algorithm: input * 143
+* hash value: x * 143
+
+
+Encryption methods:
+1. Confusion:
+e.g transpose a letter to another one
+
+2. Diffusion:
+column transposition
+
+3. Key secrecy
+
+
+
+-----------------------------------------------------------------------
+AES
+
+key expansion: deriving multiple keys from an initial key

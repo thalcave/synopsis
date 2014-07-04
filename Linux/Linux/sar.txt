@@ -1,0 +1,26 @@
+SAR = sys activity reporter
+
+Collecting data: Run crontab for the root user to enable the SAR collection
+crontab -e
+# Collect measurements at 10-minute intervals
+0,10,20,30,40,50   * * * *   /usr/lib/sysstat/sa1
+# Create daily reports and purge old files
+0                  0 * * *   /usr/lib/sysstat/sa2 -A
+
+
+
+Extracting useful information: 
+sar = shows CPU
+sar -d = shows disk I/O
+sar -c = syscalls (fork, exec etc)
+
+sar -gpw 
+    -w = no. of process switches
+    
+    
+Timing
+sar -f /var/adm/sa/sa22 --> look at data from 22nd of the month
+sar -f /var/adm/sa/sa22 -s 14:20 -e 15:00 -w -q -i 4
+    shows swap file usage and the run queue for the 22nd from 2:30 p.m. to 3:00 p.m.
+    
+        

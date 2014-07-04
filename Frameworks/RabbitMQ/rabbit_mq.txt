@@ -1,0 +1,91 @@
+message broker (intermediary for messaging) = an architectural pattern for message validation, message transformation and message routing.
+    It mediates communication amongst applications
+* Route messages to one or more of many destinations
+* Transform messages to an alternative representation
+* Perform message aggregation, decomposing messages into multiple messages and sending them to their destination, then recomposing the responses into one message to return to the user
+
+--
+
+AMQP = Advanced Message Queuing Protocol 
+- open standard application layer protocol for message-oriented middleware
+- wire-level protocol (a description of the format of the data that is sent across the network as a stream of octets)
+- binary, application-layer protocol
+
+features:
+* message orientation
+* queuing
+* routing (including point-to-point and publish-and-subscribe)
+* reliability 
+* security
+
+basic unit of data in AMQP is a frame; there are 9 frame bodies:
+- open
+- begin
+- attach
+- transfer
+- flow
+- disposition
+- detach
+- end
+- close
+
+#######################################################################
+
+RabbitMQ = open source message broker software that implements AMPQ
+- written in Erlang
+messaging is asynchronous, decoupling applications by separating sending and receiving data.
+
+persistence, delivery acknowledgements, publisher confirms, and high availability.
+
+------------------------------------------------------
+
+Sending
+* a program that sends messages is a producer.
+* messages are stored in queue
+* a message can never be sent directly to the queue, it always needs to go through an exchange
+
+Receiving:
+* a consumer is a program that mostly waits to receive messages
+* whenever we receive a message, a callback function is called
+
+------------------------------------------------------
+
+Task queue 
+- encapsulate a task as a message and send it to the queue
+- a worker process running in the background will pop the tasks and eventually execute the job
+- when you run many workers the tasks will be shared between them.
+
+RabbitMQ supports message acknowledgments:
+- an ack(nowledgement) is sent back from the consumer to tell RabbitMQ that a particular message had been received, processed and that RabbitMQ is free to delete it
+
+RabbitMQ will redeliver the message only when the worker connection dies, there are no message timeouts
+- messages can be marked as persistent (will be saved on disk by the server)
+
+------------------------------------------------------
+publish/subscribe = deliver a message to multiple consumers
+
+the producer can only send messages to an exchange.
+exchange = on one side it receives messages from producers and the other side it pushes them to queues
+- can append messages to a particular/to many queues or can discard messages
+
+binding = relationship between exchange and a queue
+
+fanout exchange = broadcasts all the messages it receives to all the queues it knows.
+direct exchange = a message goes to the queues whose binding key exactly matches the routing key of the message
+
+
+
+------------------------------------------------------
+
+
+------------------------------------------------------
+
+
+
+
+QAMPQ = AMQP implementation for Qt
+
+
+ 
+
+

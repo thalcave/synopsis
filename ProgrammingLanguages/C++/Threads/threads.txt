@@ -105,6 +105,11 @@ A program is thread-safe if it has no race conditions, does not deadlock, and ha
 Boost.Threads destructors never throw exceptions.
 
 
+Guideline: 
+    Reads (const operations) on a shared object are safe to run concurrently with each other without synchronization.
+    The code that knows about and owns a writeable shared variable is responsible for synchronizing access to it.
+
+
 *********************************
 Rationale
 

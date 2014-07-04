@@ -1,3 +1,0 @@
-Boost.Function
-
-- family of class templates that are function object wrappers (generalized backup)

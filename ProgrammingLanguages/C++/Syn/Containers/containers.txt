@@ -1,2 +1,0 @@
-1) zero-length heap-allocated arrays are okay
-zero-length stack-allocated arrays are not allowed

@@ -1,3 +1,0 @@
-Dependency injection (DI)
-	a technique that indicates to a part of a program which other parts it can use
-	a simple pattern to loosely couple objects and their dependencies.
