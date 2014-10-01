@@ -1,0 +1,120 @@
+***************************************************
+Niceness
+
+
+scheduling processes on Linux = round-robin time-sharing
+
+nice
+* default is 0, range [-20, 19]
+
+    setpriority(int which, id_t who, int prio)
+
+POSIX threads share a range of other attributes:
+- nice
+
+Linux threads (original Pthreads implementation. Since glibc 2.4, this implementation is no longer supported.):
+- Threads do not share a common nice value.
+NPTL (Native POSIX Threads Library = this is the modern Pthreads implementation. 
+By comparison with LinuxThreads, NPTL provides closer conformance to the requirements of the POSIX.1 specification and better performance when creating large numbers of threads. 
+NPTL is available since glibc 2.3.2, and requires features that are present in the Linux 2.6 kernel)
+- Threads do not share a common nice value.
+
+
+Posix 1: nice per process
+Linux threads and NPTL: nice per thread
+
+
+
+***************************************************
+Affinity
+
+soft (natural) affinity = the tendency of a scheduler to try to keep processes on the same CPU as long as possible
+- merely an attempt
+hard affinity = provided by a syscall
+- a requirement
+
+Reason:
+- optimizing cache performance
+    avoids the performance cost caused by the cache invalidation that occurs when a
+       thread ceases to execute on one CPU and then recommences execution on a different CPU.
+- If multiple threads are accessing the same data, it might make sense to bind them all to the same processor, so that the threads do not contend over data and cause cache misses
+- a specialized application receives the full attention of the processor.
+    
+
+
+1. reserve CPU (won't be used by ANY task)
+* boot kernel with isolcpus option
+* move a process to it via the affinity system calls
+
+sched_setaffinity(pid, len, cpu_set): 
+- if pid = 0 --> calling thread
+
+cpu set:
+- CPU_ZERO, CPU_SET, CPU_CLR, CPU_ISSET
+
+run process on CPU 1, 2, 3 (but not on 0)
+    cpu_set_t set;
+    CPU_ZERO(&set);
+    CPU_SET(1, &set);
+    CPU_SET(2, &set);
+    CPU_SET(3, &set);
+    sched_setaffinity(pid, CPU_SETSIZE, &set);
+    
+
+
+
+2. set CPU affinity of a thread
+pthread_setaffinity_np()
+
+A new thread created by pthread_create(3) inherits a copy of its
+       creator's CPU affinity mask.
+       
+      
+If you are using
+    the POSIX threads API, then use pthread_setaffinity_np(3) instead of
+    sched_setaffinity()
+       
+3. cpuset - confine processes to processor and memory node subsets
+ The cpuset filesystem is a pseudo-filesystem interface to the kernel
+       cpuset mechanism, which is used to control the processor placement
+       and memory placement of processes.  It is commonly mounted at
+       /dev/cpuset.
+       
+       
+***************************************************
+Check CPU usage:
+
+
+1. 
+top -H -p {PROC_ID}
+then pressing "f" to go into field selection
+"j" to enable the CPU core column, and 
+"Enter" to display.
+
+2. /proc/<pid>/task/<tid>/status
+Cpus_allowed_list                       
+
+
+
+
+
+
+***************************************************
+***************************************************
+***************************************************
+Database: PoolThreads: 100
+    TaskThreadPool::initialize(databaseSet.poolThreads());
+        new TaskThreadPool(numThreads);
+            QThread* const pThread = new QnThread(QString("worker%1").arg(i+1));
+
+
+
+Cmc: 
+setupUserServerConnection
+    StaticNetworkThreads:
+bool ServerEndpointFactoryManager::Listener::startListening()
+    new ConnectionHandlingThread
+void ServerEndpointFactoryManager::Listener::createAndAssignToNewFactory(int socketDescriptor)
+    ConnectionHandlingThread* pThread = new ConnectionHandlingThread(m_pManager, m_nextDynamicThreadNo++, false)
+    
+    MaximumDynamicNetworkThreads

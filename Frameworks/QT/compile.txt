@@ -1,0 +1,4 @@
+cd ~/your_project_folder/
+qmake -project
+qmake
+make

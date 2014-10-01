@@ -1,4 +1,14 @@
 file - identify type of file using a magic number from the beginning of the file ( defined in /usr/share/misc/file/magic)
-
 # - comment
+
+
+nullglob is a Bash shell option which modifies glob expansion such that patterns that match no files expand to zero arguments, rather than to themselves.
+$ shopt -s nullglob
+$ rm *ddadada
+rm: missing operand
+Try `rm --help' for more information.
+
+$ shopt -u nullglob
+$ rm *ddadada
+rm: cannot remove `*ddadada': No such file or directory
 

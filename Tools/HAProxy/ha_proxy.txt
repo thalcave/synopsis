@@ -1,0 +1,24 @@
+HAProxy
+* high availability
+* load balancing
+* proxying for TCP and HTTP-based applications by spreading requests across multiple servers
+
+
+Performance:
+* single-process, event-driven model considerably reduces the cost of context switch and the memory usage. 
+    Processing several hundreds of tasks in a millisecond is possible, and the memory usage is in the order of a few kilobytes per session while memory consumed 
+    in preforked or threaded servers is more in the order of megabytes per process.
+* O(1) event checker on systems that allow it (Linux and FreeBSD) allowing instantaneous detection of any event on any connection among tens of thousands.
+
+A load balancer's performance related to these factors is generally announced for the best case;
+    a good rule of thumb on software load balancers is to consider an average practical performance of half of maximal session and data rates for average sized objects.
+
+
+    
+Heartbeat = daemon that provides cluster infrastructure (communication and membership) services to its clients. 
+- this allows clients to know about the presence (or disappearance!) of peer processes on other machines and to easily exchange messages with them
+The Heartbeat daemon needs to be combined with a cluster resource manager (CRM) 
+CRM = has the task of starting and stopping the services (IP addresses, web servers, etc.) that cluster will make highly available. 
+    Pacemaker is the preferred cluster resource manager for clusters based on Heartbeat.
+    
+

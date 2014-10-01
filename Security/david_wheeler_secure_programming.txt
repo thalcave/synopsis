@@ -1,0 +1,29 @@
+Security Principles:
+* Confidentiality (also known as secrecy), meaning that the computing system's assets can be read only by authorized parties.
+* Integrity, meaning that the assets can only be modified or deleted by authorized parties in authorized ways.
+* Availability, meaning that the assets are accessible to the authorized parties in a timely manner (as determined by the systems requirements). 
+    The failure to meet this goal is called a denial of service.
+    
+defense in depth = numerous defense mechanisms (``layers'') in place, designed so that an attacker has to defeat multiple mechanisms to perform a successful attack.
+
+#############################################
+
+Chapter 4. Security Requirements
+identify the ``security environment''
+    physical environment (can attackers access the computer hardware?), 
+    the assets requiring protection (files, databases, authorization credentials, and so on), 
+    the purpose of the TOE (target of evaluation)) (what kind of product is it? what is the intended use?).
+
+
+#############################################
+Chapter 5. Validate All Input
+
+- do not identify what is illegal and write code to reject those cases, but the opposite
+- limit all numbers to the minimum (often zero) and maximum allowed values
+- Don't Let Users Set Their Own Environment Variables
+- Forbid HTTP GET To Perform Non-Queries
+- Place time-outs and load level limits, especially on incoming network data. Otherwise, an attacker might be able to easily cause a denial of service by constantly requesting the service.
+
+
+#############################################
+Avoid Buffer Overflow

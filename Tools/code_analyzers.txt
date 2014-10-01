@@ -1,0 +1,8 @@
+rats
+flawfinder
+cppcheck
+vera++
+
+
+# code duplication
+java -jar ~/Packages/simian/bin/simian-2.3.35.jar -language=C++ -threshold=30 `find . -name *.cpp`

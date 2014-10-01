@@ -1,0 +1,57 @@
+std::forward = forwards the argument to another function with the value category it had when passed to the calling function.
+* forward the parameters passed to a function template to another function call inside it without losing their own qualifiers (const-ref, ref, value, rvalue, etc.).
+a conditional cast to an rvalue
+
+template <typename T>
+T&& forward(T&& param)
+{
+    if (is_lvalue_reference<T>::value)  //if T indicates lvalue, do nothing
+    {
+        return param;
+    }
+    else                                //else cast to rvalue
+    {
+        return move(param)
+    }
+}
+
+
+------------------------------------------
+enable_if = template struct that has two type arguments: 
+* the first one is a boolean condition
+* the second one is the return type we want our function to return if the condition is true
+The enable_if struct has a static const attribute called type that maps to the return type expressed as the second type argument passed to the struct.
+
+So, if the condition is true, the compiler will enable the function declared using enable_if, otherwise the function will simply be ignored by the compiler.
+template <typename T>
+typename enable_if<!has_iterator<T>::value, void>::type show(const T& x)
+{
+    cout << x << endl;
+}
+ 
+template <typename T>
+typename enable_if<has_iterator<T>::value, void>::type show(const T& x)
+{
+    for (auto& i : x)
+        cout << i << endl;
+}
+
+
+------------------------------------------
+future & async:
+
+async call = a method invocation that will be executed in a separate thread (or core or processor); 
+so, the caller of the method does not wait for the result of the execution and continue doing what is next
+
+async() has 3 params:
+* launch policy:
+- launch::deferred = synchronous execution
+- launch::async = async execution
+* pointer to a function
+* parameters to be passed to the function
+
+return:
+*  object of type future<T> (T = return type of function passed as parameter)
+future<T>::get(*) = returns the result of executing the function asynchronously
+- if the launch policy is deferred, it executes the function in the same thread
+- otherwise, it returns the result of the asynchronuos execution (waiting until the method finishes the execution)

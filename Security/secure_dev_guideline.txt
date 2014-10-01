@@ -1,0 +1,79 @@
+Secure Development Process
+
+1. Management activities - how to track and monitor security in your application:
+a) Build and maintain an application portfolio.
+each entry from portfolio will contain:
+	- a description of the application, 
+	- the technology it uses, 
+	- who is responsible, 
+	- its risk categorization.
+b) Security metrics
+Maturity level = a direct comparison of the application against which activities of this secure development process have been completed
+	For example the maturity level "2.3" states that 3 activities of phase 2 (including all of phase 1) have been performed for the development of the application
+Development Metrics = list of development metrics which are related to security, e.g. the number of failing security unit tests, etc.
+
+
+
+2. Implementation activities - how to code and design your application securely
+a) Security requirements
+The security of the product has to be defined in the product requirements
+
+- include security requirements
+- third party requirements
+
+b) Secure Architecture
+Ensure that the architecture of our products is secure
+- Architect Awareness Training
+- Architecture Review
+- Defense in Depth
+	use layered security mechanisms that increase security of the system as a whole. 
+	If an attack causes one security mechanism to fail, other mechanisms may still provide the necessary security to protect the system.
+
+
+c) Threat Modeling
+Methodology used to understand and priorities security threats, and to identify countermeasures for an application.
+
+- Clarify Known Security Threats
+- Threat Modeling Light
+- Threat Modeling Full
+
+d) Secure Development
+- Development Awareness Training
+- Unit Test Cheat Sheet
+- Security Unit Testing
+
+e) Code Review
+- Manual Code Review
+- Perform Automated Code Analysis
+OWASP - Open Web Application Security Project
+- Integrated Automated Code Analysis
+
+
+
+3 .Quality Assurance activities - how to test and ensure your application is secure
+a) Security Assurance
+- QA Awareness Training
+- Test Cheat Sheet
+- Security QA Testing
+- Perform Black Box Testing
+- Integrate Black Box Testing
+
+b) Penetration Testing
+=  a method of evaluating the security of an application by simulating an attack from a hacker
+Penetration testing can be used in all phases of the model
+
+
+4. Secure development principles
+a) Basic recommendations
+Defense-in-depth 
+	use layered security mechanisms that increase security of the system as a whole. 
+	If an attack causes one security mechanism to fail, other mechanisms may still provide the necessary security to protect the system.
+Security components 
+	should be kept as simple as possible to limit the number of possible vulnerabilities and make security audits less difficult.
+Encapsulated security components
+	security components, (e.g. for authentication, authorization, input validation) should be separated from business components or functions and provided 
+	as central components. If any bugs in the security components are found, they can be fixed once and the results apply throughout the application immediately.
+Secure by default
+	All security relevant configuration parameters should be set to a secure default value by the installation procedure. 	
+Usability
+	reject weak passwds
