@@ -55,3 +55,31 @@ return:
 future<T>::get(*) = returns the result of executing the function asynchronously
 - if the launch policy is deferred, it executes the function in the same thread
 - otherwise, it returns the result of the asynchronuos execution (waiting until the method finishes the execution)
+
+
+------------------------------------------
+std::any_of
+
+initialize static variables:
+
+std::once_flag flag;
+static a;
+
+void create()
+{
+    a = createA()
+}
+
+A& get()
+{
+    std::call_once(flag, &create);
+
+    return a;
+}
+
+
+------------------------------------------
+
+move semantics
+
+string&& name = getName(); --> name can be modified

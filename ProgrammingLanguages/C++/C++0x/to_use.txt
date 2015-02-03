@@ -1,0 +1,40 @@
+1. auto for types
+- careful with begin()/cbegin()
+for (const auto& v : c)
+{
+}
+
+can use auto x = type{ init }
+
+
+2. constexpr
+
+
+3. tuple - generalised version of the pair class.
+
+4. std::unique_ptr
+
+5. use for
+for (const auto& v : c)
+
+6. use list initialization
+std::vector<int> mem = {1,2,3};
+
+7. nullptr
+
+8. algorithms:
+all_of(), any_of() and none_of()
+is_sorted and is_sorted_until
+minmax_element
+
+copy_if(), copy_n()
+iota() creates a range of sequentially increasing value
+
+!!!careful with QHash.values() --> returns by value
+std::any_of(hash.values().begin(), hash.values().end()) --> different lists --> begin and end do not match
+
+
+9. enum class
+
+10. 
+
