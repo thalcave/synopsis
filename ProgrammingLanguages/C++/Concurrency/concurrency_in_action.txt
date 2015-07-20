@@ -1,0 +1,80 @@
+embarrassingly parallel - code very easy to parallelize
+
+the more threads
+    --> more context switching
+    --> memory exhaustion (each thread with its own stack)
+
+abstraction penalty = cost associated with using high-level facilities
+
+the supplied function object is copied into the storage belonging to the
+newly created thread of execution and invoked from there.
+
+
+the std::thread destructor calls std::terminate() if join() was not called
+    If joinable(), calls std::terminate()
+
+it’s a bad idea to create a thread within a function that has access to the local variables of the function,
+unless the thread is guaranteed to finish before the function exits.
+
+
+C++11 thred is primitive:  you have to create your own wrappers (call join() in destructor etc.)
+
+---------------------------------------------------------------------------
+detached threads = background jobs for:
+    monitoring the filesystem,
+    clearing unused entries out of object caches
+    optimizing data structures
+
+
+the arguments are copied into internal storage, where they can be accessed by the newly created thread of execution,
+even if the corresponding parameter in the function is expecting a reference.
+    void func2(std::string& str)
+    {
+        str = "aaa";
+    }
+    std::thread t2(func2, str_from_main);
+
+"str" is a reference to the internal copy of "str_from_main", not to "str_from_main"
+Solution: use std::ref(str_from_main)
+
+
+std::thread is movable, not copyable
+    std::thread t1(function);
+    std::thread t2 = std::move(t1); --> the thread is owned by a different std::thread object
+
+
+
+std::thread::hardware_concurrency().
+    This function returns an indication of the number of threads that can truly run concurrently for a given execution of a program
+
+
+
+---------------------------------------------------------------------------
+Sharing data
+
+
+std::mutex
+std::lock_guard - RAII mutex wrapper
+std::unique_lock - mutex ownership wrapper allowing deferred locking, time-constrained attempts at locking, recursive locking, transfer of lock ownership, and use with condition variables.
+The difference is that you can lock and unlock a std::unique_lock; std::lock_guard will be locked only once on construction and unlocked on destruction.
+
+
+Don’t pass pointers and references to protected data outside the scope of the lock
+
+std::lock() - Locks the given Lockable objects lock1, lock2, ..., lockn using a deadlock avoidance algorithm to avoid deadlock.
+    - all-or-nothing semantics
+
+
+Guidelines to avoid deadlock: don’t wait for another thread if there’s a chance it’s waiting for you
+1. Avoid nested locks:
+* don't acquire a lock if you already hold one
+* use std::lock() to acquire multiple locks
+
+2. Avoid calling user-supplied code while holding a lock
+
+3. Acquire locks in a fixed order
+
+
+
+
+

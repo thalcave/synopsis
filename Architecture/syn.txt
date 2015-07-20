@@ -1,0 +1,7 @@
+Separating the Levels of Abstraction
+
+Context - shows IT landscape over the enterprise or for a particular solution, mainly shows systems and actors
+Container - the high level technology choices
+    execution environments like databases, application servers or file systems
+Component - the relationships between components where a component can be thought of as a service or logical unit exposed through a known interface.
+Class - a description of the classes in a component adhering to object oriented principles.

@@ -1,0 +1,92 @@
+Collection framework:
+* Interface
+* Implementation
+* Algorithms
+
+
+********************************************************
+Collection interface
+
+conversion constructor = initialized the new collection to contain all elements in the specified collection
+    Set<String> listOfTopicAuthors 
+    List<String> list = new ArrayList<String>(listOfTopicAuthors);
+
+Traversing collections:
+1) aggregate operations:
+    myShapesCollection.stream()
+    .filter(e -> e.getColor() == Color.RED)
+    .forEach(e -> System.out.println(e.getName()));
+
+2) for-each construct
+    for (Object o : collection)
+
+3) iterator
+Use Iterator instead of the for-each construct when you need to:
+    * Remove the current element. The for-each construct hides the iterator, so you cannot call remove. Therefore, the for-each construct is not usable for filtering.
+    * Iterate over multiple collections in parallel.
+
+the only safe way to modify a collection during iteration is Iterator.remove
+
+Filter elements from a collection:
+    static void filter(Collection<?> c) {
+        for (Iterator<?> it = c.iterator(); it.hasNext(); )
+            if (!cond(it.next()))
+                it.remove();
+    }
+
+
+********************************************************
+Set interface
+
+
+three general-purpose Set implementations: HashSet, TreeSet, and LinkedHashSet
+
+HashSet:
+* stores elements in a hashtable
+* no guarantee for order
+
+TreeSet:
+* stores elements in a red-black tree
+* orders elements based on their value
+* slower than HashSet
+
+LinkedHashSet:
+* hash table with a linked list
+* insertion-order (elements are ordered based on how they were inserted)
+
+Eliminate all duplicates from a collection:
+    Collection<Type> noDups = new HashSet<Type>(c);
+
+
+********************************************************
+List interface
+
+positional access, search, iteration, range-view
+
+ListIterator allows you to:
+* traverse the list in either direction
+* modify the list during iteration
+* obtain the current position of the iterator.
+
+
+********************************************************
+Queue interface
+
+Each Queue method exists in two forms: (1) one throws an exception if the operation fails, and (2) the other returns a special value if the operation fails (either null or false, depending on the operation)
+bounded queue = restricts the number of elements
+
+
+********************************************************
+The Deque Interface
+
+ArrayDeque and LinkedList implement the Deque interface.
+
+
+
+********************************************************
+The Map Interface
+
+Three general-purpose Map implementations: HashMap, TreeMap, and LinkedHashMap.
+Their behavior and performance are precisely analogous to HashSet, TreeSet, and LinkedHashSet
+
+

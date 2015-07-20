@@ -1,0 +1,46 @@
+################################################################################################
+
+------------------------------------------------------------------------
+SacrificialArchitecture: prepare to discard code every N years
+
+* the right architecture in 2010 won't be good for 2020
+* Google: "design a system for 10 times the current needs"; if exceeds this limit, discard it and replace it from scratch
+
+* too many users on unperformant code base --> time to change
+"design for ~10X growth, but plan to rewrite before ~100X"
+
+
+
+- accept that in few years you'll need to throw away the current code
+- accept limits
+- think now about things that can make it easier to replace when the time comes
+- do not abandon internal quality of the software, even if it will be discarded
+
+
+------------------------------------------------------------------------
+MonolithFirst: you shouldn't start a new project with microservices, even if you're sure your application will be big enough to make it worthwhile.
+
+* Almost all the successful microservice stories have started with a monolith that got too big and was broken up
+* Almost all the cases where a system was built as a microservice system from scratch, it has ended up in serious trouble.
+
+Reasons:
+1. Yagni: "You Aren't Gonna Need It"
+* do things only if needed
+
+2. Microservices work well only if you come up with good, stable boundaries between the services
+* refactoring of functionality between microservices is much harder than in a monolith
+* by building a monolith first, you can figure out the right boundaries
+
+
+Approaches:
+1. Design monolith, shift to microservices
+2. Start with a monolith, peel off microservices at edges
+3. Replace the monolith entirely: SacrificialArchitecture
+4. Start with coarse-grained services (multiple services), larger than those you expect to end up with
+- as boundaries stabilize, break down into finer-grained services
+
+
+
+
+
+################################################################################################

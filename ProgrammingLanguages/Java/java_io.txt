@@ -1,0 +1,41 @@
+***************************************************************************************
+I/O Streams
+
+
+Byte streams: FileInputStream, FileOutputStream
+    All other stream types are built on byte streams.
+
+Character stream: FileReader, FileWriter
+    A program that uses character streams in place of byte streams automatically adapts to the local character set and is ready for internationalization
+
+
+Buffered Streams:
+Byte streams: BufferedInputStream, BufferedOutputStream
+Char streams: BufferedReader, BufferedWriter
+
+
+Stream objects that implement formatting are instances of either PrintWriter, a character stream class, or PrintStream, a byte stream class.
+
+----------------------------------------------------------------------------
+Standard Streams
+
+Byte streams:
+standard input = System.in
+standard output = Systen.out
+standard error = System.err
+
+The console:
+* useful for secure password entry
+* input and output streams
+
+
+----------------------------------------------------------------------------
+Data streams:
+binary I/O of primitive data type values (boolean, char, byte, short, int, long, float, and double) as well as String values.
+
+Object streams:
+* support I/O of objects
+* Most, but not all, standard classes support serialization of their objects. Those that do implement the marker interface Serializable.
+
+ObjectInputStream
+ObjectOutputStream
