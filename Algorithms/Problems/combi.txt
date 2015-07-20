@@ -17,7 +17,7 @@ for i = 0  to limit
 	{
 		if (cnum & 1)	//last bit is set
 			current_set.add(Set[j]);
-			++j
+		++j
 		cnum >>= 1;
 	}
 	

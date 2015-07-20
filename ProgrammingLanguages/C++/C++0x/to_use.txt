@@ -6,6 +6,9 @@ for (const auto& v : c)
 
 can use auto x = type{ init }
 
+- careful with pointers
+auto ptr = new Pointer(); --> it will leak
+
 
 2. constexpr
 
@@ -14,7 +17,7 @@ can use auto x = type{ init }
 
 4. std::unique_ptr
 
-5. use for
+5. use range-based for loops
 for (const auto& v : c)
 
 6. use list initialization
@@ -36,5 +39,15 @@ std::any_of(hash.values().begin(), hash.values().end()) --> different lists --> 
 
 9. enum class
 
-10. 
+10. std::move
+v.push_back(std::move(str));
 
+- careful: 'str' is invalid now
+
+
+11. override and final
+- override: it will give you an error if Derived is not overriding the function from Base
+- final: it will give you an error if the method is overriden in derived class
+
+12. use begin(container) instead of container.begin()
+- more generic code

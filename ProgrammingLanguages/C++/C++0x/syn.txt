@@ -79,7 +79,23 @@ A& get()
 
 
 ------------------------------------------
-
 move semantics
 
+lvalue = an expression that identifies a non-temporary object or a non-member function.
+    object that has a name
+prvalue = ("pure" rvalue) is an expression that identifies a temporary object (or a subobject thereof) or is a value not associated with any object.
+    temporay object
+    
+xvalue = an expression that identifies an "eXpiring" object, that is, the object that may be moved from.
+    nameless temporary,
+    named object in scope
+rvalue = an expression that is either a prvalue or an xvalue.
+
+
+The move constructor is called whenever an object is initialized from xvalue of the same type
+
 string&& name = getName(); --> name can be modified
+
+
+// str is empty after move
+    v.push_back(std::move(str));
