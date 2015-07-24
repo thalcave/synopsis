@@ -50,7 +50,7 @@ std::thread::hardware_concurrency().
 
 
 ---------------------------------------------------------------------------
-Sharing data
+Chapter 3. Sharing data
 
 
 std::mutex
@@ -74,7 +74,15 @@ Guidelines to avoid deadlock: don’t wait for another thread if there’s a cha
 
 3. Acquire locks in a fixed order
 
+4. Don’t pass pointers and references to protected data outside the scope of the lock
 
 
 
+Guidelines:
+* don't do file I/O while holding a lock
+* a lock should be held for the minimum possible time
+
+
+avoid Double-checked Locking pattern:
+* use std::call_once()
 
