@@ -84,5 +84,107 @@ Guidelines:
 
 
 avoid Double-checked Locking pattern:
-* use std::call_once()
+* use std::call_once(), std::once_flag
 
+initialization of local variable declared with static is thread-safe guaranteed
+    class MyClass;
+    MyClass& getClass()
+    {
+        static MyClass instance;
+        return instance;
+    }
+
+
+
+Protecting rarely updated data structures
+- normal mutex will eliminate reading concurrency
+reader-writer mutex: 
+    exclusive access by a single writer
+    concurrent access by multiple readers
+    
+
+
+
+---------------------------------------------------------------------------
+Chapter 4. Synchronizing concurrent operations
+
+1. Waiting:
+    while (flag_not_set)
+        sleep(1s)
+
+condition.notifyOne(): no guarantee which thread will be notified
+
+
+2. Futures:
+
+a) future = one-off event
+    - result of a calculation done in background
+* two types: 
+    std::future - unique, like unique_ptr
+    std::shared_future - shared, like shared_ptr
+If multiple threads need to access a single future object, they must protect access via a mutex
+
+    std::future<int> future_result = std::async(do_heavy_computation, arg1, arg2);
+    do_some_stuff();
+    std::cout<<"result is: "<<future_result.get() <<"\n";
+
+std::launch::deferred = the function call is deferred until wait() or get() is called
+std::launch::async = the function must be run on its own thread
+
+
+b) Associating a task with a future
+std::packaged_task<> = ties a future to a function or callable object
+
+    std::packaged_task<int(int,int)> task(f);
+    std::future<int> result = task.get_future();
+
+If a large operation can be divided into self-contained sub-tasks, each of these can be wrapped in a std::packaged_task<>
+    instance, and then that instance passed to the task scheduler or thread pool
+    
+c) std::promise
+In applications with very large numbers of network connections, it’s common to have a small number of threads (possibly only one) 
+handling the connections, each thread dealing with multiple connections at once
+
+std::promise<T> - provides a means of setting a value (of type T), which can later
+                be read through an associated std::future<T> object. 
+                
+the waiting thread could block on the std::future, while the thread providing the data could use the promise half of
+the pairing to set the associated value and make the future ready
+
+
+Hierarchy of abstraction for asynchronous computation.
+I. std::async: 
+The most convenient and straight-forward way to perform an asynchronous com­pu­ta­tion is via the async function template, which returns the matching future immediately:
+
+    auto fut = std::async(foo, 1.5, 'x', false);  // is a std::future<int>
+
+the result is easily ob­tained when needed:
+    auto res = fut.get();  // is an int
+
+
+II. std::packaged_task. 
+This is a template that wraps a function and provides a future for the functions return value, but the object itself is call­able, and calling it is at the user's discretion
+    
+    std::packaged_task<int(double, char, bool)> tsk(foo);
+    auto fut = tsk.get_future();    // is a std::future<int>
+The future becomes ready once we call the task and the call completes. This is the ideal job for a se­pa­rate thread. We just have to make sure to move the task into the thread:
+
+    std::thread thr(std::move(tsk), 1.5, 'x', false);
+The thread starts running immediately. We can either detach it, or have join it at the end of the scope, or whenever 
+whenever the function call finishes, our result is ready:
+    auto res = fut.get();  // as before
+
+III. Now we're down to the lowest level
+The promise is the building block for communicating with a future. The principal steps are these:
+
+    The calling thread makes a promise.
+
+    The calling thread obtains a future from the promise.
+
+    The promise, along with function arguments, are moved into a separate thread.
+
+    The new thread executes the function and populates fulfills the promise.
+
+    The original thread retrieves the result.
+    
+    

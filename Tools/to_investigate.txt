@@ -1,2 +1,21 @@
 collectl
 influxdb
+
+
+Vertx - event-driven distributed framework
+- runs in JVM
+- can be easily integrated with multiple languages
+
+Hazelcast - in-memory, distributed dabatase
+
+Openfire - server implementing XMPP
+
+BuddyCloud - messaging stack
+
+WebRTC - API to support browser-to-browser applications for voice calling, video chat etc.
+    real-time communication
+
+FreeSwitch: open-source telephony platform
+
+Docker: open-source project that automates the deployment of applications inside software containers
+

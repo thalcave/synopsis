@@ -99,3 +99,4 @@ string&& name = getName(); --> name can be modified
 
 // str is empty after move
     v.push_back(std::move(str));
+    

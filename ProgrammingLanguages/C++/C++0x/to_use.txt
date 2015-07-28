@@ -51,3 +51,15 @@ v.push_back(std::move(str));
 
 12. use begin(container) instead of container.begin()
 - more generic code
+
+
+12. make_shared
+auto sp = std::make_shared<int>(12);
+    
+* Constructs an object of type T and wraps it in a std::shared_ptr using args as the parameter list for the constructor of T.
+* used to replace the construction std::shared_ptr<T>(new T(args...))
+* single memory allocation, whereas std::shared_ptr<T>(new T(args...)) performs at least two memory allocations
+* code such as 
+    f(std::shared_ptr<int>(new int(42)), g())
+can cause a memory leak if g() throws an exception because g() may be called after new int(42) and before the constructor of shared_ptr<int>
+    
