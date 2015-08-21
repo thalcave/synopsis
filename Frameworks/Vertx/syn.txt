@@ -1,0 +1,123 @@
+Vert.x = event-driven framework
+
+----------------------------------------------------------------------------------------------------
+Highlights:
+* single-threaded components
+* communication via event bus
+
+modules written in different programming languages
+everything runs in JVM
+
+Event-based programming in Vert.x
+* you have to write the event handlers
+* apps are guaranteed not to block
+
+
+Verticle = unit of deployment in Vert.x
+- every verticle contains a main method
+- an app. can be a single verticle or multiple verticles communicating via the event bus
+
+Vert.x instance: runs multiple verticles
+- runs in its own JVM
+- a host can run multiple Vert.x instances
+- each verticle is run in its own thread
+
+immutable data is passed across verticles
+
+
+
+----------------------------------------------------------------------------------------------------
+Functionality: core services and modules
+
+Core services:
+* can be directly called from a verticle
+* static, not expected to change
+Example:
+* clients/servers for TCP, HTTP, web sockets
+* timers, buffers, file system access, logging
+
+
+Modules:
+
+
+
+Fluent API is where multiple methods calls can be chained together. For example:
+    request.response().putHeader("Content-Type", "text/plain").write("some text").end();
+    
+to receive a timer event every second you would do:
+    vertx.setPeriodic(
+            1000, 
+            id -> {
+                    // This handler will get called every second
+                    System.out.println("timer fired!");
+                }
+        );
+        
+    server.requestHandler(
+            request -> {
+                    // This handler will be called every time an HTTP request is received at the server
+                    request.response().end("hello world!");
+                }
+        );
+        
+
+----------------------------------------------------------------------------------------------------
+Don’t block me!
+
+none of the APIs in Vert.x block the calling thread:
+* If a result can be provided immediately, it will be returned immediately
+* otherwise you will usually provide a handler to receive events some time later.
+
+Reactor (Single-threaded event loop) and Multi-Reactor (multi-threaded event loops)
+Vert.x calls your handlers using a thread called an event loop.
+the event loop can merrily run around delivering events to different handlers in succession as they arrive.
+
+
+Reactor pattern:
+* synchronous demultiplexing and dispatching of concurrently arriving events
+* It receives incoming messages/requests/connections from multiple concurrent clients and processes these messages sequentially using event handlers.
+Reactor:
+    runs in a separate thread and its job is to react to IO events by dispatching the work to the appropriate handler
+Handler:
+    performs the actual work to be done with an IO event similar to the actual officer in the company the client who called wants to speak to.
+    
+Multi-reactor pattern:
+* Each Vertx instance maintains several event loops (based on the number of CPUs)
+* in most cases, an event handler will be executed by the same event loop
+
+
+The Golden Rule - Don’t Block the Event Loop
+* don't block the event loop in handler; don't call blocking operations directly from event loop:
+        sleep, waiting for locks, DB operations, complex calculation
+* Vert.x will automatically log warnings if it detects an event loop hasn’t returned for some time.
+
+Running blocking code
+    vertx.executeBlocking(
+            future -> {
+                    // Call some blocking API that takes a significant amount of time to return
+                    String result = someAPI.blockingMethod("hello");
+                    future.complete(result);
+                }, 
+            res -> {
+                    System.out.println("The result is: " + res.result());
+                }
+        );
+        
+
+        
+----------------------------------------------------------------------------------------------------
+Verticles
+* can be written in any of the supported languages
+* a single app can contain verticles written in multiple languages
+
+Standard verticles:
+* are assigned an event loop thread when they are created and the start method is called with that event loop
+* all the code in your verticle instance is always executed on the same event loop
+You can write all the code in your application as single threaded
+
+Worker verticles:
+* just like a standard verticle but it’s executed not using an event loop, but using a thread from the Vert.x worker thread pool
+* are designed for calling blocking code, as they won’t block any event loops
+
+
+
