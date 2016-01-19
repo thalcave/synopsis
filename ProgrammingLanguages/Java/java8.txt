@@ -370,7 +370,9 @@ Callable = functional interface that returns a value
        }
    };
 
-Future = special result used to retrieve the actual result at a later point in time
+Future = result of an async computation
+- special result used to retrieve the actual result at a later point in time
+
 Since Executor.submit() doesn`t wait until the task completes, the executor service cannot return
 the result of the callable directly. Instead the executor returns a special result of type Future,
 which can be used to retrieve the actual result at a later point in time.
@@ -390,8 +392,8 @@ which can be used to retrieve the actual result at a later point in time.
 Every non-terminated future will throw exceptions if you shutdown the executor:
     executor.shutdownNow();
     future.get(); // will throw exception
-
-
+      
+         
 d) Timeouts
 * specify maximum wait time
 * throws TimeoutException
@@ -446,9 +448,119 @@ ScheduledExecutorService = capable of scheduling tasks to run either periodicall
 the difference is that the wait time period applies between the end of a task and the start of the next task
 
 
+h) CompletableFuture
+* a Future (result for async operation) that can be explicitly completed
+* allows to complete a future when an event happened
+
+#### Creation:
+* create a CompletableFuture using its constructor:
+    public CompletableFuture<String> ask() {
+        final CompletableFuture<String> future = new CompletableFuture<>();
+        //...
+        return future;
+    }
+- client will block here:
+     CompletableFuture completableFuture = ask();
+     completableFuture.get(); // will block
+- unblock all clients:
+     future.complete("a string")
+
+* create it using factory methods, specifying the mode (sync or async) and its task or process:
+- CompletableFuture.runAsync() = takes a Runnable -> returns a CompletableFuture<Void> (because Runnable doesn`t return anything)
+- CompletableFuture.supplyAsync() = takes a Supplier -> returns a CompletableFuture<T>
+        final CompletableFuture<String> future = CompletableFuture.supplyAsync(new Supplier<String>() {
+                @Override
+                public String get() {
+                //...long running...
+                return "42";
+             }
+        }, executor);
+
+        or:
+        final CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> longRunningTask(params), executor);
+
+!!! supplyAsync() returns a new CompletableFuture that is asynchronously completed by a task running in the ForkJoinPool.commonPool()
+with the value obtained by calling the given Supplier.
+
+     
+#### Getting results:
+* Using the get() method:
+        // wait forever until the CompletableFuture is completed or cancelled
+        cf.get();
+* Using the getNow(fallback) method:
+        // if the result is not yet present, fallback is returned
+        cf.getNow("fallback")
+* Using the get(long amount, TimeUnit unit)
+        // waits x time units and tries to return the computed value if available; if not, TimeoutException is thrown
+        cf.get(3, TimeUnit.SECONDS)
+
+
+#### Completing ad-hoc
+
+* create a Completable that is not gonna end:
+           CompletableFuture completableFutureToBeCompleted2 = CompletableFuture.supplyAsync( ( ) -> {
+                             for( int i = 0; i < 10; i-- )
+                             {
+                                System.out.println( "i " + i );
+                             }
+                             return 10;
+                  } );
+
+* create a new CompletableFuture that is going to complete the first one:
+  CompletableFuture completor = CompletableFuture.supplyAsync( ( ) -> {
+	            System.out.println( "completing the other" );
+                    completableFutureToBeCompleted2.complete( 222 );
+	            return 10;
+        } );
+
+* retrieve the results:
+  System.out.println( completor.get() );
+  System.out.println( completableFutureToBeCompleted2.get() );
+
+* CompletableFuture.complete() can only be called once, subsequent invocations are ignored
+* CompletableFuture.completeExceptionally(ex) - signal failure by passing some exception
+         - unlocks all waiting clients, but this time throwing an exception from get()
+
+#### Joining
+It is possible to join different CompletableFuture and use its results in future calculations using the methods thenApply() and thenCompose():
+* run this function on a result, when it arrives
+   // from String -> Integer -> Double
+   CompletableFuture<String> f1 = //...
+   CompletableFuture<Integer> f2 = f1.thenApply(Integer::parseInt);
+   CompletableFuture<Double> f3 = f2.thenApply(r -> r * r * Math.PI);
+* these transformations are neither executed immediately nor blocking;
+  they are simply remembered and when original f1() completes they are executed for you.
+
+Running code on completion (thenAccept/thenRun)
+
+Combining two CompletableFuture together
+
+   CompletableFuture completableFutureBigCompute = CompletableFuture.supplyAsync( ( ) -> {
+                     // big computation
+	             return "10";
+                     } );
+
+   CompletableFuture thenCompose = completableFutureBigCompute.thenCompose(CombiningCompletableFutures::continueWithVeryImportantThing);
+
+   CompletableFuture<CompletableFuture> thenApply = completableFutureBigCompute.thenApply(CombiningCompletableFutures::continueWithSomethingElse);
+
+   System.out.println( "thenCompose " + thenCompose.get() );
+   System.out.println( "thenApply " + thenApply.get() ); // is already completed
+   System.out.println( "thenApply " + thenApply.isDone() ); // is already completed
+
+   CompletableFuture thenCompose2 = completableFutureBigCompute.thenCompose(CombiningCompletableFutures::continueWithVeryImportantThing );
+
+   // difference between compose and apply: thenCompose uses the value of the source
+   System.out.println( "thenCompose2 " + thenCompose2.get() ); 
+
+####
+#### 
+         
+
 2. Synchronization and Locks
 
 a) Synchronized
+Internally Java uses a so called monitor also known as monitor lock or intrinsic lock in order to manage synchronization.
 
     synchronized void incrementSync() {
         count = count + 1;
@@ -464,4 +576,4 @@ The synchronized keyword is also available as a block statement:
 
 b) Locks
 
-
+Locks support various methods for finer grained lock control thus are more expressive than implicit monitors.
