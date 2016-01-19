@@ -1,0 +1,60 @@
+EIP register always contains the address of the next instruction to be executed.
+    EIP Instruction Pointer Register
+
+ESP register serves as an indirect memory operand pointing to the top of the stack at any time
+    As program adds data to the stack, the stack grows downward from high memory to low memory. 
+    When items are removed from the stack, stack shrinks upward from low to high memory.
+
+
+
+--------
+PIC: machine code that, being placed somewhere in the primary memory, executes properly regardless of its absolute address.
+-  commonly used for shared libraries, so that the same library code can be loaded in a location in each program address space 
+where it will not overlap any other uses of memory (for example, other shared libraries).
+- can be executed at any memory address without modification
+
+relocatable code = a link editor or program loader modifies a program before execution so it can be run only from a particular memory location.
+
+--------
+Position-independent executables (PIE) are executable binaries made entirely from position-independent code (PIC)
+- allows address space layout randomization to prevent attackers from knowing 
+where existing executable code is during a security attack using exploits that rely on knowing the offset of the executable code in the binary (Return-to-libc attack)
+
+Return-to-libc attack
+- usually starts with a buffer overflow in which a subroutine return address on a call stack is replaced by an address of a subroutine that is already present in the process’ executable memory, 
+bypassing the NX (no-execute) bit feature (if present) and ridding the attacker of the need to inject their own code.
+
+NX bit No-eXecute
+    a technology used in CPUs to segregate areas of memory for use by either storage of processor instructions (code) or for storage of data
+
+--------
+Address space layout randomization
+- ASLR randomly arranges the address space positions of key data areas of a process, including the base of the executable and the positions of the stack, heap and libraries.
+- makes it more difficult for an attacker to predict target addresses.
+
+-----
+rpath = run-time search path hard-coded in an executable file or library, used during dynamic linking to find the libraries the executable or library requires. 
+Specifically it encodes a path to shared libraries into the header of an executable (or another shared library).
+
+
+------
+FORTIFY_SOURCE 
+    is a Glibc feature which adds memory and string function protection.
+RELRO (relocate readonly)
+    is a mechanism preventing some kinds of memory corruption attacks. It reorders ELF internal data sections and marks them read-only. 
+    -z relro
+    -z relro -z now
+fstack-protector flag
+    The basic idea behind stack protection is to push a "canary" (a randomly chosen integer) on the stack just after the function return pointer has been pushed. 
+    The canary value is then checked before the function returns; if it has changed, the program will abort
+    
+int getCurrentId()
+{
+    static QAtomicInt s_idGenerator(0);
+    return s_idGenerator.fetchAndAddRelaxed(1);
+}
+    
+QString createName()
+{
+    return "waiter#" + QString::number(getCurrentId());
+}

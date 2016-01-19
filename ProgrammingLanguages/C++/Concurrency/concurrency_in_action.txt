@@ -186,5 +186,27 @@ The promise is the building block for communicating with a future. The principal
     The new thread executes the function and populates fulfills the promise.
 
     The original thread retrieves the result.
+
+
+3. Waiting with a time limit
+
+clock = source of time information
+steady clock = now() is always increasing
+
+    std::timed_mutex
     
     
+    
+Functional programming:
+* the result of a function call depends only on the parameters (if the function is called twice, it will return the same value)
+
+
+---------------------------------------------------------------------------
+Chapter 5. C++ memory model
+
+object = region of storage --> everything is an object
+
+std::atomic<bool>
+
+exchange(),
+compare_exchange()_weak()

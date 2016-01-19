@@ -16,6 +16,27 @@ T&& forward(T&& param)
 }
 
 
+Problem:
+ given the expression E(a, b, ... , c), we want the expression f(a, b, ... , c) to be equivalent. In C++03, this is impossible.
+ 
+Attempt #1
+    template <typename A, typename B, typename C>
+    void f(A& a, B& b, C& c)
+    {
+        E(a, b, c);
+    }
+* fails to handle temporary values
+
+
+Attempt #2
+    template <typename A, typename B, typename C>
+    void f(const A& a, const B& b, const C& c)
+    {
+        E(a, b, c);
+    }
+* fails to handle non-const arguments
+
+
 ------------------------------------------
 enable_if = template struct that has two type arguments: 
 * the first one is a boolean condition

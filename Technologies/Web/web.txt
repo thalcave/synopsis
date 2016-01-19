@@ -18,3 +18,32 @@ CRUD - Create (Post), Read (Get), Update (Put), Delete (Delete)
 
 
 Formats: XML, CSV, JSON
+
+---------------------------------------------------
+
+Safe operation  = is an operation that does not have any effect on the original value of the resource.
+    (like dividing with 1)
+Idempotent operation = is an operation that gives the same result no matter how many times you perform it
+
+
+* never use GET to create or delete a resource on the server
+
+
+difference between POST and PUT?
+POST - Submits data to be processed to a specified resource
+PUT - Requests that the enclosed entity be stored under the supplied URI.
+
+PUT is idempotent, POST is not; Making a POST multiple times may result in multiple resources getting created on the server.
+with PUT, you must always specify the complete URI of the resource --> the client should be able to construct the URI of a resource which does not exist on server side
+e.g. creating a user
+
+There is no difference between PUT and POST if the resource already exists, both update the existing resource.
+
+
+difference between RESTful web services and SOAP web services?
+- REST is more simple and easy to use than SOAP
+- REST uses HTTP protocol for producing or consuming web services while SOAP uses XML.
+- REST is lightweight as compared to SOAP and preferred choice in mobile devices and PDA's.
+- REST supports different format like text, JSON and XML while SOAP only support XML.
+- REST web services call can be cached to improve performance.
+

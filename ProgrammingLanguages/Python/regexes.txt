@@ -1,0 +1,95 @@
+------------------------------------------------------------------------------------------
+
+character set: []
+    [akm$] - match any of 'a', 'k', 'm' or '$'
+
+complement set: ^
+    [^akms$] - match all except 'a', 'k', 'm' or '$'
+    
+Special sequences:
+. - matches any character
+.. - matches anything except newline
+\d - similar to [0-9]
+\D - similar to [^0-9]
+\s - whitespace character
+\S - non-whitespace character
+\w - any alphanumeric character; similar to [a-zA-Z0-9_]
+\W - any non-alphanumeric character
+
+
+Repeating things:
+* - the previous character(s) can be matched 0 or more times
++ - matches one or more times
+? - once or zero times (marking something as optional)
+{m,n} - there must be at least m repetitions, and at most n
+
+
+* --> {0,}
++ --> {1,}
+? --? {0,1}
+
+
+Examples:
+[\s,.] - matches any whitespace or ',' or '.'
+
+
+More metacharacters:
+| - alternate 
+    A|B either A or B
+^ - matches at the beginning of line:
+    ^From -> matches word 'From' only at the beginning of line
+$ - matches at the end of a line
+\b - word boundary
+    re.compile(r'\bclass\b') - matches only when it's a complete word
+
+non-capturing group:
+    (?:word1|word2)
+
+------------------------------------------------------------------------------------------
+
+Compiling Regular Expressions
+    import re
+    pattern = re.compile('ab*')
+pattern:
+    match() - matches at beginning of the string, returns None or a match object
+    search() - scan through a string
+    findall() - returns a list with all substrings matching the RE
+    finditer()
+
+Match object:
+group() Return the string matched by the RE
+start() Return the starting position of the match
+end()   Return the ending position of the match
+span()  Return a tuple containing the (start, end) positions of the match
+
+    p = re.compile( ... )
+    m = p.match( 'string goes here' )
+    if m:
+        print 'Match found: ', m.group()
+    else:
+        print 'No match'
+        
+Module-level functions
+* the re module also provides top-level functions called match(), search(), findall(), sub() that can be used directly
+* They also store the compiled object in a cache, so future calls using the same RE are faster.
+    print re.match(r'From\s+', 'Fromage amk')
+
+If the RE is being used at only one point in the code, then the module functions are probably more convenient. 
+If a program contains a lot of regular expressions, or re-uses the same ones in several locations, then it might be worthwhile to collect all the definitions in one place, 
+in a section of code that compiles all the REs ahead of time
+
+
+
+------------------------------------------------------------------------------------------
+Modifying strings
+
+split() Split the string into a list, splitting it wherever the RE matches
+
+sub()   Find all substrings where the RE matches, and replace them with a different string
+.sub(replacement, string[, count=0])
+
+Replaces colour names with the word colour:
+    p = re.compile( '(blue|white|red)')
+    p.sub( 'colour', 'blue socks and red shoes')
+
+subn()  Does the same thing as sub(), but returns the new string and the number of replacements

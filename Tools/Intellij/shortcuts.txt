@@ -1,0 +1,13 @@
+CTRL + E                - recent files
+CTRL + SHIFT + E        - recently edited files
+CTRL + SHIFT + ENTER    - complete statement
+CTRL + SHIFT + SPACE    - smart completion
+
+CTRL + Slash            - (un)comment
+CTRL + SHIFT + Slash    - comment line or block
+
+CTRL + N                - go to class
+CTRL + SHIFT + A        - show actions
+
+CTRL + D                - duplicate current line
+ALT + SHIFT + V         - create variable from expression

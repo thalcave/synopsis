@@ -30,3 +30,5 @@ Distributed Systems
 * Service-oriented (SOA)
 - pieces of software providing application functionality as services to other applications. This is known as Service-orientation
 
+Thundering herd problem 
+* occurs when a large number of processes waiting for an event are awoken when that event occurs, but only one process is able to proceed at a time.

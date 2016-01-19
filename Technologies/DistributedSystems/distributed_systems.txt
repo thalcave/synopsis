@@ -126,17 +126,32 @@ Any number of things could have failed in the interim and the sending process mu
 
 
 Other:
-* Latency is the time between initiating a request for data and the beginning of the actual data transfer. Minimizing latency sometimes comes down to a question of whether you should make many little calls/data transfers or one big call/data transfer. The way to make this decision is to experiment. Do small tests to identify the best compromise. 
+* Latency is the time between initiating a request for data and the beginning of the actual data transfer. 
+Minimizing latency sometimes comes down to a question of whether you should make many little calls/data transfers or one big call/data transfer. 
+The way to make this decision is to experiment. Do small tests to identify the best compromise. 
 
-* Don't assume that data sent across a network (or even sent from disk to disk in a rack) is the same data when it arrives. If you must be sure, do checksums or validity checks on data to verify that the data has not changed. 
+* Don't assume that data sent across a network (or even sent from disk to disk in a rack) is the same data when it arrives. 
+If you must be sure, do checksums or validity checks on data to verify that the data has not changed. 
 
-* Caches and replication strategies are methods for dealing with state across components. We try to minimize stateful components in distributed systems, but it's challenging. State is something held in one place on behalf of a process that is in another place, something that cannot be reconstructed by any other component. If it can be reconstructed it's a cache. Caches can be helpful in mitigating the risks of maintaining state across components. But cached data can become stale, so there may need to be a policy for validating a cached data item before using it. 
+* Caches and replication strategies are methods for dealing with state across components. 
+We try to minimize stateful components in distributed systems, but it's challenging. 
+State is something held in one place on behalf of a process that is in another place, something that cannot be reconstructed by any other component. 
+If it can be reconstructed it's a cache. 
+Caches can be helpful in mitigating the risks of maintaining state across components. 
+But cached data can become stale, so there may need to be a policy for validating a cached data item before using it. 
 
-* If a process stores information that can't be reconstructed, then problems arise. One possible question is, "Are you now a single point of failure?" I have to talk to you now - I can't talk to anyone else. So what happens if you go down? To deal with this issue, you could be replicated. Replication strategies are also useful in mitigating the risks of maintaining state. But there are challenges here too: What if I talk to one replicant and modify some data, then I talk to another? Is that modification guaranteed to have already arrived at the other? What happens if the network gets partitioned and the replicants can't talk to each other? Can anybody proceed? 
+* If a process stores information that can't be reconstructed, then problems arise. 
+One possible question is, "Are you now a single point of failure?" I have to talk to you now - I can't talk to anyone else. So what happens if you go down? 
+To deal with this issue, you could be replicated. Replication strategies are also useful in mitigating the risks of maintaining state. 
+But there are challenges here too: What if I talk to one replicant and modify some data, then I talk to another? 
+Is that modification guaranteed to have already arrived at the other? What happens if the network gets partitioned and the replicants can't talk to each other? Can anybody proceed? 
 
-* There are a set of tradeoffs in deciding how and where to maintain state, and when to use caches and replication. It's more difficult to run small tests in these scenarios because of the overhead in setting up the different mechanisms. 
+* There are a set of tradeoffs in deciding how and where to maintain state, and when to use caches and replication. 
+It's more difficult to run small tests in these scenarios because of the overhead in setting up the different mechanisms. 
 
-* Be sensitive to speed and performance. Take time to determine which parts of your system can have a significant impact on performance: Where are the bottlenecks and why? Devise small tests you can do to evaluate alternatives. Profile and measure to learn more. Talk to your colleagues about these alternatives and your results, and decide on the best solution. 
+* Be sensitive to speed and performance. Take time to determine which parts of your system can have a significant impact on performance: 
+Where are the bottlenecks and why? Devise small tests you can do to evaluate alternatives. Profile and measure to learn more. 
+Talk to your colleagues about these alternatives and your results, and decide on the best solution. 
 
 
 
@@ -144,6 +159,8 @@ Other:
 Two Generals' Problem:
 * is a thought experiment meant to illustrate the pitfalls and design challenges of attempting to coordinate an action by communicating over an unreliable link
 
+* A and B must coordinate
+* if the network is unreliable, it is not possible for A and B to agree on mounting an attack together
 
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -185,7 +202,13 @@ Scalability best practices:
 
 3. Avoid distributed transactions
 
-CAP - Consistency Availability Partition
+CAP - Consistency Availability Partition = it is impossible for a distributed computer system to simultaneously provide all three of the following guarantees:
+* Consistency (all nodes see the same data at the same time)
+* Availability (a guarantee that every request receives a response about whether it succeeded or failed)
+* Partition tolerance (the system continues to operate despite arbitrary partitioning due to network failures)
+
+
+
 high traffic web --> Partition
 24/7 --> Availability
 
@@ -198,3 +221,12 @@ high traffic web --> Partition
 6. Virtualize at all levels
 * we virtualize the database. Applications interact with a logical representation of a database, which is then mapped onto a particular physical machine and instance through configuration.
 
+
+
+****************************************************************************************************************
+Other ideas:
+
+1. Different DBs for different purposes:
+* graph-oriented DB for relationships
+* BLOB DB for images
+* 

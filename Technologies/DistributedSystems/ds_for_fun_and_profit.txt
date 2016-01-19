@@ -1,0 +1,98 @@
+There are two basic tasks that any computer system needs to accomplish:
+* storage
+* computation
+Distributed programming is the art of solving the same problem that you can solve on a single computer
+using multiple computers - usually, because the problem no longer fits on a single computer.
+
+2 consequences of distribution:
+* information travels at best at speed of light
+* independent things fail independently
+
+----------------------------------------------------------------------------
+Chapter 1. Basics
+
+Scalability:
+* the ability of a system, network, or process, to handle a growing amount of work in a capable
+manner or its ability to be enlarged to accommodate that growth.
+
+Aspects of a scalable system:
+1. Performance (and latency)
+* is characterized by the amount of useful work accomplished by a computer system compared to the
+time and resources used.
+
+Metrics:
+* latency
+* throughput
+* utilization of computer resources
+
+Tradeoff example: batching operations can lead to higher throughput but also higher latencies (individual request is processed with delay because of batching)
+
+2. Availability (and fault tolerance)
+Availability:
+* the proportion of time a system is functioning
+Availability = uptime / (uptime + downtime)
+
+Distributed systems can take a bunch of unreliable components, and build a reliable system on top of them
+Systems with redundancy can be tolerant of partial failures.
+
+Fault-tolerance = ability of a system to behave in a well-defined manner once faults occur
+Design for fault tolerance!
+
+
+Physical factors of a Distributed system:
+* the number of nodes --> increasing the nodes we increase:
+    - the probability of failure
+    - the need for communication between nodes
+* distance between nodes --> latency for communication between nodes
+
+
+Data distribution: 
+    partitioning (data split across nodes) or/and replication
+    
+1. Partitioning
+* dividing the dateset into smaller sets
+* locates the related data in the same partition
+* allows partitions to fail independently
+
+2. Replication
+* making copies of the same data on multiple machines
+* the primary way in which to fight latency
+
+problem: data must be kept in sync
+
+
+----------------------------------------------------------------------------
+Chapter 2. Abstractions and models
+
+abstractions are fake: they simplify a model in order to analyze it
+* when simplifying, it is important to keep the essentials
+
+Distributed system properties; programs:
+* run concurrently on independent nodes --> knowledge is local
+* are connected by a network --> can introduce message loss
+* have no shared memory/clock --> local timestamps do not correspond to the global real time order
+
+
+
+
+Two Phase Commit (2PC)
+1. Voting Phase
+    A coordinator suggests a value to all nodes and gathers their responses (whether they agree to the value or not). 
+2. Commit Phase 
+    If everyone agrees, the coordinator contacts all nodes to let them know the value is final. 
+    If even one node does not agree, inform all nodes that the value is not final.
+
+Three Phase Commit (3PC)
+    The key issue with 2PC is that in case the coordinator crashes, there is no one else who has the knowledge to complete the protocol. 
+    This can be solved by the addition of an extra step:
+1. Voting Phase
+    same as before
+2. New step 
+    On receiving a yes from all nodes in previous step, the coordinator sends a “prepare to commit” message. 
+    The expectation is that nodes can perform work that they can undo, but nothing which cannot be undone. 
+    Each node acknowledges to the coordinator that it has received a “prepare to commit” message.
+3. Similar to commit phase in 2PC
+    If the coordinator receives an acknowledgement from all nodes on the “prepare to commit,” it can go ahead and communicate the result of the vote to all nodes asking them to commit. 
+    However, if all nodes do not acknowledge, the coordinator aborts the transaction.
+If the coordinator crashes at any point, any participant can take over the role and query the state from other nodes.
+

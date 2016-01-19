@@ -1,0 +1,21 @@
+----------------------------------------------------------------------------------
+Overview
+
+IMDB = store data in memory instead of disk
+IMDG = data is distributed across multiple servers
+- data model is non-relational and is object-based
+
+
+
+- open-source in-memory data grid
+- written in JAVA
+
+- there is no master and slave, no single point of failure
+- all nodes store equal amount of data and do equal amount of processing
+
+Scaling:
+- designed to scale up to thousands of nodes
+- nodes maintain a TCP connection between them
+
+- stores everything in memory
+

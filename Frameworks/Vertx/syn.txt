@@ -1,3 +1,6 @@
+###########################################################################
+1. Introduction
+
 Vert.x = event-driven framework
 
 ----------------------------------------------------------------------------------------------------
@@ -13,7 +16,7 @@ Event-based programming in Vert.x
 * apps are guaranteed not to block
 
 
-Verticle = unit of deployment in Vert.x
+Verticle = unit of deployment in Vert.x (particle in Vert.x)
 - every verticle contains a main method
 - an app. can be a single verticle or multiple verticles communicating via the event bus
 
@@ -107,12 +110,12 @@ Running blocking code
         
 ----------------------------------------------------------------------------------------------------
 Verticles
-* can be written in any of the supported languages
+* can be written in any of the supported languages (Java, Groovy, Python)
 * a single app can contain verticles written in multiple languages
 
 Standard verticles:
-* are assigned an event loop thread when they are created and the start method is called with that event loop
-* all the code in your verticle instance is always executed on the same event loop
+* are assigned an event loop thread when they are created and the start() method is called with that event loop
+* all the code in your verticle instance is always executed on the same event loop (same thread)
 You can write all the code in your application as single threaded
 
 Worker verticles:
@@ -120,4 +123,30 @@ Worker verticles:
 * are designed for calling blocking code, as they won’t block any event loops
 
 
+----------------------------------------------------------------------------------------------------------------
+Shared data
 
+Vert.x provides a shared map and a shared set
+* data stored is immutable
+
+
+----------------------------------------------------------------------------------------------------------------
+Vert.x APIs
+
+Divided into:
+
+Container API = verticle's view of the container in which it is running
+* deploy and undeploy verticles, modules
+* retrieve verticle configuration
+* logging
+
+Core API:
+* TCP clients
+* websockets
+* timers
+* file-system access etc.
+
+
+
+###########################################################################
+2. Using Vert.x from command line

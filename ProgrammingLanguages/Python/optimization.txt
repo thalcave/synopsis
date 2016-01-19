@@ -1,0 +1,5 @@
+1. python -0 
+
+Profile:
+* python -m cProfile
+* pycallgraph graphviz -- ./mypythonscript.py

@@ -7,3 +7,5 @@ proc/sys/vm/swappiness
 
 
 iptraf
+nethogs
+iotop

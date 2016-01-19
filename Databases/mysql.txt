@@ -38,3 +38,34 @@ The special lock release strategy was introduced to improve concurrency for inse
 Nevertheless, two transactions cannot have the AUTO-INC lock on the same table simultaneously,
 which can have a performance impact if the AUTO-INC lock is held for a long time. 
 
+
+
+
+#####################################################################
+MySQL binary and non-binary string data types
+
+1. Non-binary string data type
+* sequence of characters that have a character set and a collation
+
+a. character set = set of characters supported
+- determines how many bytes the storage of a single character needs
+b. collation = used in string comparison
+- determines the sorting order, if the string can be case-sensitive or case-insensitive etc.
+
+SHOW CREATE TABLE TableName;
+    `sId` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL
+    
+SHOW CHARACTER SET;
+utf8mb4_unicode_ci = based on the Unicode standard for sorting and comparison, which sorts accurately in a very wide range of languages.
+- case insensitive
+
+The non-binary string types are:
+* CHAR, VARCHAR, TEXT (and other variations of TEXT data types)
+
+
+2. Binary string data type
+* binary strings don’t have character sets and collations
+* sequence of byte values --> case-sensitive (uppercase and lowercase have different byte values)
+
+BINARY, VARBINARY, BLOB (and other variations of BLOB data types)
+

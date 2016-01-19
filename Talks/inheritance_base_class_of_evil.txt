@@ -1,0 +1,6 @@
+* there are no polymorphic types; a type is a type; polymorphic is the usage
+
+Inheritance evils:
+* indirection
+* heap allocation --> further burder to manage object lifetime
+
