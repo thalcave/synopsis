@@ -1,0 +1,7 @@
+Change major mode:
+M-x mode-name
+    java-mode
+    c++-mode
+
+
+

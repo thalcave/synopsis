@@ -1,0 +1,306 @@
+-----------------------------------------------------------------
+Java 8 Introduction
+
+1. Default methods for interfaces
+- add non-abstract method implementations to interfaces by utilizing the default keyword
+
+  interface Formula
+  {
+        default double sqrt(int a) { return Math.sqrt(a); }
+  }
+
+abstract class vs. interface in Java 8:
+* abstract classes allow non-static and non-final fields and allow methods to be public, private, or protected
+while interfaces fields are inherently public, static, and final, and all interface methods are inherently public.
+
+* if a class implements two interfaces having a default method with the same name, the result will
+be a compilation error
+
+
+2. Functional interfaces
+
+Prior to Java8, devs were using Single Abstract Method (SAM) interfaces: interface with only one method,
+which were used to create anonymous inner classes:
+      e.g.: Runnable, Comparator, Callable
+      
+Java8: SAM are called Functional interfaces:
+*  must contain exactly one abstract method declaration
+       @FunctionalInterface --> compilation error if another abstract method is added
+       public interface SimpleFuncInterface {
+              public void doWork();
+       }
+
+       // function taking FunctionalInterface argument 
+       public static void carryOutWork(SimpleFuncInterface sfi)
+       {
+           sfi.doWork();
+       }
+
+       // lambda
+       carryOutWork(
+                () -> System.out.println("Do work in lambda exp impl...")
+           );
+
+       //old-style
+       carryOutWork(
+                new SimpleFuncInterface() {
+                       @Override
+                       public void doWork()
+                       {
+                           System.out.println("Do work in SimpleFun impl...");
+                       }
+                 }
+          );
+
+
+Some functional interfaces:
+Supplier<T> : supplier of results
+    BooleanSupplier, IntSupplier, DoubleSupplier etc.
+
+Function<T,R>: a function that accepts one argument and produces a result
+    BiFunction<T, U, R>
+       - functional interface representing a function which accepts 2 arguments and returns a result
+       - two-arity specialization of Function
+
+
+2. Lambda expressions
+
+Lambda expressions in Java is usual written using syntax:
+    (argument) -> (body).
+
+Examples:
+    () -> 42
+ 
+    Collections.sort(names, (String a, String b) -> {
+           return b.compareTo(a);
+    });
+
+    Collections.sort(names, (String a, String b) -> b.compareTo(a));
+
+    // one line method bodies can skip both {} and return
+    Collections.sort(names, (a, b) -> b.compareTo(a));
+
+
+* For anonymous class ‘this’ keyword resolves to anonymous class, whereas for lambda
+expression ‘this’ keyword resolves to enclosing class where lambda is written.
+* Java compiler compiles lambda expressions and convert them into private method of the class
+
+Assign lambda to a variable:
+        final BiFunction<Integer, String, Integer> mapperFn = (k, v) -> v == null ? -1 : v + 10;
+        final IntSupplier intSupplier = () -> 42
+        final BiFunction<String, String, boolean> compareFn = (a, b) -> b.compareTo(a)
+
+        @FunctionalInterface
+        interface Converter<F, T> {
+                T convert(F from);
+            }
+
+       Converter<String, Integer> converter = (from) -> Integer.valueOf(from);
+
+3. Method and Constructor References
+Java 8 enables you to pass references of methods or constructors via the :: keyword
+     Integer::valueOf
+
+Example:     
+     class Person;
+
+     interface PersonFactory<P extends Person> {
+         P create(String firstName, String lastName);
+     }
+
+     PersonFactory<Person> personFactory = Person::new;
+     Person person = personFactory.create("Peter", "Parker");
+
+We create a reference to the Person constructor via Person::new.
+The Java compiler automatically chooses the right constructor by matching the signature of PersonFactory.create.
+
+
+4. Lambda scopes
+
+* you can access final variables (or implicitly final) from the local outer scope 
+The following code does not compile:
+    int num = 1;
+    Converter<Integer, String> stringConverter =
+        (from) -> String.valueOf(from + num);
+    num = 3;   // 'num' is not implicitly final
+
+* you can access instance fields and static variables from lambda
+
+5. Built-in Functional Interfaces
+
+* Predicates
+- boolean-valued functions of one argument
+- Predicate<String>
+
+* Functions
+- accept one argument and produce a result
+- default methods can be used to chain multiple functions together (compose, andThen):
+    Function<String, Integer> toInteger = Integer::valueOf;
+    Function<String, String> backToString = toInteger.andThen(String::valueOf);
+    
+* Suppliers
+- produce a result of a given generic type
+    Supplier<Person> personSupplier = Person::new;
+    personSupplier.get();   // new Person
+
+* Consumers
+- operations to be performed on a single input argument.
+
+* Comparators
+* Optionals
+- a simple container for a value which may be null or non-null
+
+
+6. Streams
+
+stream = sequence of elements on which one or more operations can be performed
+       intermediate (return the stream itself) or terminal (return result) operations
+sequential or parallel stream
+
+List<String> stringCollection = new ArrayList<>();
+
+Filter: accepts a predicate to filter all elements of the stream
+* intermediate operation, which enables us to call another stream operation (forEach) on the result
+- ForEach accepts a consumer to be executed for each element in the filtered stream
+- ForEach is a terminal operation. It's void, so we cannot call another stream operation
+    stringCollection
+      .stream()
+      .filter((s) -> s.startsWith("a"))
+      .forEach(System.out::println);
+
+
+Sorted: an intermediate operation which returns a sorted view of the stream (without touching the ordering of the collection)
+        stringCollection
+            .stream()
+            .sorted()
+            .filter((s) -> s.startsWith("a"))
+            .forEach(System.out::println);
+
+
+Map: an intermediate operation which converts each element into another object via the given function
+        stringCollection
+            .stream()
+            .map(String::toUpperCase)
+            .sorted((a, b) -> b.compareTo(a))
+            .forEach(System.out::println);
+
+Match: various terminal operations, used to check if a predicate is true
+anyMatch(), allMatch(), noneMatch()
+
+            boolean allStartsWithA =
+                    stringCollection
+                    .stream()
+                    .allMatch((s) -> s.startsWith("a"));
+
+Count: terminal operation returning the number of elements in the stream as a long
+       long startsWithB =
+            stringCollection
+            .stream()
+            .filter((s) -> s.startsWith("b"))
+            .count();
+
+Reduce: terminal operation performs a reduction on the elements of the stream with the given function.
+The result is an Optional holding the reduced value.
+
+    Optional<String> reduced =
+                     stringCollection
+                     .stream()
+                     .sorted()
+                     .reduce((s1, s2) -> s1 + "#" + s2);
+
+
+7. Parallel Streams
+Operations on sequential streams are performed on a single thread,
+while operations on parallel streams are performed concurrent on multiple threads.
+
+Parallel Sort
+         long count = values.parallelStream().sorted().count();
+
+
+8. Map
+
+* Maps don't support streams
+* new methods: putIfAbsent(), forEach(), getOrDefault(),
+
+9. Date API
+Java 8 contains a brand new date and time API under the package java.time.
+
+Clock
+* Clock provides access to the current date and time.
+* may be used instead of System.currentTimeMillis()
+
+10. Annotations
+
+Annotations = a form of metadata that provides data about a program
+- is not part of the program itself
+- annotations have no direct effect on the operation of the code they annotate
+
+Uses:
+* Information for the compiler — Annotations can be used by the compiler to detect errors or suppress warnings.
+* Compile-time and deployment-time processing — Software tools can process annotation information to generate code, XML files, and so forth.
+* Runtime processing — Some annotations are available to be examined at runtime.
+
+
+In previous versions of Java, developers could write annotations only on declarations.
+With Java 8, annotations can now also be written on any use of a type such as types in declarations, generics, and casts:
+     @Encrypted String data;
+     List<@NonNull String> strings;
+     myGraph = (@Immutable Graph) tmpGraph;
+
+Annotations in Java 8 are repeatable:
+* one of the limitations of annotation usage was the fact that the same annotation cannot be declared more than once at the same location
+* Java8: It allows the same annotation to be repeated several times in place it is declared.
+
+         @Schedule(dayOfMonth="last")
+         @Schedule(dayOfWeek="Fri", hour="23")
+         public void doPeriodicCleanup() { ... }
+
+Repeating annotations are stored in a container annotation that is automatically generated by the Java compiler.
+In order for the compiler to do this, two declarations are required in your code.
+a) Declare a Repeatable Annotation Type
+
+           @Repeatable(Schedules.class)
+           public @interface Schedule {
+             String dayOfMonth() default "first";
+             String dayOfWeek() default "Mon";
+             int hour() default 12;
+           }
+
+b) Declare the Containing Annotation Type (that must have a value element with an array type):
+
+           public @interface Schedules {
+                  Schedule[] value();
+           }
+
+
+Example:
+         // a holder of Filter annotations
+         @Target( ElementType.TYPE )
+         @Retention( RetentionPolicy.RUNTIME )
+         public @interface Filters {
+                Filter[] value();
+         }
+
+
+         // annotation class Filter: repeatable Filters
+         @Target( ElementType.TYPE )
+         @Retention( RetentionPolicy.RUNTIME )
+         @Repeatable( Filters.class )
+         public @interface Filter {
+                String value();
+         };
+
+
+
+         @Filter( "filter1" )
+         @Filter( "filter2" )
+         public interface Filterable {       
+                }
+
+
+
+     
+-----------------------------------------------------------------
+Java 8 Concurrency Tutorial: Threads and Executors
+
+
