@@ -19,3 +19,60 @@ Scaling:
 
 - stores everything in memory
 
+
+########################################################################
+4. Hazelcast overview
+
+* By default, Hazelcast has 271 partitions
+* the partitions are distributed equally among the members of the cluster
+* backups of partitions are created and distributed among the members of the cluster (for redundancy)
+
+Caches problems:
+* if the access is less frequent than TTL -> cache miss
+
+Hazelcast data is kept entirely in memory.
+In the case of a failure, such as a node crash, no data will be lost since
+Hazelcast distributes copies of data across all the nodes of cluster.
+
+
+-----------------------------------------------------------------------
+Data partitioning
+
+partitions = memory segments, where data entries are stored
+
+* Hazelcast distributes the partitions equally among the members of the cluster
+* each primary partition is backed up on a different node (replica partition) or more nodes (configurable)
+
+Partition table:
+* when a node is started, a partition table is created for it
+* this table has the info: which partitions belong to each nodes
+* the oldest node in the cluster periodically sends the partition table to all nodes (default, every 15 s)
+Hazelcast performs the repartitioning in the following cases:
+
+When a node joins to the cluster.
+When a node leaves the cluster.
+
+
+########################################################################
+Distributed Data Structures
+
+Standard utility collections:
+* Map, Queue, List, Set, MultiMap
+* ReplicatedMap: does not partition data; instead, it replicates the data to all nodes
+
+Topic:
+* Distributed mechanism for publishing messages that are delivered to multiple subscribers;
+this is also known as a publish/subscribe (pub/sub) messaging model.
+
+Concurrency utilities:
+* Lock, Semaphore, AtomicLong, AtomicReference
+The AtomicReference class provides an object reference variable which can be read and written atomically.
+(threads use compare-and-swap operation)
+* IdGenerator: You use Hazelcast IdGenerator to generate cluster-wide unique identifiers ("long" between 0 and Long.MAX_VALUE).
+ID generation occurs almost at the speed of AtomicLong.incrementAndGet()
+* CountdownLatch: gate keeper for concurrent operations (threads are waiting for other threads to finish)
+
+
+
+
+

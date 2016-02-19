@@ -577,3 +577,30 @@ The synchronized keyword is also available as a block statement:
 b) Locks
 
 Locks support various methods for finer grained lock control thus are more expressive than implicit monitors.
+
+
+----------------------------------------------------------------------------------------------------------------------------------
+Java8 Conversion functions/idioms
+
+
+1. Collection of sets to set:
+        final Set<String> topicsToDelete = new HashSet<>();
+        setsCollection.forEach(topicsToDelete::addAll);
+
+2. Construct a map from a collection:
+        Map<String, ContactRelationship> customDisplayNames = collection
+            .stream()
+            .collect(Collectors.toMap(
+                    ContactRelationship::getTargetEndUser,
+                    contactRealtionship -> contactRealtionship
+            ));
+
+
+3. Extract List from another List:
+        List<String> userIdsAsStrings = userIdList.stream().map(UserId::toString).collect(Collectors.toList());
+
+4. List to Set:
+        Set<Foo> foo = new HashSet<Foo>(myList);
+
+5. Set to List:
+       mainList.addAll(set);

@@ -66,7 +66,7 @@ The "8 Fallacies": eight assumptions made about the reliability of the component
 5. Topology doesn't change. 
 6. There is one administrator. 
 7. Transport cost is zero. 
-8. The network is homogeneous.
+8. The network is homogeneous (runs a single network protocol)
 
 Latency: the time between initiating a request for data and the beginning of the actual data transfer.
 Bandwidth: A measure of the capacity of a communications channel. The higher a channel's bandwidth, the more information it can carry.
