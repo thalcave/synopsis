@@ -1,0 +1,43 @@
+
+1. Add private constructor for classes:
+- containing only static utility methods (e.g., ProtUserMessageBuilder, QtalkServiceUtils)
+- containing only constants
+- singletons
+
+2. Implement Singleton using an enum: 
+enum Singleton
+{
+    INSTANCE;
+ 
+    Singleton()
+    {
+    }
+ 
+    // Static getter
+    public static Singleton getInstance()
+    {
+        return INSTANCE;
+    }
+}
+
+3. Avoid returning anonymous, local, or inner class instances from methods to the outside scope.
+- Whenever you write an anonymous, local or inner class, check if you can make it static or even a regular top-level class
+
+4. Use a Builder when having a constructor with many parameters
+- alternative: Blind Builder
+
+5. Minimize the accessibility of classes and members
+- make each class or member as inaccessible as possible
+
+6.Design for inheritance or else prohibit it
+- classes that are not designed for inheritance should be final
+
+7. Constructors must not invoke overridable methods, directly or indirectly
+
+8. Don't have overloads with the same number of parameters
+- overloads selecting - at compile time
+- overrides selecting - at runtime
+
+8. Use defensive copies
+- a List inside a class, even if declared as final, can be changed from outside
+

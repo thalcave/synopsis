@@ -1,0 +1,45 @@
+----------------------------------------------------------------------------------------------------------------------------------
+Java8 Conversion functions/idioms
+
+
+1. Collection of sets to set:
+        final Set<String> topicsToDelete = new HashSet<>();
+        setsCollection.forEach(topicsToDelete::addAll);
+
+2. Construct a map from a collection:
+        Map<String, ContactRelationship> customDisplayNames = collection
+            .stream()
+            .collect(Collectors.toMap(
+                    ContactRelationship::getTargetEndUser,
+                    contactRealtionship -> contactRealtionship
+            ));
+
+
+3. Extract List from another List:
+        List<String> userIdsAsStrings = userIdList.stream().map(UserId::toString).collect(Collectors.toList());
+
+4. List to Set:
+        Set<Foo> foo = new HashSet<Foo>(myList);
+
+5. Set to List:
+       mainList.addAll(set);
+
+6. List with known values:
+        final List<UserAddress> participants = Stream.of(UserAddress.fromString(userId.toString()), secondParticipant)
+                                                     .collect(Collectors.toList());
+
+7. Populate a list:
+        final List<UserId> users = IntStream.range(0, 3)
+                                            .boxed()
+                                            .map(integer -> IdProvider.randomUserId())
+
+8. Collections:
+    Collection.singleton(object): Returns an immutable set containing only the specified object. The returned set is serializable.
+    Collection.singletonList(T o): Returns an immutable list containing only the specified object. The returned list is serializable.
+    Collection.singletonMap
+
+    nCopies(int n, T o): Returns an immutable list consisting of n copies of the specified object
+        The newly allocated data object is tiny (it contains a single reference to the data object)
+
+    frequency() = Returns the number of elements in the specified collection equal to the specified object
+    
