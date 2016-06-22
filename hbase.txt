@@ -1,0 +1,27 @@
+HBase is a "persistent, distributed, sorted, multidimensional map"
+1. map
+
+2. persistent
+
+3. distributed
+- built upon distributed FS:
+        Hadoop's Distributed FS (HDFS) or Amazon's Simple Storage Service (S3)
+        Google File System (GFS)
+- replicated
+
+4. sorted
+- strict alphabetical order for keys -> items of greatest interest are next to each other
+
+5. multidimensional
+- map of maps
+
+
+OLTP = On-Line Transaction Processing
+- large number of short on-line transactions (INSERT, UPDATE, DELETE)
+- very fast processing
+
+OLAP = On-Line Analytical Processing
+- low volume of transactions
+- complex queries, requiring aggregations
+
+

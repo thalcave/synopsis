@@ -1,0 +1,4 @@
+1. Weak vs. soft references
+* weak reference = a reference that isn't strong enough to force an object to remain in memory
+* soft reference = exactly like a weak reference, except that it is less eager to throw away the object to which it refers: if
+there is enough memory, the object is retained longer
