@@ -1,0 +1,157 @@
+CompletableFuture:
+* a Future (result for async operation) that can be explicitly completed
+* allows to complete a future when an event happened
+
+future vs. promise:
+- future = read-only reference to a yet-to-be-computed value
+- promise = read+write reference ...
+
+
+Cheatsheet:
+Method		Async method		Arguments				Returns
+thenAccept()	thenAcceptAsync()	Result of previous stage		Nothing
+thenRun()	thenRunAsync()		None					Nothing
+thenApply()	thenApplyAsync()	Result of previous stage		Result of current stage
+thenCompose()	thenComposeAsync()	Result of previous stage		Future result of current stage
+thenCombine()	thenCombineAsync()	Result of two previous stages		Result of current stage
+whenComplete()	whenCompleteAsync()	Result or exception from previous stage	Nothing
+
+exceptionally(): provides a piece of code to execute in case of errors
+completeExceptionally(): explicitly reject a promise
+
+register both a fulfill callback as well as a reject callback:
+	 promise.thenAccept(...);
+	 promise.exceptionally(...);
+or provide a combined callback:
+   	 promise.whenComplete((val, error) -> )
+
+
+thenCompose - similar to flatMap (extract the value from another CompletableFuture)
+
+
+
+
+-------------------------------------------------------------------------------------------------
+1. Creation:
+* create a CompletableFuture using its constructor:
+    public CompletableFuture<String> ask() {
+        final CompletableFuture<String> future = new CompletableFuture<>();
+        //...
+        return future;
+    }
+- client will block here:
+     CompletableFuture completableFuture = ask();
+     completableFuture.get(); // will block
+- unblock all clients:
+     future.complete("a string")
+
+* create it using factory methods, specifying the mode (sync or async) and its task or process:
+- CompletableFuture.runAsync() = takes a Runnable -> returns a CompletableFuture<Void> (because Runnable doesn`t return anything)
+- CompletableFuture.supplyAsync() = takes a Supplier -> returns a CompletableFuture<T>
+        final CompletableFuture<String> future = CompletableFuture.supplyAsync(new Supplier<String>() {
+                @Override
+                public String get() {
+                //...long running...
+                return "42";
+             }
+        }, executor);
+
+        or:
+        final CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> longRunningTask(params), executor);
+
+!!! supplyAsync() returns a new CompletableFuture that is asynchronously completed by a task running in the ForkJoinPool.commonPool()
+with the value obtained by calling the given Supplier.
+
+-------------------------------------------------------------------------------------------------
+2. Getting results:
+* Using the get() method:
+        // wait forever until the CompletableFuture is completed or cancelled
+        cf.get();
+* Using the getNow(fallback) method:
+        // if the result is not yet present, fallback is returned
+        cf.getNow("fallback")
+* Using the get(long amount, TimeUnit unit)
+        // waits x time units and tries to return the computed value if available; if not, TimeoutException is thrown
+        cf.get(3, TimeUnit.SECONDS)
+
+
+-------------------------------------------------------------------------------------------------
+3. Completing ad-hoc
+* create a Completable that is not gonna end:
+           CompletableFuture completableFutureToBeCompleted2 = CompletableFuture.supplyAsync( ( ) -> {
+                             for( int i = 0; i < 10; i-- )
+                             {
+                                System.out.println( "i " + i );
+                             }
+                             return 10;
+                  } );
+
+* create a new CompletableFuture that is going to complete the first one:
+  CompletableFuture completor = CompletableFuture.supplyAsync( ( ) -> {
+	            System.out.println( "completing the other" );
+                    completableFutureToBeCompleted2.complete( 222 );
+	            return 10;
+        } );
+
+* retrieve the results:
+  System.out.println( completor.get() );
+  System.out.println( completableFutureToBeCompleted2.get() );
+
+* CompletableFuture.complete() can only be called once, subsequent invocations are ignored
+* CompletableFuture.completeExceptionally(ex) - signal failure by passing some exception
+         - unlocks all waiting clients, but this time throwing an exception from get()
+
+-------------------------------------------------------------------------------------------------
+4. Joining
+It is possible to join different CompletableFuture and use its results in future calculations using the methods thenApply() and thenCompose():
+* run this function on a result, when it arrives
+   // from String -> Integer -> Double
+   CompletableFuture<String> f1 = //...
+   CompletableFuture<Integer> f2 = f1.thenApply(Integer::parseInt);
+   CompletableFuture<Double> f3 = f2.thenApply(r -> r * r * Math.PI);
+* these transformations are neither executed immediately nor blocking;
+  they are simply remembered and when original f1() completes they are executed for you.
+
+Running code on completion (thenAccept/thenRun)
+
+Combining two CompletableFuture together
+
+   CompletableFuture completableFutureBigCompute = CompletableFuture.supplyAsync( ( ) -> {
+                     // big computation
+	             return "10";
+                     } );
+
+   CompletableFuture thenCompose = completableFutureBigCompute.thenCompose(CombiningCompletableFutures::continueWithVeryImportantThing);
+
+   CompletableFuture<CompletableFuture> thenApply = completableFutureBigCompute.thenApply(CombiningCompletableFutures::continueWithSomethingElse);
+
+   System.out.println( "thenCompose " + thenCompose.get() );
+   System.out.println( "thenApply " + thenApply.get() ); // is already completed
+   System.out.println( "thenApply " + thenApply.isDone() ); // is already completed
+
+   CompletableFuture thenCompose2 = completableFutureBigCompute.thenCompose(CombiningCompletableFutures::continueWithVeryImportantThing );
+
+   // difference between compose and apply: thenCompose uses the value of the source
+   System.out.println( "thenCompose2 " + thenCompose2.get() ); 
+
+
+-------------------------------------------------------------------------------------------------
+
+5. Transform a list of futures to a list of results
+allOf - Returns a new CompletableFuture that is completed when all of the given CompletableFutures complete.
+
+
+private static <T> CompletableFuture<List<T>> sequence(List<CompletableFuture<T>> futures) {
+    CompletableFuture<Void> allDoneFuture =
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[futures.size()]));
+    return allDoneFuture.thenApply(v ->
+            futures.stream().
+                    map(future -> future.join()).
+                    collect(Collectors.<T>toList())
+    );
+}
+
+
+6. fail()/complete() can be replaced with:
+future.handle(event.mapEmpty());
+

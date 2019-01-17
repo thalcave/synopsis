@@ -3,5 +3,8 @@ M-x mode-name
     java-mode
     c++-mode
 
+delete trailing whitespace:
+‘M-x delete-trailing-whitespace’
+
 
 

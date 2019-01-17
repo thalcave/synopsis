@@ -1,0 +1,83 @@
+Currying = transforms a multiargument function to a chain of single-argument functions
+    function curriedAdd (a) {
+        return function (b) {
+            return a + b;
+        }
+    }
+
+partial application = assign a fix value to one or more of the arguments to a function
+    function add3(a, b, c) { return a+b+c; }
+    add3(2,4,8);  // 14
+
+    var add6 = add3.bind(this, 2, 4);
+    add6(8);  // 14
+
+first-class function = you can do with the function everything you can do with other types, like assigning them to variables
+
+-----------------------------------------------------
+ Template Method with first-class functions
+        class CustomerBlocks {
+            // the steps in the algorithm are merely properties of the class
+            def plan, checkCredit, checkInventory, ship
+
+            def CustomerBlocks() {
+                plan = []
+            }
+
+            def process() {
+                checkCredit()
+                checkInventory()
+                ship()
+            }
+        }
+
+        class UsCustomerBlocks extends CustomerBlocks{
+            def UsCustomerBlocks() {
+                checkCredit = { plan.add "checking US customer credit" }
+                checkInventory = { plan.add "checking US warehouses" }
+                ship = { plan.add "Shipping to US address" }
+            }
+        }
+
+
+-----------------------------------------------------
+Strategy
+
+Classical strategy:
+        interface Calc {
+            def product(n, m)
+        }
+
+        class CalcMult implements Calc {
+            def product(n, m) { n * m }
+        }
+
+        class CalcAdds implements Calc {
+            def product(n, m) {
+                def result = 0
+                n.times {
+                result += m
+                }
+                result
+            }
+        }
+
+
+Functional:
+        interface Calc {
+            def product(n, m)
+        }
+
+        func(Calc calc);
+
+        func((a, b) -> a * b);
+        func((a, b) -> a + b);
+
+
+-----------------------------------------------------
+Flyweight pattern = used to reduce the number of objects created and to decrease memory footprint and increase performance
+* tries to reuse already existing similar kind objects by storing them and creates new object when no matching object is found
+To enable safe sharing, between clients and threads, Flyweight objects must be immutable
+
+
+

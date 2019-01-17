@@ -1,0 +1,6 @@
+
+optional
+	.map(value -> {...})
+	.orElse(0);
+
+optional.ifPresent(value -> )

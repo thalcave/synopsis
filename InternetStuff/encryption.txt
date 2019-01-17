@@ -43,3 +43,7 @@ column transposition
 AES
 
 key expansion: deriving multiple keys from an initial key
+
+
+--------------------------------------------------------------------
+

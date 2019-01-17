@@ -1,0 +1,13 @@
+Priority inversion problem:
+* high priority task is indirectly pre-empted by a medium priority task "inverting" the relative priorities of the two tasks
+
+Low priority process - L
+Medium priority process - M
+High priority process - H
+R - resurce shared by L and H
+
+1. L acquires a resource R (needed by H)
+2. L is preempted by M
+3. M is preempted by H
+4. H blocks getting the resource R
+5. M executes and finishes (being executed with a lower priority)

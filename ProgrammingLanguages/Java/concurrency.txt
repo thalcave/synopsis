@@ -148,6 +148,10 @@ h) CompletableFuture
 * a Future (result for async operation) that can be explicitly completed
 * allows to complete a future when an event happened
 
+future vs. promise:
+- future = read-only reference to a yet-to-be-computed value
+- promise = read+write reference ...
+
 #### Creation:
 * create a CompletableFuture using its constructor:
     public CompletableFuture<String> ask() {

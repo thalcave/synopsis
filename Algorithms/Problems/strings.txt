@@ -93,3 +93,11 @@ if using a rolling hash (use previous value) --> hash_computation takes O(1) -->
 P5. No. of occurences of a character in a sorted string:
 
 binary search; if char is found, go left and right
+
+
+P6. Reverse a sentence
+- split the sentence into words
+- reverse each word
+- join the reversed words into a new sentence
+- reverse the new sentence
+' '.join([x[::-1] for x in p.split()])[::-1]

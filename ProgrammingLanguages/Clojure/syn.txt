@@ -1,0 +1,83 @@
+(operator operand1 operand2 ... operandn)
+
+or: first truthy value, or last value
+and: first falsey value, or last truthy value
+
+def: defining constants
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Structures
+
+data structures are immutable, meaning you can’t change them in place
+
+Maps
+ hash maps and sorted maps
+{}
+
+Vectors
+[] - vector
+(get [3 2 1] 0)
+conj - add elements to vector
+(conj [1 2] 3)
+
+
+Lists
+() - list
+
+
+conj - add elements to a list / vector
+get - get elements from map / vector
+nth - get element from list
+
+Sets
+#{} - hash set
+
+Keywords:
+* used as keys in maps
+(:a {:a 1 :b 2 :c 3})
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Functions
+
+function call = an operation where the operator is a function
+higher-order functions = functions that can either take a function as an argument or return a function
+Clojure evaluates all function arguments recursively before passing them to the function
+
+Defining:
+(defn <function_name>  [docstring] [param1 ... param] nbody)
+
+
+Parameters:
+(defn chop
+  "Function taking multiple parameters"
+  ([first-name last-name]
+   (str "First: " first-name " Last: " last-name))
+  ([first-name]
+   (chop first-name "Ecke")))
+
+(defn chop_multiple
+  [& names]
+  (map chop names))
+
+
+Anonymous functions:
+(fn [param-list]
+  function body)
+or: #(* %1 %2)
+
+
+Let:
+(let [y x]
+    <body>)
+evaluates <body> in a lexical context where y is bound to the value of x.
+(let [x 1 y 4] (+ x y)) -> 5
+* let forms provide clarity by allowing you to name things
+* let forms they allow you to evaluate an expression only once and reuse the result. This is especially important when you need to reuse the result of an expensive function call, like a network API call
+. It’s also important when the expression has side effects.
+
+
+Into
+(into [] (set [:a :a])) -> add elements
+

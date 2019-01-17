@@ -1,0 +1,48 @@
+Java class file is a file (.class) containing Java bytecode that can be executed on JVM
+Produced by the compiler from .java files
+
+
+Java Archive = platform-independent file format
+Functions:
+1. Data compression (using ZIP algo)
+2. Ease of distribution
+3. Authentication: JAR file can be digitally signed
+
+JRE can load classes from JAR directly, without un-jarring.
+
+"jar" and "tar" have the same syntax.
+
+Create a JAR file:
+* jar cvf hello.jar *.class images
+
+Manifest:
+* special file MANIFEST.MF, that specifies the main-class, digital signing, version control
+* created by default, if no input manifest is given
+
+Signing and verifying a JAR file
+* encrypt the file with private key; can be decrypted with public key
+* if you managed to decrypt using Alice's public key, it means it was encrypted with Alice's private key
+
+how do you make sure that the public key really belongs to Alice?
+CA issues a digital certificate to Alice, which contains her public key
+The certificate is signed with CA's private key, and requires CA's public key to be decrypted
+When Alice signs the JAR file, this certificate is placed inside the JAR file
+
+
+Obfuscation:
+* Renaming = alters the name of methods and variables
+* String encryption = hides strings in the executable and only restores their original value when needed
+* Control Flow Obfuscation = it makes decompiled code look like spaghetti logic which is very difficult for a hacker to comprehend
+* Dummy Code Insertion
+
+The JVM is a stack-based machine (as opposed to a register-based machine), meaning instructions operate on an evaluation stack. 
+Operands may be popped off the stack, various operations performed, and the results pushed back onto the stack for further evaluation
+
+
+A method’s local variables (including arguments to the method) are stored in what the JVM refers to as the local variable array.
+ ‘slot #x’ = value (reference) stored in location #x
+slot #0 = "this" pointer for instance methods (non-static)
+
+
+javac almost never emits optimised bytecode (this allowes the ability to set breakpoints)
+most of the optimizations are done at runtime by JIT compiler

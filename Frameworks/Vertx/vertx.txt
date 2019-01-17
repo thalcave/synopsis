@@ -147,6 +147,16 @@ Core API:
 * file-system access etc.
 
 
+----------------------------------------------------------------------------------------------------------------
+Context
+- event-loop context associated with an event loop thread
+- when verticle.start() is called, that execution is associated with a specific context
+
+a verticle has only one context -> all handlers in an event-loop verticle run on the same context (same event-loop thread)
+each context is bound to a single event-loop thread
+an event-loop thread can have multiple contexts
+
+if 4 different verticles are deployed, the start() methods of each will be on a new context
 
 ###########################################################################
 2. Using Vert.x from command line

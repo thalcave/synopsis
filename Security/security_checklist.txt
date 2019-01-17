@@ -1,0 +1,96 @@
+2.1 Check for compiler warnings
+2.2 Check for: system(), popen()
+2.3 Check for: strcpy(), strcat(), sprintf(), scanf(), gets(), ...
+2.4 Check for: strncpy(), strncat(), snprintf(), ...
+2.5 Check for: malloc() & co.
+2.6 Check for: wrong casts
+2.7 Check for: loops iterating over arrays/strings
+2.8 Check for: variable parameter lists
+2.9 Check for: file operations 
+2.9.1 Creating files: permissions
+2.9.2 Creating files: owner
+2.9.3 Creating files: symbolic links
+2.9.4 Processes with higher privileges
+2.10 Check for: process environment
+2.11 Check for: dropping privileges
+2.12 Check for: handling sensible information
+
+
+
+
+
+
+########################################################################3
+Problems:
+
+Buffer overflows
+1. ./Base/QnBase/Source/QnModuleManagerImpl.cpp:35:  [3] (buffer) getenv:
+  Environment variables are untrustable input if they can be set by an
+  attacker.  They can have any content and length, and the same variable
+  can be set more than once. Check environment variables carefully before
+  using them.
+
+  getenv("LANG")
+  
+Fix:
+  validate the size and content
+
+
+2. memcpy
+Does not check for buffer overflows when copying to destination. Make
+  sure destination can always hold the source data.
+
+You have to know how much data is in the source buffer and how much space is available in the target buffer.
+Do not call memcpy() if there is not enough space in the target buffer for all the data you want to copy from the source buffer. 
+(You have to decide whether it is OK to truncate the data if the source is bigger than the target.)
+
+
+3. (buffer) strlen:
+  Does not handle strings that are not \0-terminated (it could cause a
+  crash if unprotected). 
+
+
+4, use strncpy instead of strcpy
+ (or better, use some C++ routines):
+ strncpy: To safely use strncpy, you must either explicitly zero the last byte of the buffer after calling strncpy or pre-zero the buffer and then pass in a maximum length that is one byte smaller than the buffer size.
+ 
+
+
+ 
+Other vulnerabilities
+ 
+1. when using open/fopen:
+* check if path is symlink
+* use absolute path
+* use mkstemp or similar to create temporary files
+
+
+
+  
+2. ./Server/ServerEngine/Source/ProvisioningStrategy.cpp:136:  [3] (random) random:
+  This function is not sufficiently random for security-related
+  functions such as key and nonce creation. use a more secure technique for
+  acquiring random values. 
+
+
+  
+3. ./Client/Base/ClientEngine/Source/DeviceInfoDesktopImpl.cpp:542:  [4] (shell) system:
+  This causes a new program to execute and is difficult to use safely.
+  try using a library call that implements the same functionality if
+  available. 
+
+  
+  
+ 
+ 4. ./Client/Base/DesktopUiCommons/Source/DesktopUtils.cpp:51:  [3] (misc) LoadLibrary:
+  Ensure that the full path to the library is specified, or current
+  directory may be used. Use registry entry or GetWindowsDirectory to find
+  library path, if you aren't already. 
+
+  
+########################################################################3
+Fixes:
+1. use strncpy, strncat or C++ functions
+2. check env. variable for a certain format
+3. before using memcpy, make sure destionation can hold source data
+4.

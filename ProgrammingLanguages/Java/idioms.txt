@@ -28,6 +28,8 @@ Java8 Conversion functions/idioms
         final List<UserAddress> participants = Stream.of(UserAddress.fromString(userId.toString()), secondParticipant)
                                                      .collect(Collectors.toList());
 
+        final List<Integer> intList = Collections.singleton(1);
+
 7. Populate a list:
         final List<UserId> users = IntStream.range(0, 3)
                                             .boxed()
@@ -43,3 +45,78 @@ Java8 Conversion functions/idioms
 
     frequency() = Returns the number of elements in the specified collection equal to the specified object
     
+
+
+9. Concatenate 2 lists:
+        final List<byte[]> allOrganizations = Stream.concat(
+                existingOrganizations.stream(),
+                newOrganizations.stream()
+        ).collect(Collectors.toList());
+
+10. List to String
+    firstOrgUsers.stream().map(UserId::encode).collect(Collectors.joining(",")),
+
+
+11. Collection to map (with groupBy and Max):
+
+        final Map<UserAddress, Optional<Integer>> collect = entries
+                .stream()
+                .collect(
+                        Collectors.groupingBy(
+                                UserDeviceIndex::getUserAddress,
+                                Collectors.mapping(
+                                        index -> ((UserDeviceIndex) index).getIDeviceIndex().getElement(),
+                                        Collectors.maxBy(Integer::compare)
+                                )
+                        )
+                );
+
+        final Map<UserAddress, Integer> collect2 = entries
+                .stream()
+                .collect(
+                        Collectors.toMap(
+                                UserDeviceIndex::getUserAddress,
+                                index -> index.getIDeviceIndex().getElement(),
+                                BinaryOperator.maxBy(Integer::compare)
+                        )
+                );
+
+
+        final Map<UserAddress, Integer> collect1 = firstMap
+                .entrySet()
+                .stream()
+                .collect(
+                        Collectors.toMap(
+                                entry -> entry.getKey().getUserAddress(),
+                                Map.Entry::getValue,
+                                BinaryOperator.maxBy(Integer::compare)
+                        )
+                );
+
+
+
+        // collection to map of Lists
+        final Map<ConversationId, List<MessageindexRecord>> messagesPerConversation = messages
+                .stream()
+                .collect(
+                        Collectors.groupingBy(
+                                msg -> ConversationIdFactory.fromBytes(msg.getSconversationid()),
+                                HashMap::new,
+                                Collectors.toCollection(ArrayList::new)
+                        )
+                );
+
+        // collection to map of Lists
+        final Map<UserId, List<ConversationId>> ownerToGroupsMap = groupsWithOwners
+                .entrySet()
+                .stream()
+                .collect(
+                        Collectors.groupingBy(
+                                Map.Entry::getValue,
+                                Collectors.mapping(
+                                        Map.Entry::getKey,
+                                        Collectors.toList()
+                                )
+                        )
+                );
+

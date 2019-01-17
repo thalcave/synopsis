@@ -1,0 +1,28 @@
+List<String>		parameterized type
+List<E>			generic type
+List			raw type
+List<?>			unbounded wildcard type
+<E extends Number> 	bounded type parameter
+List<? extends Number>	bounded wildcard type
+
+
+1. Raw types and unbounded wildcards
+Class vs Class<?>
+
+      public void foo(Class<String> c) { System.out.println(c); }
+
+      Class r = Integer.class
+      foo(r); //THIS IS OK (BUT SHOULDN'T BE)
+
+      Class<?> w = Integer.class
+      foo(w); // WILL NOT COMPILE
+
+
+
+public interface FooService
+// I do not know at this point that my class, is of the correct type:
+Class<?> c = Class.forName(System.getProperty("foo.service"));
+
+//next line throws ClassCastException if c is not of a compatible type
+Class<? extends FooService> f = c.asSubclass(FooService.class); 
+FooService s = f.newInstance(); //no cast

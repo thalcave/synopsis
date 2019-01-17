@@ -41,3 +41,5 @@ enum Singleton
 8. Use defensive copies
 - a List inside a class, even if declared as final, can be changed from outside
 
+9. Use static nested class instead of top-level class if it's not used from elsewhere
+If you are using a nested class, start off with it being static, and then decide if it really needs to be non-static based on your usage.

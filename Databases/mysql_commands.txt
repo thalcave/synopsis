@@ -1,0 +1,98 @@
+SELECT sOrgId,bSuspended,COUNT(bSuspended) from EndUser WHERE eUserType = 0 AND sOrgId <> '' GROUP BY sOrgId,bSuspended;
+
+
+
+SELECT Organization.sId, EndUser.bSuspended, COUNT(EndUser.bSuspended) FROM Organization
+          LEFT JOIN EndUser ON Organization.sId = EndUser.sOrgId
+          GROUP BY Organization.sId, EndUser.bSuspended;
+
+
+SELECT a.topic_id, a.max_index, MAX(c.message_index), MIN(c.message_index) FROM topic AS a
+LEFT JOIN topic_message AS c
+     ON a.topic_id = c.topic_id
+WHERE a.topic_id IN
+      (SELECT topic.topic_id FROM topic where `QtalkNG`.`topic`.`topic_name` regexp 'topic')
+GROUP BY a.topic_id; 
+
+SELECT topic.topic_id, topic.max_index, MIN(topic_message.message_index), MAX(topic_message.message_index), COUNT(topic_message.topic_id)
+FROM topic
+LEFT JOIN topic_message
+     ON topic.topic_id = topic_message.topic_id
+WHERE topic.topic_id IN
+      (SELECT topic.topic_id FROM topic where `QtalkNG`.`topic`.`topic_name` regexp 'topic')
+GROUP BY topic.topic_id;
+
+
+
+-------------------------------
+GROUP BY - specifies that rows from the intermediate result set are to be divided in a number of groups, 
+returning one single row for each such group
+
+GROUP BY 'species' - yields one group for each species
+     whereas 
+GROUP BY 'species', 'birth' - yields a group for each combination of values in 'species' and 'birth' - most probably not at all what is intended.
+
+
+
+Joins
+
+Inner join: intersection of 2 tables
+- selects from *both* tables the topics which have messages
+          SELECT * FROM topic INNER JOIN topic_message ON topic.topic_id = topic_message.topic_id;
+- selects from 'topic' table only the topics which have messages
+          SELECT topic.* FROM topic INNER JOIN topic_message ON topic.topic_id = topic_message.topic_id;
+      
+Left outer join: all the rows of the left collection, and where present, the rows of the right collection
+- rows from the left collection are not left out
+// count messages for each topic
+         SELECT topic.topic_name, COUNT(topic_message.topic_id) FROM topic
+                LEFT JOIN topic_message ON topic.topic_id = topic_message.topic_id
+         GROUP BY topic.topic_id, topic_message.topic_id;
+
+// select conversations without participants
+        SELECT hex(conversation.conversation_id) FROM conversation 
+                LEFT JOIN participant ON conversation.conversation_id = participant.conversation_id 
+        WHERE participant.conversation_id IS NULL;
+
+
+// select from Participants and order from Conversation
+        SELECT hex(participant.conversation_id), participant.end_user FROM participant 
+                LEFT JOIN conversation ON participant.conversation_id  = conversation.conversation_id 
+                WHERE participant.end_user like '%+417991834903%' AND participant.is_deleted = 0 
+                ORDER BY created_at;
+
+Outer join: inverse of the Inner join
+- retuns those records not in T1 and T2
+
+
+
+--------------------------
+MySQL client:
+\# - enable autocompletion
+
+
+
+-------------------------------------
+Efficient deletion
+
+DELETE topic_message.* FROM topic_message 
+INNER JOIN topic ON 
+    (topic_message.topic_id = topic.topic_id) 
+WHERE `topic`.`topic_name` = 'stage:keys&test.user.-1414636811#2&3';
+
+inefficient one:
+DELETE FROM topic_message WHERE topic_id IN (
+    SELECT topic_id FROM topic WHERE topic.topic_name = 'stage:keys&test.user.-1414636811#2&3'
+);
+
+
+
+
+--------------------------------
+		 SELECT conversation_id, BIT_AND(end_user IN (users)) AS hasOnlyInternalParticipants
+		 FROM participant
+		 GROUP BY cid
+		 HAVING hasOnlyInternalParticipants
+		 ORDER BY cid ;
+
+

@@ -1,0 +1,83 @@
+Glossary
+***********************************************************************************************
+
+
+forward-secure scheme = secret keys are updated at regular periods of time; 
+* exposure of the secret key corresponding to a given time period does not enable an adversary to “break” the scheme (in the appropriate sense) for any prior time period.
+
+
+
+MAC (message authentication code) = a short piece of information used to authenticate a message and to provide integrity and authenticity assurances on the message
+* MAC algorithm:
+    Input:  secret key
+            message (to be authenticated)
+    Output: MAC
+    
+HMAC (hash message authentication code) = MAC algorithm using a hash function
+* calculating a message authentication code (MAC) involving a cryptographic hash function in combination with a secret cryptographic key
+* can be used to verify data integrity and authentication
+* any cryptographic function (MD5,SHA-1) can be used
+
+
+
+
+SAS = short authentication string
+
+MSISDN (misden) = number uniquely identifying a subscription in a GSM or a UMTS mobile network. 
+* it is the telephone number to the SIM card in a mobile/cellular phone
+
+IMEI = a number to identify mobile phones, 
+
+IMEISV = IMEI software version
+
+UUID (universally unique identifier) = an identifier standard used in software construction
+* represented by 32 hexadecimal digits: 550e8400-e29b-41d4-a716-446655440000
+
+
+
+replay attack = network attack in which a valid data transmission is maliciously or fraudulently repeated or delayed. 
+    This is carried out either by the originator or by an adversary who intercepts the data and retransmits it, possibly as part of a masquerade attack by IP packet substitution
+Example:
+* Suppose Alice wants to prove her identity to Bob. 
+  Bob requests her password as proof of identity, which Alice dutifully provides (possibly after some transformation like a hash function)
+  meanwhile, Mallory is eavesdropping on the conversation and keeps the password (or the hash)
+  After the interchange is over, Mallory (posing as Alice) connects to Bob
+  when asked for a proof of identity, Mallory sends Alice's password (or hash) read from the last session, which Bob accepts
+ 
+nonce = arbitrary number used only once in a cryptographic communication
+* random number to ensure that old communications cannot be reused in replay attacks
+
+-----------------------------------------------------------------------------------
+
+ciphertext (or cyphertext) = the result of encryption performed on plaintext using an algorithm, called a cipher
+
+Block cipher = deterministic algorithm operating on fixed-length groups of bits (called blocks) with an unvarying transformation that is specified by a symmetric key
+- a cryptographic key and algorithm are applied to a block of data (for example, 64 contiguous bits) at once as a group rather than to one bit at a time
+- so that identical blocks of text do not get encrypted the same way in a message (which might make it easier to decipher the ciphertext), 
+it is common to apply the ciphertext from the previous encrypted block to the next block in a sequence
+- so that identical messages encrypted on the same day do not produce identical ciphertext, an initialization vector derived from a random number generator is combined with the text in the first block and the key
+Algo:
+* break the plaintext into equally-sized blocks (e.g 64 bits)
+* each block is transformed into another equally sized block
+* apply chaining:
+    XOR the ciphertext of the previous block with the plaintext of the next block, before the normal encryption technique is executed on the plaintext
+
+Keystream: stream of random characters that are combined with a plaintext message to obtain ciphertext
+- common operations: addition, subtraction, XORing
+
+Stream cipher = symmetric key cipher where plaintext digits are combined with a pseudorandom cipher digit stream (keystream)
+- a method of encrypting text (to produce ciphertext) in which a cryptographic key and algorithm are applied to each binary digit in a data stream, one bit at a time
+
+
+Mode of operation = an algorithm that uses a block cipher to provide an information service such as confidentiality or authenticity
+*  describes how to repeatedly apply a cipher's single-block operation to securely transform amounts of data larger than a block
+
+counter (CTR) mode = turns a block cipher into a stream cipher
+
+SQLCipher = open source library that provides transparent, secure 256-bit AES encryption of SQLite database files
+- iOS, Android, Windows, Linux etc.
+
+
+
+
+rainbow tables = precomputed table for reversing cryptographic hash functions, usually for cracking password hashes

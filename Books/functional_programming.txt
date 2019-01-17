@@ -1,0 +1,16 @@
+Functional Thinking - Neal Ford
+
+Clojure: designed for concurrency (details are hidden from the developer)
+
+List: composed of 'head' and 'tail'
+
+Java.Stream(): 
+* lazy
+* order does not matter (filter and map vs. map and filter)
+
+
+Filter: function that processes a list and returns a new list, containing elements for which the given predicate is true
+
+Curry-ing: transforming a function which takes N arguments into N single-argument functions
+
+Cede more mundane details such as iteration, concurrency, and state to the runtime as much as possible

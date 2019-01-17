@@ -2,3 +2,39 @@
 * weak reference = a reference that isn't strong enough to force an object to remain in memory
 * soft reference = exactly like a weak reference, except that it is less eager to throw away the object to which it refers: if
 there is enough memory, the object is retained longer
+
+
+2. static initializers
+Static initialization block is executed when the class is initialized, 
+which happens before the first occurrence of any one of the following:
+* T is a class and an instance of T is created.
+* T is a class and a static method declared by T is invoked.
+* A static field declared by T is assigned.
+* A static field declared by T is used and the field is not a constant variable (
+
+
+3. Enums with values:
+public enum QnCounters
+{
+    NO_MEDIA_MESSAGES_SENT("noMediaMessagesSent"),
+    NO_MEDIA_MESSAGES_RECEIVED("noMediaMessagesReceived");
+
+    private String counterName;
+
+    QnCounters(String counterName)
+    {
+        this.counterName = counterName;
+    }
+
+    public String getCounterName()
+    {
+        return counterName;
+    }
+}
+
+* an enum cannot extend anything else, because it already extends Enum
+* MyEnum.values() returns an array of MyEnum’s values.
+* An enum specifies a list of constant values assigned to a type.
+* Enums can contain constructors, methods, variables, and constant class bodies.
+
+

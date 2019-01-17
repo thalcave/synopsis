@@ -1,0 +1,21 @@
+The PushKit framework provides the classes for your iOS apps to receive pushes from remote servers.
+Pushes can be of one of two types: standard and VoIP.
+
+In the past, a VoIP app had to maintain a persistent network connection with a server to receive incoming calls and other data
+This technique resulted in frequent device wakes that wasted energy.
+
+Instead of persistent connections, developers should use the PushKit framework—APIs that allows an app to receive pushes (notifications when data is available) from a remote server.
+Whenever a push is received, the app is called to action.
+
+There are many advantages to using PushKit to receive VoIP pushes:
+* The device is woken only when VoIP pushes occur, saving energy.
+* Unlike standard push notifications, which the user must respond to before your app can perform an action, VoIP pushes go straight to your app for processing.
+* VoIP pushes are considered high-priority notifications and are delivered without delay.
+* VoIP pushes can include more data than what is provided with standard push notifications.
+* Your app is automatically relaunched if it’s not running when a VoIP push is received.
+* Your app is given runtime to process a push, even if your app is operating in the background.
+
+
+Server will have to keep two certificates:
+* one for signing "normal" notifications
+* one for "VoIP" notifications.

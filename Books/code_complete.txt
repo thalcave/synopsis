@@ -1,0 +1,74 @@
+-----------------------------------------------------------------------------------------
+Chapter 2: Metaphors
+
+modeling = compare a topics you understand poorly to something similar that you understand better
+
+Corbato's law:
+          The number of lines of code a programmer can write in a fixed period of time is the same, 
+          independent of the language used.
+
+
+The most challenging part of programming is conceptualizing the problem
+
+Software farming: 
+* design a piece, code a piece, test a piece, add it to the
+system a little bit at a time
+
+Incremental development (oyster forming a pearl):
+* add to your software systems a small amount at a time
+* first make the simpleset possible version of the system that will run 
+
+Building software, like building a house:
+* general design, then construction, then optimization, then inspection
+
+
+-----------------------------------------------------------------------------------------
+Chapter 3. Upstream prerequisites
+
+resist the urge to begin coding as soon as possible
+
+Programmers are at the end of the software food chain:
+             the architect consumes the requirements
+             the designer consumes the architecture
+             the coder consumes the design.
+Errors in requirements are the most expensive ones:
+* detected during architecture stage, they are 3x as expensive
+* detected during dev. stage, they are 5-10x as expensive 
+* post-release: 10-100x
+
+One common rule of thumb is:
+* plan to specify about 80 percent of the requirements up front
+* allocate time for additional requirements to be specified later
+* then practice systematic change control to accept only the most valuable new requirements as
+the project progresses
+
+Problem definition = clear statement of the problem that the system is supposed to solve
+* should not sound like a solution
+
+average project experiences 25% requirements change, which leads to 70-85% of the rework
+
+The words “schedule” and “cost” are more sobering than coffee and a
+cold shower, and many “must haves” will quickly turn into “nice to haves.”
+
+Software architecture = high-level design
+
+A building block should have one area of responsibility, 
+and it should know as little as possible about
+other building blocks’ areas of responsibility
+
+Error processing:
+* it has systemwide implications, it should be treated at the architectural level
+Questions:
+* is error processing corrective or merely detective?
+* is error detection active or passive?
+* how does the system propagate errors?
+* how will exceptions be handled?
+
+-----------------------------------------------------------------------------------------
+Chapter 4. Key Construction decisions
+
+Choice of language:
+The Sapir-Whorf hypothesis says that your ability to
+think a thought depends on knowing words capable of expressing the thought. If you
+don’t know the words, you can’t express the thought and you might not even be able
+to formulate it

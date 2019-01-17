@@ -1,0 +1,125 @@
+kaizen = continuously making many small improvements
+
+------------------------------------------------------------------------
+Chapter 1. A Pragmatic Philosoph
+
+* take responsibility
+- provide options, don't make lame excuses
+
+* don't live with broken windows: 
+crack down on the small stuff in order to keep out the big stuff
+
+* be a catalyst for change: (stone soup)
+- easier to ask forgiveness than it is to get permission
+* remember the big picture
+
+great software today is better than perfect software tomorrow
+
+* know when to stop from tinkering
+
+
+Building your knowledge portfolio
+* invest regularly
+- learn at least one new language every year
+- read a technical book each quarter
+- experiment with different environments
+
+* diversify
+* manage risks
+
+* critical thinking: beware of zealots who insist that their dogma
+provides the _only_ answer
+
+* communicate:
+- know what you want to say
+- know your audience
+
+------------------------------------------------------------------------
+Chapter 2. A Pragmatic Approach
+
+
+DRY principle
+* reserve the comments for high-level explanations
+* generate tests from documentation
+* generate classes from metadata files, from DB schema
+
+"if it isn't easy, people won't do it"
+
+Orthogonality
+* components are isolated, you can change one without 
+worrying about the rest
+
+orthogonal teams: the larger the number of people involved in
+discussing changes, the less orthogonal the group
+
+Orthogonality test: if I do a change, how many modules are affected?
+The answer should be "one".
+
+
+Reversibility
+* there are no final decisions
+* have a flexible architecture
+
+
+The trace bullet approach is to get something working right away
+* Tracer code is not disposable: you write it for keeps. It contains all the error checking that any piece of production code has. 
+* It simply is not fully functional.
+Prototype:
+* you must make it very clear that this code is disposable
+
+
+------------------------------------------------------------------------
+Chapter 3. The Basic Tools
+
+* keep knowledge in plain text
+Unix is designed around the philosophy of small, sharp tools,
+each doing one thing well. Databases are kept as plain text files.
+
+* use the power of command shells
+* pick a powerful editor and learn it well
+
+Debugging:
+* fix the problem, not the blame
+* don't panic
+* Don’t waste a single neuron on the train of thought that begins “but that can’t happen” because
+quite clearly it can, and has.
+* it is much more likely that the bug exists in your application code, than in kernel, libraries etc.
+* determine why this failure wasn’t caught earlier: amend tests
+* are there any other places susceptible to this same bug?
+
+rubber ducking = explain the problem to someone else
+
+Debugging Checklist
+* Is the problem being reported a direct result of the underlying bug,
+  or merely a symptom?
+* Is the bug really in the compiler? Is it in the OS? Or is it in your code?
+* If you explained this problem in detail to a coworker, what would you say?
+* If the suspect code passes its unit tests, are the tests complete enough? 
+  What happens if you run the unit test with this data?
+
+------------------------------------------------------------------------
+Chapter 4. Pragmatic Paranoia
+
+class invariant = a class ensures that this condition is always true
+
+contract between a routine and a caller: if all preconditions are met by the caller,
+the routine shall guarantee that all postconditions and invariants will be true when it completes.
+
+a subclass should not accept a weaker contract than the base class
+
+banana problem = I don't know when to stop
+fencepost problem = count the fenceposts or the spaces between them
+off by one error
+
+loop invariant = valid before the iteration, and on each iteration
+ex: max = Math.max(array[0:i-1])
+
+coding defensively 
+
+Tips:
+* Crash Early
+
+Assertive programming
+* assertions check for things that should never happen
+* exceptions should be reserved for unexpected events: a program should still
+run if I remove all the exceptions handlers

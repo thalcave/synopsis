@@ -32,3 +32,24 @@ Distributed Systems
 
 Thundering herd problem 
 * occurs when a large number of processes waiting for an event are awoken when that event occurs, but only one process is able to proceed at a time.
+
+
+honeypot = honeypot is a computer system that is set up to act as a decoy to lure cyberattackers, and to detect, deflect or study 
+attempts to gain unauthorized access to information systems. 
+Generally, it consists of a computer, applications, and data that simulate the behavior of a real system that appears to be part of a 
+network but is actually isolated and closely monitored. All communications with a honeypot are considered hostile, as there's no reason 
+for legitimate users to access a honeypot. 
+Viewing and logging this activity can provide an insight into the level and types of threat a network infrastructure faces while distracting 
+attackers away from assets of real value.
+
+
+"Simplicity is robust, complexity is fragile."
+
+Cunningham's Law states "the best way to get the right answer on the internet is not to ask a question; it's to post the wrong answer."
+
+
+Price segmentation = charging different prices to different people for the same or similar product or service. 
+You see examples every time you go shopping: student prices at movie theaters, senior prices for coffee at McDonald's, 
+people who use coupons and many more
+
+Don’t Make Me Think = As a rule, people don’t like to puzzle over how to do things.

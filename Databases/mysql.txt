@@ -1,3 +1,5 @@
+#####################################################################
+Locking
 
 LOCK TABLES
 * A session can release its locks explicitly with UNLOCK TABLES.
@@ -41,6 +43,10 @@ which can have a performance impact if the AUTO-INC lock is held for a long time
 
 
 
+
+
+
+
 #####################################################################
 MySQL binary and non-binary string data types
 
@@ -69,3 +75,47 @@ The non-binary string types are:
 
 BINARY, VARBINARY, BLOB (and other variations of BLOB data types)
 
+
+
+#####################################################################
+Basic Locks mode
+
+enum lock_mode { 
+        LOCK_IS = 0,    /* intention shared */ 
+        LOCK_IX,        /* intention exclusive */ 
+        LOCK_S,         /* shared */ 
+        LOCK_X,         /* exclusive */ 
+        LOCK_AUTO_INC,  /* locks the auto-inc counter of a table 
+                        in an exclusive mode */ 
+        LOCK_NONE,      /* this is used elsewhere to note consistent read */ 
+        LOCK_NUM = LOCK_NONE, /* number of lock modes */ 
+        LOCK_NONE_UNSET = 255 
+}; 
+
+Transactions cannot be nested. 
+This is a consequence of the implicit commit performed for any current
+transaction when you issue a START TRANSACTION statement or one of its
+synonyms.
+
+
+A limitation on UPDATE and DELETE statements that use a subquery to
+modify a single table is that the optimizer does not use semi-join or
+materialization subquery optimizations. 
+As a workaround, try rewriting them as multiple-table UPDATE and
+DELETE statements that use a join rather than a subquery.
+
+delete topic_message.* FROM topic_message INNER JOIN topic ON
+(topic_message.topic_id = topic.topic_id) WHERE `topic`.`topic_name` =
+'stage:keys&test.user.-1414636811#2&3' ;
+
+
+DELETE locks all rows that are scanned in the query -> make sure you have index on right column
+
+
+
+#####################################################################
+data normalization = 
+* there is no redundancy of data (all data is stored in only one place)
+* data dependencies are logical (all related data items are stored together).
+
+Traditional database design principles tell you that well-designed databases are always normalized.
