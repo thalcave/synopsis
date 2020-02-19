@@ -1,0 +1,49 @@
+MVC = Model View Controller: separates an application into three main components: the model, the view, and the controller.
+
+Model - Model represents an object or JAVA POJO carrying data. It can also have logic to update controller if its data changes.
+
+Controller - Controller acts on both model and view. It controls the data flow into model object and updates the view whenever data changes. It keeps view and model separate.
+* The responsibility of the Controller is to process incoming requests. It gets the input from users via the View, then processes the user's data through the Model, passing back the results to View. It normally acts as a mediator between the View and the Model.
+
+
+View - View represents the visualization of the data that model contains.
+
+----------------------------------------------------------------------------
+
+
+
+MVVM = Model, View, ViewModel pattern
+
+Model = simply holds the data
+- all the business specific code
+
+ViewModel = the link between the Model and View
+- does not know which View is using it
+- when data changes, it will publish an event, so that observers (Views) know to update the data
+
+View = simply holds the formatted data
+- handles what the user sees/touches
+- does not hold business logic
+- observes data exposed by the ViewModel, and updates it when data changes
+
+The basic MVCVM guidelines we follow are:
+* Views display a certain shape of data
+* ViewModels hold a certain shape of data and commands, they do not know where the data, or code, comes from or how it is displayed.
+* Models hold the actual data (various context, store or other methods) 
+
+MVVM pattern supports two-way data binding between View and ViewModel. This allows automatic propagation of changes, inside the state of ViewModel to the View. 
+Generally, the ViewModel utilizes the observer pattern to inform changes in the ViewModel to the Model.
+
+Model:
+* The Model represents a collection of classes that explains the business model and the data model. It also defines the business rules for data means as how the data can be altered and manipulated.
+
+View:
+* The View represents the user interface components such as CSS, jQuery, HTML, etc. View displays the data that is received from the controller as the outcome. This also changes the model(s) into the user interface.
+
+ViewModel:
+* The View Model is responsible of displaying methods, commands, and other functions that assist in maintaining the state of the View, manipulating the Model as the result of actions on the View, and triggering the events in the View itself.
+
+
+-----------------------------------------------------------------------
+
+

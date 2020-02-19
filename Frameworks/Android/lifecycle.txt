@@ -1,0 +1,52 @@
+every Android app runs in its own Linux process
+the lifetime of the process is not directly controlled by the app (Android may kill the process at any time)
+
+To determine which processes to kill when low on memory, Android places each process into an "importance hierarchy":
+1. foreground process; any of the conditions
+- is running an Activity (onResume() method was called)
+- has a BroadcastReceiver currently running
+- it has a Service that is currently executing
+
+2. visible process: doing work that is user is currently aware of:
+- It is running an Activity that is visible to the user on-screen but not in the foreground (its onPause() method has been called)
+- It has a Service that is running as a foreground service
+- It is hosting a service that the system is using for a particular feature that the user is aware, such as a live wallpaper, input method service,
+
+3. service process
+
+
+4. cached process: 
+
+
+Activity = a single, focused thing that the user can do
+ the Activity class takes care of creating a window for you in which you can place your UI 
+ An activity specifies a layout to represent it on screen.
+
+Fragment  = a piece of an activity which enable more modular activity design. It will not be wrong if we say, a fragment is a kind of sub-activity.
+
+
+Service = an application component representing: either an application's desire to perform a longer-running operation while not interacting with the user 
+or to supply functionality for other applications to use
+
+Intent = an abstract description of an operation to be performed
+event (system message) that is passed along with data from the first user interface to another.
+
+
+------------------------------------------------------------------------
+Glossary
+
+.dex = compiled Android application code file
+
+Action = a description of something that an Intent sender wants done
+Activity = a single screen in an application, that can receive and handle UI events
+
+Dalvik VM = Android' virtual machine, that executes files in .dex format
+
+Broadcast Receiver = An application class that listens for Intents that are broadcast,
+Manifest File = An XML file that each application must define, to describe the application's package name, version, components (activities, intent filters, services), imported libraries, and describes the various activities
+
+Resources = Nonprogrammatic application components that are external to the compiled application code, but which can be loaded from application code using a well-known reference format
+
+Service = runs in the background (without any UI presence) to perform various persistent actions, such as playing music or monitoring network activity.
+
+View = An object that draws to a rectangular area on the screen and handles click, keystroke, and other interaction events. 

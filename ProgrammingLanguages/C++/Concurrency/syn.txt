@@ -1,0 +1,7 @@
+the default behavior of atomics provides both atomicity and ordering for loads and stores.
+
+sequential consistency: 
+* all loads and stores must be "as if" they happened in the order you wrote them within each thread
+* operations among threads can be interleaved however the system likes.
+
+C++0x has atomic variables which also enforce sequential consistency when used in the default mode.

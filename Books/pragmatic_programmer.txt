@@ -123,3 +123,95 @@ Assertive programming
 * assertions check for things that should never happen
 * exceptions should be reserved for unexpected events: a program should still
 run if I remove all the exceptions handlers
+
+
+------------------------------------------------------------------------
+Chapter 5. Bend, or Break
+
+Law of Demeter: minimize coupling between modules
+
+------------------------------------------------------------------------
+Chapter 6. While you are coding
+
+Avoid programming by coincidence, relying on luck and accidental successes:
+* understand why the code works in the first place
+* understand the application you're building
+* don’t let existing code dictate future code
+
+
+
+Testing against Contract
+Desing to Test: When you design a module, or even a single routine, you should design
+both its contract and the code to test that contract.
+
+Writing Unit Tests:
+* for small projects, they can be embedded in the module itself
+* for larger project, each test into a subdirectory
+
+Tips:
+Test Your Software, or Your Users Will
+Don’t Use Wizard Code You Don’t Understand
+
+
+------------------------------------------------------------------------
+Chapter 7. Before the Project
+
+Tips:
+Don’t Gather Requirements - Dig for Them: they’re buried deep beneath layers of assumptions, misconceptions, and politics.
+It’s important to discover the underlying reason why users do a particular thing, rather than just the way they currently do it.
+
+Tips:
+Work with a User to Think Like a User
+
+
+Cockburn use case template
+
+
+Danger: overspecifying
+Requirements are not architecture. Requirements are not design, nor are they the user interface. Requirements are need.
+
+Track the requirements to understand the feature bloat
+
+Tip: Create and maintain a project glossary
+
+Tip: identify the most restrictive constraints first, and fit the remaining constraints within them.
+
+
+Starting a new project:
+* Listen to Nagging Doubts—Start When You’re Ready
+* start prototyping
+
+Program specification: 
+* is the process of taking a requirement and reducing it down to the point where a programmer’s skill can take over.
+* a record for future generations of programmers who will be maintaining and enhancing the code
+* an agreement with the user
+
+Some Things Are Better Done than Described
+
+Distrust environments where requirements are gathered, specifications are written, and then coding starts, all in isolation.
+
+
+------------------------------------------------------------------------
+Chapter 8. Pragmatic Projects
+
+No Broken Windows
+Don't Repeat Yourself
+
+Tip: Don’t Use Manual Procedures
+
+Ruthless testing: Test Early. Test Often. Test Automatically.
+
+What to Test:
+* Unit testing
+* Integration testing
+* Validation and verification: is it what the users need?
+* Resource exhaustion, errors, and recovery
+* Performance testing
+* Usability testing: It is performed with real users, under real environmental conditions.
+
+How to Test:
+Test Data: either real, or synthetic. We need both.
+Test State Coverage, Not Code Coverage
+
+When to Test:
+As soon as any production code exists, it needs to be tested.

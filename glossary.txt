@@ -53,3 +53,18 @@ You see examples every time you go shopping: student prices at movie theaters, s
 people who use coupons and many more
 
 Don’t Make Me Think = As a rule, people don’t like to puzzle over how to do things.
+
+
+Good Work < Right Work < Great Work
+Good work: 
+* complex, quality could be improved
+* takes great effort to author, debate, review, debug, and maintain.
+
+Great work:
+* solves difficult problems with a paucity of means
+* deceptively simple
+
+Right work:
+* work that is undeniably, pound-on-the-table good, however unexciting or trivial: making public vars private, reducing the number of global vars etc.
+* phronesis (practical wisdom)
+

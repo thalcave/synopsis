@@ -10,7 +10,6 @@ SacrificialArchitecture: prepare to discard code every N years
 "design for ~10X growth, but plan to rewrite before ~100X"
 
 
-
 - accept that in few years you'll need to throw away the current code
 - accept limits
 - think now about things that can make it easier to replace when the time comes
@@ -38,6 +37,15 @@ Approaches:
 3. Replace the monolith entirely: SacrificialArchitecture
 4. Start with coarse-grained services (multiple services), larger than those you expect to end up with
 - as boundaries stabilize, break down into finer-grained services
+
+
+if two pieces of information are dependent on each other, they should belong to a single server:
+the natural boundaries for a service should be the natural boundaries of its data.
+
+KISS - there's no need to start off with over-complicating everything for no reason. 
+When there's a need for Ansible, introduce it at that point. 
+When you think you need microservices, think about it a lot and move to them if you really do require them.
+
 
 
 
